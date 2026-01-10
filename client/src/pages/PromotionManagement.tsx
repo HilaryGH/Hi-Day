@@ -174,15 +174,17 @@ const PromotionManagement = () => {
     }
   };
 
-  const handleApplyToProducts = async (promotionId: string, productIds: string[]) => {
-    try {
-      await promotionAPI.applyToProducts(promotionId, productIds);
-      alert('Promotion applied to selected products successfully!');
-      await loadPromotions();
-    } catch (err: any) {
-      setError(err.message || 'Failed to apply promotion to products');
-    }
-  };
+  // Note: This function can be used when implementing "Apply to Products" button for specific promotions
+  // Currently promotions are applied when created/updated with selected products
+  // const handleApplyToProducts = async (promotionId: string, productIds: string[]) => {
+  //   try {
+  //     await promotionAPI.applyToProducts(promotionId, productIds);
+  //     alert('Promotion applied to selected products successfully!');
+  //     await loadPromotions();
+  //   } catch (err: any) {
+  //     setError(err.message || 'Failed to apply promotion to products');
+  //   }
+  // };
 
   if (authLoading || loading) {
     return (

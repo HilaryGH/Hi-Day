@@ -181,7 +181,7 @@ const Home: React.FC = () => {
             <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-[#111827] mb-2">Explore Popular Categories</h3>
             {loading ? (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
-                {categories.slice(0, 4).map((category, index) => (
+                {categories.slice(0, 4).map((_, index) => (
                   <div
                     key={index}
                     className="bg-white rounded-lg p-1.5 border border-[#E5E7EB] animate-pulse"

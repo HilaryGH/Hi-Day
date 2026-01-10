@@ -72,7 +72,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
     return () => {
       Object.values(previews).forEach(url => URL.revokeObjectURL(url));
     };
-  }, [formData.images.map(img => img?.name + img?.size).join(',')]);
+  }, [formData.images.map(img => img ? `${img.name}-${img.size || 0}` : '').join(',')]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -549,7 +549,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
                 description: '',
                 price: '',
                 originalPrice: '',
-                images: [''],
+                images: [null],
                 category: '',
                 subcategory: '',
                 brand: '',

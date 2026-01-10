@@ -138,6 +138,10 @@ const Register = () => {
     }
   };
 
+  // Helper variables for type checking (outside conditional blocks)
+  const isIndividual = userType === 'individual';
+  const isProductProvider = userType === 'product provider';
+
   // Individual Registration Form
   if (userType === 'individual') {
     return (
@@ -163,7 +167,7 @@ const Register = () => {
                   type="button"
                   onClick={() => setUserType('individual')}
                   className={`p-4 border-2 rounded-lg text-center transition-all ${
-                    userType === 'individual'
+                    isIndividual
                       ? 'border-[#2563EB] bg-[#2563EB]/5'
                       : 'border-gray-300 hover:border-gray-400'
                   }`}
@@ -176,7 +180,7 @@ const Register = () => {
                   type="button"
                   onClick={() => setUserType('product provider')}
                   className={`p-4 border-2 rounded-lg text-center transition-all ${
-                    userType === 'product provider'
+                    isProductProvider
                       ? 'border-[#2563EB] bg-[#2563EB]/5'
                       : 'border-gray-300 hover:border-gray-400'
                   }`}
@@ -408,7 +412,7 @@ const Register = () => {
                   type="button"
                   onClick={() => setUserType('individual')}
                   className={`p-4 border-2 rounded-lg text-center transition-all ${
-                    userType === 'individual'
+                    isIndividual
                       ? 'border-[#2563EB] bg-[#2563EB]/5'
                       : 'border-gray-300 hover:border-gray-400'
                   }`}
@@ -421,7 +425,7 @@ const Register = () => {
                   type="button"
                   onClick={() => setUserType('product provider')}
                   className={`p-4 border-2 rounded-lg text-center transition-all ${
-                    userType === 'product provider'
+                    isProductProvider
                       ? 'border-[#2563EB] bg-[#2563EB]/5'
                       : 'border-gray-300 hover:border-gray-400'
                   }`}
@@ -471,7 +475,7 @@ const Register = () => {
                   <input
                     id="companyName"
                     type="text"
-                    required={providerType !== 'freelancer'}
+                    required={providerType === 'small business' || providerType === 'specialized'}
                     value={formData.companyName}
                     onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
@@ -746,7 +750,7 @@ const Register = () => {
                   <input
                     id="crCertificate"
                     type="file"
-                    required={providerType !== 'freelancer'}
+                    required={providerType === 'small business' || providerType === 'specialized'}
                     accept=".pdf,.jpg,.jpeg,.png"
                     onChange={(e) => handleFileChange('crCertificate', e.target.files)}
                     className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#2563EB] file:text-white hover:file:bg-[#1d4ed8]"
@@ -763,7 +767,7 @@ const Register = () => {
                 <input
                   id="professionalCertificate"
                   type="file"
-                  required={providerType !== 'freelancer'}
+                    required={providerType === 'small business' || providerType === 'specialized'}
                   accept=".pdf,.jpg,.jpeg,.png"
                   onChange={(e) => handleFileChange('professionalCertificate', e.target.files)}
                   className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#2563EB] file:text-white hover:file:bg-[#1d4ed8]"

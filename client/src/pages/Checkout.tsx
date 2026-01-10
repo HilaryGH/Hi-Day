@@ -21,7 +21,6 @@ const Checkout = () => {
   const fromCart = location.state?.fromCart === true;
 
   const [items, setItems] = useState<CheckoutItem[]>([]);
-  const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -67,7 +66,6 @@ const Checkout = () => {
           navigate('/cart');
           return;
         }
-        setCartItems(cart.items);
         const checkoutItems = cart.items.map((item: any) => ({
           productId: item.product._id,
           quantity: item.quantity,
