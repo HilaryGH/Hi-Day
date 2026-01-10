@@ -1,0 +1,48 @@
+import mongoose from 'mongoose';
+
+const reviewSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true
+  },
+  order: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order'
+  },
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5
+  },
+  comment: {
+    type: String,
+    trim: true
+  },
+  images: [{
+    type: String
+  }],
+  isVerified: {
+    type: Boolean,
+    default: false
+  }
+}, {
+  timestamps: true
+});
+
+reviewSchema.index({ product: 1 });
+reviewSchema.index({ user: 1 });
+reviewSchema.index({ product: 1, user: 1 }, { unique: true });
+
+export default mongoose.model('Review', reviewSchema);
+
+
+
+
+

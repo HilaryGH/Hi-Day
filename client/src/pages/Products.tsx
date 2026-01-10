@@ -1,0 +1,315 @@
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { productsAPI } from '../utils/api';
+import { useAuth } from '../context/AuthContext';
+
+interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  originalPrice?: number;
+  images: string[];
+  category: string;
+  rating: {
+    average: number;
+    count: number;
+  };
+  stock: number;
+}
+
+const Products = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    category: '',
+    search: '',
+    minPrice: '',
+    maxPrice: '',
+    sortBy: 'createdAt',
+    order: 'desc',
+  });
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 20,
+    total: 0,
+    pages: 0,
+  });
+
+  useEffect(() => {
+    loadProducts();
+  }, [filters, pagination.page]);
+
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      const params: any = {
+        page: pagination.page,
+        limit: pagination.limit,
+      };
+
+      if (filters.category) params.category = filters.category;
+      if (filters.search) params.search = filters.search;
+      if (filters.minPrice) params.minPrice = Number(filters.minPrice);
+      if (filters.maxPrice) params.maxPrice = Number(filters.maxPrice);
+      if (filters.sortBy) params.sortBy = filters.sortBy;
+      if (filters.order) params.order = filters.order;
+
+      const data = await productsAPI.getAll(params);
+      setProducts(data.products);
+      setPagination(data.pagination);
+    } catch (error) {
+      console.error('Error loading products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
+
+  const categories = [
+    'Fashion',
+    'Electronics',
+    'Home & Living',
+    'Beauty & Personal Care',
+    'Sports & Outdoors',
+    'Books',
+    'Toys & Games',
+    'Food & Beverages',
+    'Other',
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Shop Products</h1>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Filters Sidebar */}
+          <div className="lg:w-64 flex-shrink-0">
+            <div className="bg-white rounded-lg shadow p-6 sticky top-24">
+              <h2 className="text-lg font-semibold mb-4">Filters</h2>
+
+              {/* Search */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Search
+                </label>
+                <input
+                  type="text"
+                  value={filters.search}
+                  onChange={(e) => handleFilterChange('search', e.target.value)}
+                  placeholder="Search products..."
+                  className="w-full px-3 py-2 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+                />
+              </div>
+
+              {/* Category */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Category
+                </label>
+                <select
+                  value={filters.category}
+                  onChange={(e) => handleFilterChange('category', e.target.value)}
+                  className="w-full px-3 py-2 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-[#2563EB]"
+                >
+                  <option value="">All Categories</option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Price Range */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Price Range
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    value={filters.minPrice}
+                    onChange={(e) => handleFilterChange('minPrice', e.target.value)}
+                    placeholder="Min"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  />
+                  <input
+                    type="number"
+                    value={filters.maxPrice}
+                    onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                    placeholder="Max"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+              </div>
+
+              {/* Sort */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sort By
+                </label>
+                <select
+                  value={`${filters.sortBy}-${filters.order}`}
+                  onChange={(e) => {
+                    const [sortBy, order] = e.target.value.split('-');
+                    handleFilterChange('sortBy', sortBy);
+                    handleFilterChange('order', order);
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                >
+                  <option value="createdAt-desc">Newest First</option>
+                  <option value="createdAt-asc">Oldest First</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="rating.average-desc">Highest Rated</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Products Grid */}
+          <div className="flex-1">
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB]"></div>
+                <p className="mt-4 text-gray-600">Loading products...</p>
+              </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600">No products found</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {products.map((product) => (
+                    <div
+                      key={product._id}
+                      className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group flex flex-col"
+                    >
+                      <Link to={`/products/${product._id}`} className="flex-1 flex flex-col">
+                        <div className="aspect-square bg-gray-100 overflow-hidden">
+                          {product.images && product.images.length > 0 ? (
+                            <img
+                              src={product.images[0]}
+                              alt={product.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                              <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-4 flex-1 flex flex-col">
+                          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-[#2563EB] transition-colors">
+                            {product.name}
+                          </h3>
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-2xl font-bold text-[#2563EB]">
+                              ETB {product.price.toLocaleString()}
+                            </span>
+                            {product.originalPrice && product.originalPrice > product.price && (
+                              <span className="text-sm text-gray-500 line-through">
+                                ETB {product.originalPrice.toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                          {product.rating.count > 0 && (
+                            <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
+                              <span className="text-[#F97316]">★</span>
+                              <span>{product.rating.average.toFixed(1)}</span>
+                              <span>({product.rating.count})</span>
+                            </div>
+                          )}
+                          {product.stock === 0 && (
+                            <span className="inline-block mt-auto text-sm text-red-600 font-medium mb-2">
+                              Out of Stock
+                            </span>
+                          )}
+                        </div>
+                      </Link>
+                      <div className="p-4 pt-0 space-y-2">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (!user) {
+                              navigate('/login');
+                              return;
+                            }
+                            if (product.stock === 0) {
+                              alert('This product is out of stock');
+                              return;
+                            }
+                            navigate('/checkout', {
+                              state: {
+                                product: {
+                                  _id: product._id,
+                                  name: product.name,
+                                  price: product.price,
+                                  images: product.images,
+                                  quantity: 1
+                                },
+                                fromCart: false
+                              }
+                            });
+                          }}
+                          disabled={product.stock === 0}
+                          className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Shop Now
+                        </button>
+                        <Link
+                          to={`/products/${product._id}`}
+                          className="block w-full text-center text-[#2563EB] hover:text-[#1d4ed8] font-medium py-2 px-4 rounded-lg transition-colors border border-[#2563EB] hover:bg-[#2563EB]/5"
+                        >
+                          View Details
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {pagination.pages > 1 && (
+                  <div className="mt-8 flex justify-center gap-2">
+                    <button
+                      onClick={() => setPagination((prev) => ({ ...prev, page: prev.page - 1 }))}
+                      disabled={pagination.page === 1}
+                      className="px-4 py-2 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    >
+                      Previous
+                    </button>
+                    <span className="px-4 py-2">
+                      Page {pagination.page} of {pagination.pages}
+                    </span>
+                    <button
+                      onClick={() => setPagination((prev) => ({ ...prev, page: prev.page + 1 }))}
+                      disabled={pagination.page === pagination.pages}
+                      className="px-4 py-2 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Products;
+

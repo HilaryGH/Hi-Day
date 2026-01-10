@@ -1,154 +1,315 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { productsAPI } from "../utils/api";
+
+const categories = [
+  { name: "Fashion & Apparel", link: "/products?category=Fashion & Apparel", categoryName: "Fashion & Apparel" },
+  { name: "Electronics", link: "/products?category=Electronics", categoryName: "Electronics" },
+  { name: "Home & Living", link: "/products?category=Home & Living", categoryName: "Home & Living" },
+  { name: "Beauty & Personal Care", link: "/products?category=Beauty & Personal Care", categoryName: "Beauty & Personal Care" },
+  { name: "Sports & Outdoors", link: "/products?category=Sports & Outdoors", categoryName: "Sports & Outdoors" },
+  { name: "Books", link: "/products?category=Books", categoryName: "Books" },
+  { name: "Toys & Games", link: "/products?category=Toys & Games", categoryName: "Toys & Games" },
+  { name: "Food & Beverages", link: "/products?category=Food & Beverages", categoryName: "Food & Beverages" },
+];
+
+interface CategoryProduct {
+  category: string;
+  product: any | null;
+}
 
 const Home: React.FC = () => {
+  const [categoryProducts, setCategoryProducts] = useState<CategoryProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategoryProducts = async () => {
+      try {
+        setLoading(true);
+        // Fetch first product from each of the first 4 categories
+        const popularCategories = categories.slice(0, 4);
+        const productPromises = popularCategories.map(async (category) => {
+          try {
+            const response = await productsAPI.getAll({
+              category: category.categoryName,
+              limit: 1,
+              sortBy: 'createdAt',
+              order: 'desc'
+            });
+            return {
+              category: category.name,
+              product: response.products && response.products.length > 0 ? response.products[0] : null
+            };
+          } catch (error) {
+            console.error(`Error fetching products for ${category.name}:`, error);
+            return {
+              category: category.name,
+              product: null
+            };
+          }
+        });
+
+        const results = await Promise.all(productPromises);
+        setCategoryProducts(results);
+      } catch (error) {
+        console.error('Error fetching category products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategoryProducts();
+  }, []);
+
+  const getProductForCategory = (categoryName: string) => {
+    return categoryProducts.find(cp => cp.category === categoryName)?.product || null;
+  };
+
   return (
     <section className="w-full">
       {/* Enhanced Hero Section */}
-      <div className="relative w-full h-screen flex flex-col md:flex-row overflow-hidden">
-        {/* Content Half - Left Side */}
-        <div className="w-full md:w-1/2 h-1/2 md:h-full bg-gradient-to-br from-amber-50 via-white to-amber-50 flex items-center justify-center text-center md:text-left px-4 md:px-8 lg:px-12 py-12 md:py-0 order-2 md:order-1 relative overflow-hidden">
-          {/* Overlay similar to image section */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
-          <div className="max-w-2xl relative z-10">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Your Hair, Your Confidence
-            </h1>
-            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              Discover our exquisite collection of high-quality human hair and wigs, 
-              carefully imported from China and distributed across Ethiopia. 
-              Elevate your style with premium products you can trust.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <button className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-lg">
-                Shop Now
-              </button>
-              <button className="border-2 border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white font-semibold py-4 px-8 rounded-lg transition-all transform hover:scale-105 text-lg">
-                Explore Collection
-              </button>
+      <div className="relative w-full min-h-[45vh] md:min-h-[50vh] lg:min-h-[55vh] flex flex-col lg:flex-row overflow-hidden bg-[#F9FAFB]">
+        {/* Left Side - Categories */}
+        <div className="w-full lg:w-64 xl:w-72 bg-white border-r border-[#E5E7EB] p-4 min-h-[45vh] md:min-h-[50vh] lg:min-h-[55vh]">
+          <h2 className="text-xl font-bold text-[#111827] mb-4 flex items-center gap-2">
+          
+            Categories
+          </h2>
+          <ul className="space-y-2">
+            {categories.map((category, index) => (
+              <li key={index}>
+                <Link
+                  to={category.link}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors group"
+                >
+                  <span className="text-[#111827] font-medium group-hover:text-[#2563EB] transition-colors">
+                    {category.name}
+                  </span>
+                  <svg 
+                    className="w-5 h-5 text-[#6B7280] ml-auto group-hover:text-[#2563EB] group-hover:translate-x-1 transition-all" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Right Side - Hero Content */}
+        <div className="flex-1 px-4 md:px-8 lg:px-12 py-8 lg:py-6">
+          {/* Top Section - Mega Sale Event on Left, Two Cards Stacked on Right */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-12 h-[7vh] w-full">
+            {/* African Shape Mirror */}
+            <div className="md:col-span-3 bg-gradient-to-r from-[#93C5FD] to-[#60A5FA] rounded-lg text-white relative overflow-hidden h-full flex">
+              {/* Text content on the left */}
+              <div className="w-1/2 p-2 md:p-2.5 relative z-10 h-full flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-1 mb-1">
+                    <span className="bg-[#FCD34D] text-[#92400E] px-1.5 py-0.5 rounded-full text-[9px] font-bold">SALE</span>
+                    <span className="text-white/90 text-[9px]">Limited Time</span>
+                  </div>
+                  <h2 className="text-sm md:text-base font-bold mb-0.5">Used African Shape Mirror</h2>
+                  <p className="text-white/90 mb-1.5 text-[10px] md:text-xs">Beautiful Handcrafted African Design</p>
+                </div>
+                <Link
+                  to="/products"
+                  className="inline-block bg-white text-[#3B82F6] font-semibold py-1 px-3 rounded-md hover:bg-[#F9FAFB] transition-all transform hover:scale-105 text-[10px] w-fit"
+                >
+                  Shop Now
+                </Link>
+              </div>
+              {/* Image on the right - half width, 80% height, centered */}
+              <div className="w-1/2 h-full flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/africa mirror.jpg" 
+                  alt="African Shape Mirror" 
+                  className="w-full h-[80%] object-cover"
+                />
+              </div>
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white rounded-xl p-4 shadow-lg border border-amber-100">
-                <div className="text-3xl md:text-4xl font-bold text-amber-600 mb-1">1000+</div>
-                <div className="text-sm text-gray-600 font-medium">Products</div>
+            {/* Right Side - Two Cards Stacked Vertically */}
+            <div className="md:col-span-2 flex flex-col gap-2.5 h-full">
+              {/* Get up to 20% OFF */}
+              <div className="bg-gradient-to-br from-[#FCD34D] to-[#FBBF24] rounded-lg p-2 text-[#92400E] relative overflow-hidden flex-1">
+                <div className="absolute top-0 right-0 w-12 h-12 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                <div className="relative z-10 h-full flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xs font-bold mb-0.5">Get up to</h3>
+                    <div className="text-xl font-bold mb-0.5">20% OFF</div>
+                    <p className="text-[#92400E]/90 mb-0.5 text-[9px]">On your first purchase</p>
+                  </div>
+                  <Link
+                    to="/products"
+                    className="inline-block bg-white text-[#D97706] font-semibold py-0.5 px-2 rounded-md hover:bg-[#F9FAFB] transition-all text-[9px] w-fit"
+                  >
+                    Claim Offer
+                  </Link>
+                </div>
               </div>
-              <div className="bg-white rounded-xl p-4 shadow-lg border border-amber-100">
-                <div className="text-3xl md:text-4xl font-bold text-amber-600 mb-1">5000+</div>
-                <div className="text-sm text-gray-600 font-medium">Customers</div>
-              </div>
-              <div className="bg-white rounded-xl p-4 shadow-lg border border-amber-100">
-                <div className="text-3xl md:text-4xl font-bold text-amber-600 mb-1">100%</div>
-                <div className="text-sm text-gray-600 font-medium">Quality</div>
+
+              {/* New Arrivals */}
+              <div className="bg-white rounded-lg p-2 border border-[#E5E7EB] relative overflow-hidden group flex-1">
+                <div className="h-10 bg-gradient-to-br from-[#2563EB]/10 to-[#2563EB]/20 rounded-md mb-1.5 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-[#2563EB]/30 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                </div>
+                <div className="flex flex-col justify-between h-[calc(100%-3rem)]">
+                  <div>
+                    <h3 className="text-[10px] font-bold text-[#111827] mb-0.5">New Arrivals</h3>
+                    <p className="text-[9px] text-[#6B7280] mb-1.5">Discover the latest products</p>
+                  </div>
+                  <Link
+                    to="/products"
+                    className="inline-block bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-1 px-2.5 rounded-md transition-colors text-[9px] w-full text-center"
+                  >
+                    Shop Now
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Image Half - Right Side */}
-        <div className="w-full md:w-1/2 h-1/2 md:h-full relative order-1 md:order-2 overflow-hidden">
-          <img 
-            src="/hi day.jpg" 
-            alt="Hi Day" 
-            className="w-full h-full object-cover"
-          />
-          {/* Optional subtle overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-transparent"></div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
-          <svg 
-            className="w-6 h-6 text-white drop-shadow-lg" 
-            fill="none" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth="2" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
-            <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-          </svg>
+          {/* Explore Popular Categories - Bottom of Hero Section */}
+          <div className="mt-[calc(29vh+1rem)] md:mt-[calc(29vh+1.5rem)] lg:mt-[calc(29vh+2rem)] w-full">
+            <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-[#111827] mb-2">Explore Popular Categories</h3>
+            {loading ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
+                {categories.slice(0, 4).map((category, index) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-lg p-1.5 border border-[#E5E7EB] animate-pulse"
+                  >
+                    <div className="aspect-[4/3] bg-gray-200 rounded-lg mb-1"></div>
+                    <div className="h-3 bg-gray-200 rounded w-3/4 mx-auto"></div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
+                {categories.slice(0, 4).map((category, index) => {
+                  const product = getProductForCategory(category.name);
+                  return (
+                    <Link
+                      key={index}
+                      to={category.link}
+                      className="bg-white rounded-lg p-1.5 border border-[#E5E7EB] hover:border-[#2563EB] hover:shadow-sm transition-all group"
+                    >
+                      <div className="aspect-[4/3] bg-[#F9FAFB] rounded-lg mb-1 overflow-hidden group-hover:bg-[#2563EB]/5 transition-colors relative">
+                        {product && product.images && product.images.length > 0 ? (
+                          <img
+                            src={product.images[0]}
+                            alt={product.name || category.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <svg className="w-5 h-5 text-[#2563EB]/40 group-hover:text-[#2563EB] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <h4 className="text-[9px] font-medium text-[#111827] group-hover:text-[#2563EB] transition-colors text-center line-clamp-2">
+                        {category.name}
+                      </h4>
+                      {product && (
+                        <p className="text-[8px] text-gray-500 text-center mt-0.5 line-clamp-1">
+                          {product.name}
+                        </p>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Enhanced Features Section */}
       <div className="max-w-7xl mx-auto py-20 px-4 bg-white">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Why Choose Hi-Day?</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            We bring you the finest quality hair products with unmatched service
+          <h2 className="text-4xl md:text-5xl font-bold text-[#111827] mb-4">Why Choose da-hi Marketplace?</h2>
+          <p className="text-xl text-[#6B7280] max-w-2xl mx-auto">
+            Your trusted platform for buying and selling with confidence
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-white hover:shadow-xl transition-all transform hover:-translate-y-2">
-            <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mb-6">
-              <svg className="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          <div className="flex flex-col items-center p-8 rounded-2xl bg-[#F9FAFB] hover:shadow-xl transition-all transform hover:-translate-y-2">
+            <div className="w-20 h-20 bg-[#2563EB]/10 rounded-full flex items-center justify-center mb-6">
+              <svg className="w-10 h-10 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
-            <h3 className="font-bold text-2xl mb-3 text-gray-900">Premium Quality</h3>
-            <p className="text-gray-600 text-center leading-relaxed">
-              100% human hair, verified and smooth. Every strand is carefully selected for consistency and shine.
+            <h3 className="font-bold text-2xl mb-3 text-[#111827]">Secure Transactions</h3>
+            <p className="text-[#6B7280] text-center leading-relaxed">
+              Safe and secure payment processing with buyer protection. Your transactions are always protected.
             </p>
           </div>
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-white hover:shadow-xl transition-all transform hover:-translate-y-2">
-            <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mb-6">
-              <svg className="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex flex-col items-center p-8 rounded-2xl bg-[#F9FAFB] hover:shadow-xl transition-all transform hover:-translate-y-2">
+            <div className="w-20 h-20 bg-[#2563EB]/10 rounded-full flex items-center justify-center mb-6">
+              <svg className="w-10 h-10 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="font-bold text-2xl mb-3 text-gray-900">Verified Hair</h3>
+            <h3 className="font-bold text-2xl mb-3 text-gray-900">Verified Sellers</h3>
             <p className="text-gray-600 text-center leading-relaxed">
-              Carefully sourced from trusted suppliers in China, ensuring authenticity and premium quality.
+              All sellers are verified and rated by our community. Shop with confidence from trusted vendors.
             </p>
           </div>
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-white hover:shadow-xl transition-all transform hover:-translate-y-2">
-            <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mb-6">
-              <svg className="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex flex-col items-center p-8 rounded-2xl bg-[#F9FAFB] hover:shadow-xl transition-all transform hover:-translate-y-2">
+            <div className="w-20 h-20 bg-[#2563EB]/10 rounded-full flex items-center justify-center mb-6">
+              <svg className="w-10 h-10 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <h3 className="font-bold text-2xl mb-3 text-gray-900">Fast Delivery</h3>
             <p className="text-gray-600 text-center leading-relaxed">
-              Nationwide delivery to all cities in Ethiopia. Fast, secure, and reliable shipping.
+              Nationwide delivery to all cities in Ethiopia. Fast, secure, and reliable shipping options.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Enhanced Collections Section */}
-      <div className="max-w-7xl mx-auto py-20 px-4 bg-gradient-to-b from-white to-amber-50">
+      {/* Enhanced Categories Section */}
+      <div className="max-w-7xl mx-auto py-20 px-4 bg-[#F9FAFB]">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Our Collections</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Explore our wide range of premium hair products
+          <h2 className="text-4xl md:text-5xl font-bold text-[#111827] mb-4">Shop by Category</h2>
+          <p className="text-xl text-[#6B7280] max-w-2xl mx-auto">
+            Browse thousands of products across multiple categories
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { name: "Brazilian Hair", price: "$69.99", desc: "Silky smooth texture" },
-            { name: "Peruvian Hair", price: "$79.99", desc: "Natural wave pattern" },
-            { name: "Malaysian Hair", price: "$89.99", desc: "Luxurious shine" },
-            { name: "Indian Hair", price: "$74.99", desc: "Thick and voluminous" }
+            { name: "Fashion & Apparel", price: "1000+ Items", desc: "Clothing, shoes & accessories" },
+            { name: "Electronics", price: "500+ Items", desc: "Phones, laptops & gadgets" },
+            { name: "Home & Living", price: "800+ Items", desc: "Furniture & home decor" },
+            { name: "Beauty & Personal Care", price: "600+ Items", desc: "Skincare & cosmetics" }
           ].map((product, i) => (
             <div key={i} className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 overflow-hidden group">
-              <div className="relative h-64 bg-gradient-to-br from-amber-100 to-amber-200 overflow-hidden">
+              <div className="relative h-64 bg-gradient-to-br from-[#2563EB]/10 to-[#2563EB]/20 overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <svg className="w-32 h-32 text-amber-300 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-32 h-32 text-[#2563EB]/30 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
                   </svg>
                 </div>
-                <div className="absolute top-4 right-4 bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                <div className="absolute top-4 right-4 bg-[#F97316] text-white px-3 py-1 rounded-full text-sm font-semibold">
                   New
                 </div>
               </div>
               <div className="p-6">
-                <h3 className="font-bold text-xl mb-2 text-gray-900">{product.name}</h3>
-                <p className="text-gray-600 mb-4 text-sm">{product.desc}</p>
+                <h3 className="font-bold text-xl mb-2 text-[#111827]">{product.name}</h3>
+                <p className="text-[#6B7280] mb-4 text-sm">{product.desc}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-amber-600">{product.price}</span>
-                  <button className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                  <span className="text-2xl font-bold text-[#2563EB]">{product.price}</span>
+                  <button className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                     View
                   </button>
                 </div>
@@ -163,116 +324,86 @@ const Home: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="relative">
             <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl">
-              <div className="aspect-square bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 flex items-center justify-center">
-                <svg className="w-64 h-64 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
+              <div className="aspect-square bg-gradient-to-br from-[#2563EB]/10 via-[#2563EB]/20 to-[#2563EB]/30 flex items-center justify-center">
+                <svg className="w-64 h-64 text-[#2563EB]/40" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
                 </svg>
               </div>
             </div>
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-amber-200 rounded-full opacity-50 blur-2xl"></div>
-            <div className="absolute -top-6 -right-6 w-32 h-32 bg-amber-300 rounded-full opacity-50 blur-2xl"></div>
+            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-[#2563EB]/20 rounded-full opacity-50 blur-2xl"></div>
+            <div className="absolute -top-6 -right-6 w-32 h-32 bg-[#2563EB]/30 rounded-full opacity-50 blur-2xl"></div>
           </div>
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">About Hi-Day</h2>
-            <p className="text-lg text-gray-700 mb-4 leading-relaxed">
-              Hi-Day was born to empower women to feel confident and beautiful every day. 
-              We bring premium human hair and professional-grade wigs directly from China to Ethiopia.
+            <h2 className="text-4xl md:text-5xl font-bold text-[#111827] mb-6">About da-hi Marketplace</h2>
+            <p className="text-lg text-[#111827] mb-4 leading-relaxed">
+              da-hi Marketplace is Ethiopia's premier online shopping destination, connecting buyers and sellers 
+              across the country. We're building a vibrant community where everyone can buy and sell with confidence.
             </p>
-            <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-              Our mission is to provide access to high-quality hair products that enhance your natural beauty 
-              and boost your confidence. Every product is carefully selected, verified, and distributed with 
-              the highest standards of quality and service.
+            <p className="text-lg text-[#111827] mb-6 leading-relaxed">
+              Our mission is to empower local businesses and provide customers with access to a wide variety of 
+              quality products. Whether you're looking to shop or start selling, da-hi Marketplace offers a secure, 
+              user-friendly platform for all your needs.
             </p>
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-[#2563EB]/10 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <span className="font-semibold text-gray-900">Quality Assured</span>
+                <span className="font-semibold text-[#111827]">Quality Assured</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-[#2563EB]/10 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <span className="font-semibold text-gray-900">Fast Shipping</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-[#2563EB]/10 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
                 <span className="font-semibold text-gray-900">Secure Payment</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-[#2563EB]/10 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                 </div>
                 <span className="font-semibold text-gray-900">24/7 Support</span>
               </div>
             </div>
-            <button className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg">
+            <button className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg">
               Learn More
             </button>
           </div>
         </div>
       </div>
 
-      {/* Testimonials Section */}
-      <div className="max-w-7xl mx-auto py-20 px-4 bg-gradient-to-b from-amber-50 to-white">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">What Our Customers Say</h2>
-          <p className="text-xl text-gray-600">Real reviews from satisfied customers</p>
-        </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          {[
-            { name: "Amina Hassan", location: "Addis Ababa", text: "The quality is amazing! My hair looks so natural and beautiful. Highly recommend!" },
-            { name: "Tigist Bekele", location: "Dire Dawa", text: "Fast delivery and excellent customer service. The hair exceeded my expectations." },
-            { name: "Meron Tesfaye", location: "Hawassa", text: "Best hair I've ever purchased. The texture is perfect and it lasts so long!" }
-          ].map((testimonial, i) => (
-            <div key={i} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
-              <div className="flex items-center gap-1 mb-4">
-                {[...Array(5)].map((_, j) => (
-                  <svg key={j} className="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-              </div>
-              <p className="text-gray-700 mb-6 leading-relaxed italic">"{testimonial.text}"</p>
-              <div>
-                <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                <div className="text-sm text-gray-600">{testimonial.location}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Enhanced CTA Section */}
-      <div className="relative w-full bg-gradient-to-r from-amber-600 to-amber-700 py-20 px-4 overflow-hidden">
+      <div className="relative w-full bg-gradient-to-r from-[#2563EB] to-[#1d4ed8] py-20 px-4 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Ready to Shine?
+            Ready to Get Started?
           </h2>
-          <p className="text-xl md:text-2xl mb-8 text-amber-100">
-            Explore our premium hair collections today and transform your look
+          <p className="text-xl md:text-2xl mb-8 text-white/90">
+            Join thousands of buyers and sellers on Ethiopia's fastest-growing marketplace
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="bg-white text-amber-600 hover:bg-amber-50 font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-xl text-lg">
-              Shop Now
+            <button className="bg-white text-[#2563EB] hover:bg-[#F9FAFB] font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-xl text-lg">
+              Start Shopping
             </button>
-            <button className="border-2 border-white text-white hover:bg-white hover:text-amber-600 font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 text-lg">
-              Contact Us
+            <button className="border-2 border-white text-white hover:bg-white hover:text-[#2563EB] font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 text-lg">
+              Start Selling
             </button>
           </div>
         </div>
