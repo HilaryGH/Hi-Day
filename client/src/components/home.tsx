@@ -195,16 +195,16 @@ const Home: React.FC = () => {
                 
                 {/* Mobile View - Overlaid Content */}
                 <div className="absolute inset-0 md:hidden flex flex-col justify-between p-3 z-10">
-                  {/* "New Arrivals" text in top right with blur background */}
+                  {/* "New Arrivals" text in top right with orange blur background */}
                   <div className="flex justify-end">
-                    <div className="bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-lg">
-                      <h3 className="text-xs font-bold text-[#111827]">New Arrivals</h3>
+                    <div className="bg-[#F97316]/90 backdrop-blur-md px-3 py-1.5 rounded-lg">
+                      <h3 className="text-xs font-bold text-white">New Arrivals</h3>
                     </div>
                   </div>
                   
                   {/* Shop Now button at bottom */}
-                  <div className="w-full">
-                    <div className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-2 px-3 rounded-md transition-colors text-[10px] text-center">
+                  <div className="flex justify-start">
+                    <div className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-2 px-4 rounded-md transition-colors text-[10px] w-fit">
                       Shop Now
                     </div>
                   </div>
