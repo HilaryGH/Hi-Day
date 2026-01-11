@@ -1,5 +1,3 @@
-import React from 'react';
-
 const TermsOfService = () => {
   return (
     <div className="p-6 max-w-3xl mx-auto">
