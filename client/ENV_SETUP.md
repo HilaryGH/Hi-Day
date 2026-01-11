@@ -2,31 +2,35 @@
 
 ## API Configuration
 
-The application uses environment variables to configure the API URL. 
+The application automatically detects the environment and uses the appropriate API URL:
 
-### For Production (Render Backend)
+### Automatic Detection
 
-The default API URL is set to: `https://hi-day.onrender.com/api`
+- **Development Mode**: Automatically uses `http://localhost:5000/api` when running `npm run dev`
+- **Production Mode**: Automatically uses `https://hi-day.onrender.com/api` when building for production
 
-If you need to override this, create a `.env` file in the `client` directory with:
+### Manual Override
 
-```env
-VITE_API_URL=https://hi-day.onrender.com/api
-```
+If you need to override the automatic detection, create a `.env` or `.env.local` file in the `client` directory:
 
-### For Local Development
-
-To use a local backend, create a `.env.local` file in the `client` directory with:
-
+**For Local Development:**
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
-**Note:** The `.env.local` file takes precedence over the default value and `.env` file.
+**For Production/Testing with Render:**
+```env
+VITE_API_URL=https://hi-day.onrender.com/api
+```
+
+**Note:** 
+- `.env.local` takes precedence over `.env`
+- Environment variables take precedence over automatic detection
+- After changing environment variables, restart the Vite development server
 
 ### Environment Variables
 
-- `VITE_API_URL` - The base URL for the backend API (default: `https://hi-day.onrender.com/api`)
-
-After changing environment variables, restart the Vite development server for changes to take effect.
+- `VITE_API_URL` - The base URL for the backend API
+  - Default in development: `http://localhost:5000/api`
+  - Default in production: `https://hi-day.onrender.com/api`
 

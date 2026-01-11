@@ -1,4 +1,20 @@
-const API_URL = import.meta.env.VITE_API_URL || 'https://hi-day.onrender.com/api';
+// Use environment variable if set, otherwise use localhost for development or Render for production
+const getApiUrl = () => {
+  // Check if environment variable is explicitly set
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // In development mode, use localhost; otherwise use Render URL
+  if (import.meta.env.DEV || import.meta.env.MODE === 'development') {
+    return 'http://localhost:5000/api';
+  }
+  
+  // Default to Render URL for production
+  return 'https://hi-day.onrender.com/api';
+};
+
+const API_URL = getApiUrl();
 
 // Helper function to get auth token
 const getToken = () => {

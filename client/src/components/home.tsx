@@ -69,8 +69,8 @@ const Home: React.FC = () => {
     <section className="w-full">
       {/* Enhanced Hero Section */}
       <div className="relative w-full min-h-[45vh] md:min-h-[50vh] lg:min-h-[55vh] flex flex-col lg:flex-row overflow-hidden bg-[#F9FAFB]">
-        {/* Left Side - Categories */}
-        <div className="w-full lg:w-64 xl:w-72 bg-white border-r border-[#E5E7EB] p-4 min-h-[45vh] md:min-h-[50vh] lg:min-h-[55vh]">
+        {/* Left Side - Categories (Hidden on mobile, shown on desktop) */}
+        <div className="hidden lg:block lg:w-64 xl:w-72 bg-white border-r border-[#E5E7EB] p-4 lg:min-h-[50vh] xl:min-h-[55vh]">
           <h2 className="text-xl font-bold text-[#111827] mb-4 flex items-center gap-2">
           
             Categories
