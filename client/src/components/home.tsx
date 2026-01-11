@@ -233,11 +233,11 @@ const Home: React.FC = () => {
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
                 {categories.slice(0, 4).map((category, index) => {
-                  const product = getProductForCategory(category.name);
+                  const product = getProductForCategory(category.categoryName);
                   return (
                     <Link
                       key={index}
-                      to={category.link}
+                      to={`/products?category=${encodeURIComponent(category.categoryName)}`}
                       className="bg-white rounded-lg p-1.5 border border-[#E5E7EB] hover:border-[#2563EB] hover:shadow-sm transition-all group"
                     >
                       <div className="aspect-[4/3] bg-[#F9FAFB] rounded-lg mb-1 overflow-hidden group-hover:bg-[#2563EB]/5 transition-colors relative">
