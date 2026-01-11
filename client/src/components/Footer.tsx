@@ -117,7 +117,7 @@ const Footer: React.FC = () => {
                 </svg>
                 <a 
                   href="mailto:hilarygebremedhn28@gmail.com" 
-                  className="text-gray-300 hover:text-amber-400 transition-colors break-all"
+                  className="text-gray-300 hover:text-[#F97316] transition-colors break-all"
                 >
                   hilarygebremedhn28@gmail.com
                 </a>
@@ -130,27 +130,27 @@ const Footer: React.FC = () => {
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#home" className="text-gray-300 hover:text-amber-400 transition-colors">
+                <a href="#home" className="text-gray-300 hover:text-[#F97316] transition-colors">
                   Home
                 </a>
               </li>
               <li>
-                <a href="#categories" className="text-gray-300 hover:text-amber-400 transition-colors">
+                <a href="#categories" className="text-gray-300 hover:text-[#F97316] transition-colors">
                   Categories
                 </a>
               </li>
               <li>
-                <a href="#sellers" className="text-gray-300 hover:text-amber-400 transition-colors">
+                <a href="#sellers" className="text-gray-300 hover:text-[#F97316] transition-colors">
                   Sellers
                 </a>
               </li>
               <li>
-                <a href="#about" className="text-gray-300 hover:text-amber-400 transition-colors">
+                <a href="#about" className="text-gray-300 hover:text-[#F97316] transition-colors">
                   About
                 </a>
               </li>
               <li>
-                <a href="#contact" className="text-gray-300 hover:text-amber-400 transition-colors">
+                <a href="#contact" className="text-gray-300 hover:text-[#F97316] transition-colors">
                   Contact
                 </a>
               </li>

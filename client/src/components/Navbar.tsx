@@ -195,7 +195,7 @@ const Navbar = () => {
       </div>
 
       {/* Mobile - Categories Below Search Input */}
-      <div className="md:hidden bg-white border-b border-[#E5E7EB] pb-3">
+      <div className="md:hidden bg-white border-b border-[#E5E7EB] py-2">
         <div className="overflow-x-auto scrollbar-hide px-4">
           <div className="flex gap-2 min-w-max">
             {categories.map((category) => (

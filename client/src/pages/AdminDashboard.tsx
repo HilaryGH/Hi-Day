@@ -255,7 +255,7 @@ const AdminDashboard = () => {
                   </div>
                   <div className="bg-white rounded-lg shadow p-6">
                     <h3 className="text-sm font-medium text-gray-500 mb-2">Pending Verification</h3>
-                    <p className="text-3xl font-bold text-yellow-600">{stats.pendingVerification}</p>
+                    <p className="text-3xl font-bold text-[#F97316]">{stats.pendingVerification}</p>
                   </div>
                   <div className="bg-white rounded-lg shadow p-6">
                     <h3 className="text-sm font-medium text-gray-500 mb-2">Total Products</h3>
@@ -355,7 +355,7 @@ const AdminDashboard = () => {
                               <span className={`px-2 py-1 text-xs rounded-full ${
                                 userItem.isVerified 
                                   ? 'bg-green-100 text-green-800' 
-                                  : 'bg-yellow-100 text-yellow-800'
+                                  : 'bg-orange-100 text-orange-800'
                               }`}>
                                 {userItem.isVerified ? 'Verified' : 'Pending'}
                               </span>
@@ -480,7 +480,7 @@ const AdminDashboard = () => {
                             onClick={() => handleToggleProductStatus(product._id)}
                             className={`flex-1 px-3 py-2 rounded text-sm ${
                               product.isActive
-                                ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                                ? 'bg-orange-100 text-orange-800 hover:bg-orange-200'
                                 : 'bg-green-100 text-green-800 hover:bg-green-200'
                             }`}
                           >

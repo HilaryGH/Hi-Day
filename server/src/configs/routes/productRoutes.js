@@ -27,7 +27,7 @@ router.post('/',
       if (err) {
         if (err instanceof multer.MulterError) {
           if (err.code === 'LIMIT_FILE_SIZE') {
-            return res.status(400).json({ message: 'File size too large. Maximum size is 5MB per image.' });
+            return res.status(400).json({ message: 'File size too large. Maximum size is 10MB per image.' });
           }
           if (err.code === 'LIMIT_FILE_COUNT') {
             return res.status(400).json({ message: 'Too many files. Maximum 5 images allowed.' });

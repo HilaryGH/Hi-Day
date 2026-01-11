@@ -1,4 +1,5 @@
 import Product from '../models/Product.js';
+import { uploadMultipleToCloudinary } from '../cloudinary.js';
 
 // Get all products with filters
 export const getProducts = async (req, res) => {
@@ -28,9 +29,15 @@ export const getProducts = async (req, res) => {
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
-    // Search filter
+    // Search filter - search by name, description, tags, and category
     if (search) {
-      query.$text = { $search: search };
+      const searchRegex = new RegExp(search, 'i'); // Case-insensitive regex
+      query.$or = [
+        { name: searchRegex }, // Search by product name
+        { description: searchRegex }, // Search by description
+        { category: searchRegex }, // Search by category
+        { tags: searchRegex } // Search in tags array (MongoDB matches regex against array elements)
+      ];
     }
 
     const sortOptions = {};
@@ -97,12 +104,24 @@ export const createProduct = async (req, res) => {
       return res.status(400).json({ message: 'At least one product image is required' });
     }
 
-    // Handle uploaded files - images will be in req.files
+    // Handle uploaded files - upload to Cloudinary
     let imageUrls = [];
     if (req.files && req.files.length > 0) {
-      // Get base URL from request or use default
-      const baseUrl = req.protocol + '://' + req.get('host');
-      imageUrls = req.files.map(file => `${baseUrl}/uploads/products/${file.filename}`);
+      try {
+        // Extract buffers from multer files (when using memory storage, files are in req.files[].buffer)
+        const fileBuffers = req.files.map(file => file.buffer);
+        
+        // Upload all images to Cloudinary
+        const uploadResults = await uploadMultipleToCloudinary(fileBuffers, 'products');
+        
+        // Extract secure URLs from Cloudinary response
+        imageUrls = uploadResults.map(result => result.secure_url);
+      } catch (uploadError) {
+        console.error('Cloudinary upload error:', uploadError);
+        return res.status(500).json({ 
+          message: uploadError.message || 'Failed to upload images. Please try again.' 
+        });
+      }
     }
 
     // Parse other fields from req.body (they come as strings from FormData)

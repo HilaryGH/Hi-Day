@@ -100,24 +100,24 @@ const Home: React.FC = () => {
         </div>
 
         {/* Right Side - Hero Content */}
-        <div className="flex-1 px-4 md:px-8 lg:px-12 py-8 lg:py-6">
+        <div className="flex-1 px-4 md:px-8 lg:px-12 py-4 md:py-8 lg:py-6">
           {/* Top Section - Mega Sale Event on Left, Two Cards Stacked on Right */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-12 h-[7vh] w-full">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-8 lg:gap-12 min-h-[140px] md:h-[7vh] w-full">
             {/* African Shape Mirror */}
-            <div className="md:col-span-3 bg-gradient-to-r from-[#93C5FD] to-[#60A5FA] rounded-lg text-white relative overflow-hidden h-full flex">
+            <div className="md:col-span-3 bg-gradient-to-r from-[#93C5FD] to-[#60A5FA] rounded-lg text-white relative overflow-hidden min-h-[140px] md:h-full flex">
               {/* Text content on the left */}
-              <div className="w-1/2 p-2 md:p-2.5 relative z-10 h-full flex flex-col justify-between">
+              <div className="w-1/2 p-3 md:p-2.5 relative z-10 h-full flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center gap-1 mb-1">
-                    <span className="bg-[#FCD34D] text-[#92400E] px-1.5 py-0.5 rounded-full text-[9px] font-bold">SALE</span>
-                    <span className="text-white/90 text-[9px]">Limited Time</span>
+                  <div className="flex items-center gap-1 mb-1.5 md:mb-1">
+                    <span className="bg-[#F97316] text-white px-2 py-1 md:px-1.5 md:py-0.5 rounded-full text-[10px] md:text-[9px] font-bold">SALE</span>
+                    <span className="text-white/90 text-[10px] md:text-[9px]">Limited Time</span>
                   </div>
-                  <h2 className="text-sm md:text-base font-bold mb-0.5">Used African Shape Mirror</h2>
-                  <p className="text-white/90 mb-1.5 text-[10px] md:text-xs">Beautiful Handcrafted African Design</p>
+                  <h2 className="text-base md:text-sm lg:text-base font-bold mb-1 md:mb-0.5">Used African Shape Mirror</h2>
+                  <p className="text-white/90 mb-2 md:mb-1.5 text-xs md:text-[10px] lg:text-xs">Beautiful Handcrafted African Design</p>
                 </div>
                 <Link
                   to="/products"
-                  className="inline-block bg-white text-[#3B82F6] font-semibold py-1 px-3 rounded-md hover:bg-[#F9FAFB] transition-all transform hover:scale-105 text-[10px] w-fit"
+                  className="inline-block bg-white text-[#3B82F6] font-semibold py-1.5 px-4 md:py-1 md:px-3 rounded-md hover:bg-[#F9FAFB] transition-all transform hover:scale-105 text-xs md:text-[10px] w-fit"
                 >
                   Shop Now
                 </Link>
@@ -133,20 +133,20 @@ const Home: React.FC = () => {
               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             </div>
 
-            {/* Right Side - Two Cards Stacked Vertically */}
-            <div className="md:col-span-2 flex flex-col gap-2.5 h-full">
+            {/* Right Side - Two Cards Side by Side on Mobile, Stacked on Desktop */}
+            <div className="md:col-span-2 flex flex-row md:flex-col gap-3 md:gap-2.5 md:h-full">
               {/* Get up to 20% OFF */}
-              <div className="bg-gradient-to-br from-[#FCD34D] to-[#FBBF24] rounded-lg p-2 text-[#92400E] relative overflow-hidden flex-1">
+              <div className="flex-1 bg-gradient-to-br from-[#F97316] to-[#EA580C] rounded-lg p-3 md:p-2 text-white relative overflow-hidden min-h-[100px] md:flex-1">
                 <div className="absolute top-0 right-0 w-12 h-12 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
                 <div className="relative z-10 h-full flex flex-col justify-between">
                   <div>
-                    <h3 className="text-xs font-bold mb-0.5">Get up to</h3>
-                    <div className="text-xl font-bold mb-0.5">20% OFF</div>
-                    <p className="text-[#92400E]/90 mb-0.5 text-[9px]">On your first purchase</p>
+                    <h3 className="text-xs md:text-xs font-bold mb-1 md:mb-0.5">Get up to</h3>
+                    <div className="text-xl md:text-xl font-bold mb-1 md:mb-0.5">20% OFF</div>
+                    <p className="text-white/90 mb-2 md:mb-0.5 text-[10px] md:text-[9px]">On your first purchase</p>
                   </div>
                   <Link
                     to="/products"
-                    className="inline-block bg-white text-[#D97706] font-semibold py-0.5 px-2 rounded-md hover:bg-[#F9FAFB] transition-all text-[9px] w-fit"
+                    className="inline-block bg-white text-[#F97316] font-semibold py-1 px-2 md:py-0.5 md:px-2 rounded-md hover:bg-[#F9FAFB] transition-all text-[10px] md:text-[9px] w-fit"
                   >
                     Claim Offer
                   </Link>
@@ -154,20 +154,20 @@ const Home: React.FC = () => {
               </div>
 
               {/* New Arrivals */}
-              <div className="bg-white rounded-lg p-2 border border-[#E5E7EB] relative overflow-hidden group flex-1">
-                <div className="h-10 bg-gradient-to-br from-[#2563EB]/10 to-[#2563EB]/20 rounded-md mb-1.5 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-[#2563EB]/30 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex-1 bg-white rounded-lg p-3 md:p-2 border border-[#E5E7EB] relative overflow-hidden group min-h-[100px] md:flex-1">
+                <div className="h-10 md:h-10 bg-gradient-to-br from-[#2563EB]/10 to-[#2563EB]/20 rounded-md mb-2 md:mb-1.5 flex items-center justify-center">
+                  <svg className="w-8 h-8 md:w-8 md:h-8 text-[#2563EB]/30 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   </svg>
                 </div>
-                <div className="flex flex-col justify-between h-[calc(100%-3rem)]">
+                <div className="flex flex-col justify-between h-[calc(100%-3.5rem)] md:h-[calc(100%-3rem)]">
                   <div>
-                    <h3 className="text-[10px] font-bold text-[#111827] mb-0.5">New Arrivals</h3>
-                    <p className="text-[9px] text-[#6B7280] mb-1.5">Discover the latest products</p>
+                    <h3 className="text-xs md:text-[10px] font-bold text-[#111827] mb-1 md:mb-0.5">New Arrivals</h3>
+                    <p className="text-[10px] md:text-[9px] text-[#6B7280] mb-2 md:mb-1.5">Discover the latest products</p>
                   </div>
                   <Link
                     to="/products"
-                    className="inline-block bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-1 px-2.5 rounded-md transition-colors text-[9px] w-full text-center"
+                    className="inline-block bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-1 px-2 md:py-1 md:px-2.5 rounded-md transition-colors text-[10px] md:text-[9px] w-full text-center"
                   >
                     Shop Now
                   </Link>
@@ -177,7 +177,7 @@ const Home: React.FC = () => {
           </div>
 
           {/* Explore Popular Categories - Bottom of Hero Section */}
-          <div className="mt-[calc(29vh+1rem)] md:mt-[calc(29vh+1.5rem)] lg:mt-[calc(29vh+2rem)] w-full">
+          <div className="mt-4 md:mt-[calc(29vh+1.5rem)] lg:mt-[calc(29vh+2rem)] w-full">
             <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-[#111827] mb-2">Explore Popular Categories</h3>
             {loading ? (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">

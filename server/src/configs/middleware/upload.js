@@ -1,27 +1,5 @@
 import multer from 'multer';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Ensure upload directory exists
-const uploadDir = path.join(process.cwd(), 'uploads', 'products');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'product-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
 
 // File filter - only images
 const fileFilter = (req, file, cb) => {
@@ -36,19 +14,24 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Configure multer
+// Configure multer with memory storage (files will be stored in memory as buffers)
+// This allows us to upload directly to Cloudinary without saving to disk first
+const memoryStorage = multer.memoryStorage();
+
+// Configure multer for product images (multiple files)
 export const uploadProductImages = multer({
-  storage: storage,
+  storage: memoryStorage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit per file
+    fileSize: 10 * 1024 * 1024 // 10MB limit per file (Cloudinary supports larger files)
   },
   fileFilter: fileFilter
 }).array('images', 5); // Allow up to 5 images
 
+// Configure multer for single image upload
 export const uploadSingleImage = multer({
-  storage: storage,
+  storage: memoryStorage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
+    fileSize: 10 * 1024 * 1024 // 10MB limit
   },
   fileFilter: fileFilter
 }).single('image');
