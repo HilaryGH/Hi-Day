@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { productsAPI } from "../utils/api";
 
 const categories = [
-  { name: "Fashion & Apparel", link: "/products?category=Fashion & Apparel", categoryName: "Fashion & Apparel" },
-  { name: "Electronics", link: "/products?category=Electronics", categoryName: "Electronics" },
-  { name: "Home & Living", link: "/products?category=Home & Living", categoryName: "Home & Living" },
-  { name: "Beauty & Personal Care", link: "/products?category=Beauty & Personal Care", categoryName: "Beauty & Personal Care" },
-  { name: "Sports & Outdoors", link: "/products?category=Sports & Outdoors", categoryName: "Sports & Outdoors" },
-  { name: "Books", link: "/products?category=Books", categoryName: "Books" },
-  { name: "Toys & Games", link: "/products?category=Toys & Games", categoryName: "Toys & Games" },
-  { name: "Food & Beverages", link: "/products?category=Food & Beverages", categoryName: "Food & Beverages" },
+  { name: "Fashion & Apparel", categoryName: "Fashion & Apparel" },
+  { name: "Electronics", categoryName: "Electronics" },
+  { name: "Home & Living", categoryName: "Home & Living" },
+  { name: "Beauty & Personal Care", categoryName: "Beauty & Personal Care" },
+  { name: "Sports & Outdoors", categoryName: "Sports & Outdoors" },
+  { name: "Books", categoryName: "Books" },
+  { name: "Toys & Games", categoryName: "Toys & Games" },
+  { name: "Food & Beverages", categoryName: "Food & Beverages" },
 ];
 
 interface CategoryProduct {
@@ -20,6 +20,7 @@ interface CategoryProduct {
 
 const Home: React.FC = () => {
   const [categoryProducts, setCategoryProducts] = useState<CategoryProduct[]>([]);
+  const [newArrivals, setNewArrivals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -58,7 +59,24 @@ const Home: React.FC = () => {
       }
     };
 
+    const fetchNewArrivals = async () => {
+      try {
+        // Fetch the latest 3 products
+        const response = await productsAPI.getAll({
+          limit: 3,
+          sortBy: 'createdAt',
+          order: 'desc'
+        });
+        if (response.products && response.products.length > 0) {
+          setNewArrivals(response.products);
+        }
+      } catch (error) {
+        console.error('Error fetching new arrivals:', error);
+      }
+    };
+
     fetchCategoryProducts();
+    fetchNewArrivals();
   }, []);
 
   const getProductForCategory = (categoryName: string) => {
@@ -79,7 +97,7 @@ const Home: React.FC = () => {
             {categories.map((category, index) => (
               <li key={index}>
                 <Link
-                  to={category.link}
+                  to={`/products?category=${encodeURIComponent(category.categoryName)}`}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors group"
                 >
                   <span className="text-[#111827] font-medium group-hover:text-[#2563EB] transition-colors">
@@ -154,25 +172,46 @@ const Home: React.FC = () => {
               </div>
 
               {/* New Arrivals */}
-              <div className="flex-1 bg-white rounded-lg p-3 md:p-2 border border-[#E5E7EB] relative overflow-hidden group min-h-[100px] md:flex-1">
-                <div className="h-10 md:h-10 bg-gradient-to-br from-[#2563EB]/10 to-[#2563EB]/20 rounded-md mb-2 md:mb-1.5 flex items-center justify-center">
-                  <svg className="w-8 h-8 md:w-8 md:h-8 text-[#2563EB]/30 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
+              <Link 
+                to="/products?sortBy=createdAt&order=desc"
+                className="flex-1 bg-white rounded-lg border border-[#E5E7EB] relative overflow-hidden group min-h-[100px] md:flex-1 hover:border-[#2563EB] transition-all flex"
+              >
+                {/* Left Section - Image (half width, full height) */}
+                <div className="w-1/2 h-full flex items-center justify-center overflow-hidden bg-[#F9FAFB]">
+                  {newArrivals.length > 0 && newArrivals[0]?.images && newArrivals[0].images.length > 0 ? (
+                    <img 
+                      src={newArrivals[0].images[0]} 
+                      alt={newArrivals[0].name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <svg className="w-10 h-10 md:w-8 md:h-8 text-[#2563EB]/30 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
-                <div className="flex flex-col justify-between h-[calc(100%-3.5rem)] md:h-[calc(100%-3rem)]">
+                
+                {/* Right Section - Text Content (half width) */}
+                <div className="w-1/2 p-3 md:p-2 flex flex-col justify-between h-full">
                   <div>
                     <h3 className="text-xs md:text-[10px] font-bold text-[#111827] mb-1 md:mb-0.5">New Arrivals</h3>
-                    <p className="text-[10px] md:text-[9px] text-[#6B7280] mb-2 md:mb-1.5">Discover the latest products</p>
+                    <p className="text-[10px] md:text-[9px] text-[#6B7280] mb-1.5 md:mb-1">Discover the latest products</p>
+                    {newArrivals.length > 0 && newArrivals[0] && (
+                      <p className="text-[9px] md:text-[8px] font-medium text-[#111827] line-clamp-2 mb-1">
+                        {newArrivals[0].name}
+                      </p>
+                    )}
+                    {newArrivals.length > 1 && (
+                      <p className="text-[8px] text-[#6B7280]">+{newArrivals.length - 1} more</p>
+                    )}
                   </div>
-                  <Link
-                    to="/products"
-                    className="inline-block bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-1 px-2 md:py-1 md:px-2.5 rounded-md transition-colors text-[10px] md:text-[9px] w-full text-center"
-                  >
+                  <div className="inline-block bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-1 px-2 md:py-1 md:px-2.5 rounded-md transition-colors text-[10px] md:text-[9px] w-full text-center">
                     Shop Now
-                  </Link>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
 

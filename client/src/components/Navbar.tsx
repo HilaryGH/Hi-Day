@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const categories = [
-  'Fashion',
+  'Fashion & Apparel',
   'Electronics',
   'Home & Living',
   'Beauty & Personal Care',

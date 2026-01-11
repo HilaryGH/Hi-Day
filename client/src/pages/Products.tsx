@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { productsAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -21,22 +21,46 @@ interface Product {
 const Products = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Initialize filters from URL parameters
   const [filters, setFilters] = useState({
-    category: '',
-    search: '',
-    minPrice: '',
-    maxPrice: '',
-    sortBy: 'createdAt',
-    order: 'desc',
+    category: searchParams.get('category') || '',
+    search: searchParams.get('search') || '',
+    minPrice: searchParams.get('minPrice') || '',
+    maxPrice: searchParams.get('maxPrice') || '',
+    sortBy: searchParams.get('sortBy') || 'createdAt',
+    order: searchParams.get('order') || 'desc',
   });
   const [pagination, setPagination] = useState({
-    page: 1,
+    page: Number(searchParams.get('page')) || 1,
     limit: 20,
     total: 0,
     pages: 0,
   });
+
+  // Update filters when URL parameters change
+  useEffect(() => {
+    const category = (searchParams.get('category') || '').trim();
+    const search = (searchParams.get('search') || '').trim();
+    const minPrice = searchParams.get('minPrice') || '';
+    const maxPrice = searchParams.get('maxPrice') || '';
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const order = searchParams.get('order') || 'desc';
+    const page = Number(searchParams.get('page')) || 1;
+
+    setFilters({
+      category,
+      search,
+      minPrice,
+      maxPrice,
+      sortBy,
+      order,
+    });
+    setPagination((prev) => ({ ...prev, page }));
+  }, [searchParams]);
 
   useEffect(() => {
     loadProducts();
@@ -50,8 +74,8 @@ const Products = () => {
         limit: pagination.limit,
       };
 
-      if (filters.category) params.category = filters.category;
-      if (filters.search) params.search = filters.search;
+      if (filters.category) params.category = filters.category.trim();
+      if (filters.search) params.search = filters.search.trim();
       if (filters.minPrice) params.minPrice = Number(filters.minPrice);
       if (filters.maxPrice) params.maxPrice = Number(filters.maxPrice);
       if (filters.sortBy) params.sortBy = filters.sortBy;
@@ -68,12 +92,24 @@ const Products = () => {
   };
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
     setPagination((prev) => ({ ...prev, page: 1 }));
+    
+    // Update URL parameters
+    const newSearchParams = new URLSearchParams();
+    if (newFilters.category) newSearchParams.set('category', newFilters.category);
+    if (newFilters.search) newSearchParams.set('search', newFilters.search);
+    if (newFilters.minPrice) newSearchParams.set('minPrice', newFilters.minPrice);
+    if (newFilters.maxPrice) newSearchParams.set('maxPrice', newFilters.maxPrice);
+    if (newFilters.sortBy !== 'createdAt') newSearchParams.set('sortBy', newFilters.sortBy);
+    if (newFilters.order !== 'desc') newSearchParams.set('order', newFilters.order);
+    
+    setSearchParams(newSearchParams, { replace: true });
   };
 
   const categories = [
-    'Fashion',
+    'Fashion & Apparel',
     'Electronics',
     'Home & Living',
     'Beauty & Personal Care',
@@ -184,7 +220,35 @@ const Products = () => {
               </div>
             ) : products.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-gray-600">No products found</p>
+                <div className="max-w-md mx-auto">
+                  <svg className="w-24 h-24 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
+                  {filters.category ? (
+                    <p className="text-gray-600 mb-4">No products available in the "{filters.category}" category.</p>
+                  ) : filters.search ? (
+                    <p className="text-gray-600 mb-4">No products match your search "{filters.search}".</p>
+                  ) : (
+                    <p className="text-gray-600 mb-4">Try adjusting your filters or search criteria.</p>
+                  )}
+                  <button
+                    onClick={() => {
+                      setFilters({
+                        category: '',
+                        search: '',
+                        minPrice: '',
+                        maxPrice: '',
+                        sortBy: 'createdAt',
+                        order: 'desc',
+                      });
+                      setSearchParams({}, { replace: true });
+                    }}
+                    className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
               </div>
             ) : (
               <>

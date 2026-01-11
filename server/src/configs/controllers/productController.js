@@ -17,9 +17,9 @@ export const getProducts = async (req, res) => {
 
     const query = { isActive: true };
 
-    // Category filter
+    // Category filter - exact match
     if (category) {
-      query.category = category;
+      query.category = category.trim();
     }
 
     // Price range filter
@@ -29,15 +29,27 @@ export const getProducts = async (req, res) => {
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
-    // Search filter - search by name, description, tags, and category
+    // Search filter - search by name, description, and tags
+    // If category is already set, search only within that category
+    // If category is not set, search across all categories by name, description, tags, and category
     if (search) {
       const searchRegex = new RegExp(search, 'i'); // Case-insensitive regex
-      query.$or = [
-        { name: searchRegex }, // Search by product name
-        { description: searchRegex }, // Search by description
-        { category: searchRegex }, // Search by category
-        { tags: searchRegex } // Search in tags array (MongoDB matches regex against array elements)
-      ];
+      if (category) {
+        // If category is already filtered, search only by name, description, and tags within that category
+        query.$or = [
+          { name: searchRegex }, // Search by product name
+          { description: searchRegex }, // Search by description
+          { tags: searchRegex } // Search in tags array
+        ];
+      } else {
+        // If no category filter, search across all fields including category
+        query.$or = [
+          { name: searchRegex }, // Search by product name
+          { description: searchRegex }, // Search by description
+          { category: searchRegex }, // Search by category name
+          { tags: searchRegex } // Search in tags array
+        ];
+      }
     }
 
     const sortOptions = {};
