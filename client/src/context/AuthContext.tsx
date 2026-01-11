@@ -13,6 +13,7 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
+  googleLogin: (idToken: string) => Promise<void>;
   register: (data: any) => Promise<void>;
   logout: () => void;
   loading: boolean;
@@ -54,6 +55,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(response.user);
   };
 
+  const googleLogin = async (idToken: string) => {
+    const response = await authAPI.googleLogin(idToken);
+    localStorage.setItem('token', response.token);
+    setToken(response.token);
+    setUser(response.user);
+  };
+
   const register = async (data: any) => {
     const response = await authAPI.register(data);
     localStorage.setItem('token', response.token);
@@ -68,7 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, googleLogin, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

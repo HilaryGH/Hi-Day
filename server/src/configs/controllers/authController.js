@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET || 'your-secret-key', {
@@ -129,6 +130,82 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// Google OAuth Login
+export const googleLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+
+    if (!idToken) {
+      return res.status(400).json({ message: 'ID token is required' });
+    }
+
+    // Initialize Google OAuth client
+    // Note: Update .env file to use GOOGLE_CLIENT_ID instead of "Client ID" (spaces not supported)
+    const googleClientId = process.env.GOOGLE_CLIENT_ID || '99344341424-dfr39pbsip8a7j7008d037ulvhndjpk1.apps.googleusercontent.com';
+    const client = new OAuth2Client(googleClientId);
+
+    // Verify the ID token
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: googleClientId,
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    // Check if user exists with this Google ID
+    let user = await User.findOne({ googleId });
+
+    if (!user) {
+      // Check if user exists with this email
+      user = await User.findOne({ email });
+
+      if (user) {
+        // Link Google account to existing user
+        user.googleId = googleId;
+        if (picture && !user.avatar) {
+          user.avatar = picture;
+        }
+        await user.save();
+      } else {
+        // Create new user with Google OAuth
+        user = await User.create({
+          googleId,
+          email,
+          name,
+          avatar: picture || '',
+          role: 'individual', // Always set role to 'individual' for Google OAuth users
+          privacyConsent: true,
+          isVerified: true, // Google accounts are pre-verified
+        });
+      }
+    } else {
+      // Update avatar if not set
+      if (picture && !user.avatar) {
+        user.avatar = picture;
+        await user.save();
+      }
+    }
+
+    const token = generateToken(user._id);
+
+    res.json({
+      message: 'Google login successful',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+      },
+    });
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(500).json({ message: 'Google authentication failed', error: error.message });
   }
 };
 

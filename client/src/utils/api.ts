@@ -58,6 +58,11 @@ export const authAPI = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  googleLogin: (idToken: string) =>
+    fetchAPI('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ idToken }),
+    }),
   getMe: () => fetchAPI('/auth/me'),
 };
 

@@ -62,3 +62,4 @@ CLOUDINARY_API_SECRET=your-api-secret
 - Existing products with local image URLs will continue to work, but new uploads will use Cloudinary
 - All new product images are automatically uploaded to Cloudinary
 
+

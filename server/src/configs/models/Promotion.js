@@ -91,3 +91,4 @@ promotionSchema.index({ type: 1 });
 export default mongoose.model('Promotion', promotionSchema);
 
 
+
