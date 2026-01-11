@@ -194,16 +194,16 @@ const Home: React.FC = () => {
                 </div>
                 
                 {/* Mobile View - Overlaid Content */}
-                <div className="absolute inset-0 md:hidden flex flex-col justify-between p-3 z-10">
-                  {/* "New Arrivals" text in top right with orange blur background */}
-                  <div className="flex justify-end">
+                <div className="absolute inset-0 md:hidden flex flex-col justify-between z-10">
+                  {/* "New Arrivals" text in top right with orange blur background - no gap from top */}
+                  <div className="flex justify-end pt-0 pr-3">
                     <div className="bg-[#F97316]/90 backdrop-blur-md px-3 py-1.5 rounded-lg">
                       <h3 className="text-xs font-bold text-white">New Arrivals</h3>
                     </div>
                   </div>
                   
-                  {/* Shop Now button at bottom */}
-                  <div className="flex justify-start">
+                  {/* Shop Now button at bottom - very small gap from bottom */}
+                  <div className="flex justify-start pl-3 pb-1">
                     <div className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-2 px-4 rounded-md transition-colors text-[10px] w-fit">
                       Shop Now
                     </div>
