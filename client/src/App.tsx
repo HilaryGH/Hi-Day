@@ -15,6 +15,8 @@ import OrderConfirmation from './pages/OrderConfirmation';
 import PromotionManagement from './pages/PromotionManagement';
 import Cart from './components/Cart';
 import './App.css';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 function App() {
   return (
@@ -35,6 +37,8 @@ function App() {
               <Route path="/promotions" element={<PromotionManagement />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/orders/:id" element={<OrderConfirmation />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} /> 
             </Routes>
           </main>
           <Footer />
