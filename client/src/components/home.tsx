@@ -174,10 +174,10 @@ const Home: React.FC = () => {
               {/* New Arrivals */}
               <Link 
                 to="/products?sortBy=createdAt&order=desc"
-                className="flex-1 bg-white rounded-lg border border-[#E5E7EB] relative overflow-hidden group min-h-[100px] md:flex-1 hover:border-[#2563EB] transition-all flex"
+                className="flex-1 bg-white rounded-lg border border-[#E5E7EB] relative overflow-hidden group min-h-[100px] md:flex-1 hover:border-[#2563EB] transition-all md:flex"
               >
-                {/* Left Section - Image (half width, full height) */}
-                <div className="w-1/2 h-full flex items-center justify-center overflow-hidden bg-[#F9FAFB]">
+                {/* Background Image - Full width/height on mobile, half width on desktop */}
+                <div className="absolute inset-0 md:relative md:w-1/2 md:inset-auto h-full flex items-center justify-center overflow-hidden bg-[#F9FAFB]">
                   {newArrivals.length > 0 && newArrivals[0]?.images && newArrivals[0].images.length > 0 ? (
                     <img 
                       src={newArrivals[0].images[0]} 
@@ -191,20 +191,22 @@ const Home: React.FC = () => {
                       </svg>
                     </div>
                   )}
+                  {/* Dark overlay for mobile - makes text readable */}
+                  <div className="absolute inset-0 bg-black/40 md:hidden"></div>
                 </div>
                 
-                {/* Right Section - Text Content (half width) */}
-                <div className="w-1/2 p-3 md:p-2 flex flex-col justify-between h-full">
+                {/* Text Content - Overlaid on mobile, side-by-side on desktop */}
+                <div className="relative z-10 md:w-1/2 p-3 md:p-2 flex flex-col justify-between h-full text-white md:text-[#111827]">
                   <div>
-                    <h3 className="text-xs md:text-[10px] font-bold text-[#111827] mb-1 md:mb-0.5">New Arrivals</h3>
-                    <p className="text-[10px] md:text-[9px] text-[#6B7280] mb-1.5 md:mb-1">Discover the latest products</p>
+                    <h3 className="text-xs md:text-[10px] font-bold mb-1 md:mb-0.5">New Arrivals</h3>
+                    <p className="text-[10px] md:text-[9px] md:text-[#6B7280] mb-1.5 md:mb-1">Discover the latest products</p>
                     {newArrivals.length > 0 && newArrivals[0] && (
-                      <p className="text-[9px] md:text-[8px] font-medium text-[#111827] line-clamp-2 mb-1">
+                      <p className="text-[9px] md:text-[8px] font-medium line-clamp-2 mb-1">
                         {newArrivals[0].name}
                       </p>
                     )}
                     {newArrivals.length > 1 && (
-                      <p className="text-[8px] text-[#6B7280]">+{newArrivals.length - 1} more</p>
+                      <p className="text-[8px] md:text-[#6B7280]">+{newArrivals.length - 1} more</p>
                     )}
                   </div>
                   <div className="inline-block bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-1 px-2 md:py-1 md:px-2.5 rounded-md transition-colors text-[10px] md:text-[9px] w-full text-center">
