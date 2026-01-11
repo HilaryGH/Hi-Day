@@ -269,9 +269,9 @@ const Login = () => {
         <div className="mt-8 text-center">
           <p className="text-xs text-gray-500">
             By continuing, you agree to da-hi's{' '}
-            <Link to="#" className="text-[#2563EB] hover:underline">Terms of Service</Link>
+            <Link to="/terms-of-service" className="text-[#2563EB] hover:underline">Terms of Service</Link>
             {' '}and{' '}
-            <Link to="#" className="text-[#2563EB] hover:underline">Privacy Policy</Link>
+            <Link to="/privacy-policy" className="text-[#2563EB] hover:underline">Privacy Policy</Link>
           </p>
         </div>
       </div>

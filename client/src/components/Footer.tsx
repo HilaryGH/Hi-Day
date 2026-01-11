@@ -1,4 +1,4 @@
-import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
   return (
@@ -166,13 +166,13 @@ const Footer: React.FC = () => {
                 © {new Date().getFullYear()} da-hi. All rights reserved.
               </p>
               <div className="flex gap-4 justify-center md:justify-start text-sm">
-                <a href="#terms" className="text-gray-400 hover:text-[#F97316] transition-colors">
-                  Terms and Agreements
-                </a>
+                <Link to="/terms-of-service" className="text-gray-400 hover:text-[#F97316] transition-colors">
+                  Terms of Service
+                </Link>
                 <span className="text-gray-600">|</span>
-                <a href="#refund" className="text-gray-400 hover:text-[#F97316] transition-colors">
-                  Refund Policy
-                </a>
+                <Link to="/privacy-policy" className="text-gray-400 hover:text-[#F97316] transition-colors">
+                  Privacy Policy
+                </Link>
               </div>
             </div>
             {/* Social Media Icons - Bottom */}

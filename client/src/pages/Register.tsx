@@ -362,7 +362,7 @@ const Register = () => {
               />
               <label htmlFor="privacyConsent" className="ml-2 text-sm text-gray-700">
                 I consent to the collection and processing of my personal data in line with data regulations as described in the{' '}
-                <Link to="/privacy" className="text-[#2563EB] hover:underline">Privacy Policy & Merchant Service Agreement</Link>.
+                <Link to="/privacy-policy" className="text-[#2563EB] hover:underline">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-[#2563EB] hover:underline">Terms of Service</Link>.
               </label>
             </div>
 
@@ -838,7 +838,7 @@ const Register = () => {
               />
               <label htmlFor="privacyConsent" className="ml-2 text-sm text-gray-700">
                 I consent to the collection and processing of my personal data in line with data regulations as described in the{' '}
-                <Link to="/privacy" className="text-[#2563EB] hover:underline">Privacy Policy & Merchant Service Agreement</Link>.
+                <Link to="/privacy-policy" className="text-[#2563EB] hover:underline">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-[#2563EB] hover:underline">Terms of Service</Link>.
               </label>
             </div>
 
