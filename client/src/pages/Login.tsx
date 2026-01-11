@@ -55,6 +55,45 @@ const Login = () => {
     // Google login is handled by the button rendered by Google Identity Services
   };
 
+  useEffect(() => {
+    // Load Google Identity Services script
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+
+    script.onload = () => {
+      if (window.google && googleButtonRef.current && !googleLoading) {
+        window.google.accounts.id.initialize({
+          client_id: '99344341424-dfr39pbsip8a7j7008d037ulvhndjpk1.apps.googleusercontent.com',
+          callback: handleGoogleCallback,
+        });
+
+        // Render the Google Sign-In button
+        window.google.accounts.id.renderButton(
+          googleButtonRef.current,
+          {
+            type: 'standard',
+            theme: 'outline',
+            size: 'large',
+            width: '100%',
+            text: 'signin_with',
+          }
+        );
+      }
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup
+      const existingScript = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+      if (existingScript && existingScript.parentNode) {
+        existingScript.parentNode.removeChild(existingScript);
+      }
+    };
+  }, [handleGoogleCallback, googleLoading]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
