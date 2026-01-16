@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import Product from '../models/Product.js';
+import Order from '../models/Order.js';
 
 // Get all users
 export const getAllUsers = async (req, res) => {
@@ -153,6 +154,8 @@ export const getDashboardStats = async (req, res) => {
       role: { $in: providerRoles },
       isVerified: false 
     });
+    const totalOrders = await Order.countDocuments();
+    const pendingOrders = await Order.countDocuments({ orderStatus: 'pending' });
 
     res.json({
       stats: {
@@ -161,7 +164,9 @@ export const getDashboardStats = async (req, res) => {
         verifiedProviders,
         pendingVerification,
         totalProducts,
-        activeProducts
+        activeProducts,
+        totalOrders,
+        pendingOrders
       }
     });
   } catch (error) {
@@ -247,6 +252,102 @@ export const toggleProductStatus = async (req, res) => {
     await product.save();
 
     res.json({ message: `Product ${product.isActive ? 'activated' : 'deactivated'} successfully`, product });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get all orders (admin only)
+export const getAllOrders = async (req, res) => {
+  try {
+    const { 
+      orderStatus, 
+      paymentStatus,
+      search, 
+      page = 1, 
+      limit = 50 
+    } = req.query;
+
+    const query = {};
+
+    if (orderStatus) {
+      query.orderStatus = orderStatus;
+    }
+
+    if (paymentStatus) {
+      query.paymentStatus = paymentStatus;
+    }
+
+    if (search) {
+      // Search by order ID or customer name/email
+      query.$or = [
+        { _id: { $regex: search, $options: 'i' } },
+        { 'user.name': { $regex: search, $options: 'i' } },
+        { 'user.email': { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const orders = await Order.find(query)
+      .populate('user', 'name email phone')
+      .populate('items.product', 'name images seller')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
+
+    const total = await Order.countDocuments(query);
+
+    res.json({
+      orders,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        pages: Math.ceil(total / Number(limit))
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get order statistics for dashboard
+export const getOrderStats = async (req, res) => {
+  try {
+    const totalOrders = await Order.countDocuments();
+    const pendingOrders = await Order.countDocuments({ orderStatus: 'pending' });
+    const processingOrders = await Order.countDocuments({ orderStatus: 'processing' });
+    const shippedOrders = await Order.countDocuments({ orderStatus: 'shipped' });
+    const deliveredOrders = await Order.countDocuments({ orderStatus: 'delivered' });
+    const cancelledOrders = await Order.countDocuments({ orderStatus: 'cancelled' });
+    
+    // Calculate total revenue from delivered orders
+    const revenueData = await Order.aggregate([
+      { $match: { orderStatus: 'delivered', paymentStatus: 'paid' } },
+      { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+    ]);
+    const totalRevenue = revenueData.length > 0 ? revenueData[0].total : 0;
+
+    // Get pending payment amount
+    const pendingPaymentData = await Order.aggregate([
+      { $match: { paymentStatus: 'pending' } },
+      { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+    ]);
+    const pendingPayment = pendingPaymentData.length > 0 ? pendingPaymentData[0].total : 0;
+
+    res.json({
+      stats: {
+        totalOrders,
+        pendingOrders,
+        processingOrders,
+        shippedOrders,
+        deliveredOrders,
+        cancelledOrders,
+        totalRevenue,
+        pendingPayment
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -168,7 +168,7 @@ const Register = () => {
                   onClick={() => setUserType('individual')}
                   className={`p-4 border-2 rounded-lg text-center transition-all ${
                     isIndividual
-                      ? 'border-[#2563EB] bg-[#2563EB]/5'
+                      ? 'border-[#16A34A] bg-[#16A34A]/5'
                       : 'border-gray-300 hover:border-gray-400'
                   }`}
                 >
@@ -181,7 +181,7 @@ const Register = () => {
                   onClick={() => setUserType('product provider')}
                   className={`p-4 border-2 rounded-lg text-center transition-all ${
                     isProductProvider
-                      ? 'border-[#2563EB] bg-[#2563EB]/5'
+                      ? 'border-[#16A34A] bg-[#16A34A]/5'
                       : 'border-gray-300 hover:border-gray-400'
                   }`}
                 >
@@ -203,7 +203,7 @@ const Register = () => {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 placeholder="Enter your full name"
               />
             </div>
@@ -219,7 +219,7 @@ const Register = () => {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 placeholder="g.fikre2@gmail.com"
               />
             </div>
@@ -235,7 +235,7 @@ const Register = () => {
                 required
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 placeholder="Enter your complete address"
               />
             </div>
@@ -251,7 +251,7 @@ const Register = () => {
                 required
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 placeholder="+251 9X XXX XXXX"
               />
             </div>
@@ -266,7 +266,7 @@ const Register = () => {
                 type="tel"
                 value={formData.whatsapp}
                 onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 placeholder="+251 9X XXX XXXX"
               />
             </div>
@@ -281,7 +281,7 @@ const Register = () => {
                 type="text"
                 value={formData.telegram}
                 onChange={(e) => setFormData({ ...formData, telegram: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 placeholder="@username"
               />
             </div>
@@ -296,7 +296,7 @@ const Register = () => {
                 type="text"
                 value={formData.referralCode}
                 onChange={(e) => setFormData({ ...formData, referralCode: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 placeholder="Enter referral code if you have one"
               />
               <p className="mt-1 text-xs text-gray-500">Have a referral code? Enter it here to support the person who referred you!</p>
@@ -313,7 +313,7 @@ const Register = () => {
                 required
                 accept=".pdf,.jpg,.jpeg,.png"
                 onChange={(e) => handleFileChange('idDocument', e.target.files)}
-                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#2563EB] file:text-white hover:file:bg-[#1d4ed8]"
+                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#16A34A] file:text-white hover:file:bg-[#15803D]"
               />
               <p className="mt-1 text-xs text-gray-500">Accepted formats: PDF, JPG, PNG (Max 5MB)</p>
             </div>
@@ -329,7 +329,7 @@ const Register = () => {
                 required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 placeholder="••••••••••••"
               />
             </div>
@@ -345,7 +345,7 @@ const Register = () => {
                 required
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 placeholder="Confirm your password"
               />
             </div>
@@ -358,11 +358,11 @@ const Register = () => {
                 required
                 checked={formData.privacyConsent}
                 onChange={(e) => setFormData({ ...formData, privacyConsent: e.target.checked })}
-                className="mt-1 h-4 w-4 text-[#2563EB] focus:ring-[#2563EB] border-gray-300 rounded"
+                className="mt-1 h-4 w-4 text-[#16A34A] focus:ring-[#16A34A] border-gray-300 rounded"
               />
               <label htmlFor="privacyConsent" className="ml-2 text-sm text-gray-700">
                 I consent to the collection and processing of my personal data in line with data regulations as described in the{' '}
-                <Link to="/privacy-policy" className="text-[#2563EB] hover:underline">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-[#2563EB] hover:underline">Terms of Service</Link>.
+                <Link to="/privacy-policy" className="text-[#16A34A] hover:underline">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-[#16A34A] hover:underline">Terms of Service</Link>.
               </label>
             </div>
 
@@ -370,14 +370,14 @@ const Register = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#2563EB] hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2563EB] disabled:opacity-50"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#16A34A] hover:bg-[#15803D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#16A34A] disabled:opacity-50"
             >
               {loading ? 'Creating account...' : 'Create Account'}
             </button>
 
             <p className="text-center text-sm text-gray-600">
               Already have an account?{' '}
-              <Link to="/login" className="font-medium text-[#2563EB] hover:text-[#1d4ed8]">
+              <Link to="/login" className="font-medium text-[#16A34A] hover:text-[#15803D]">
                 Sign In
               </Link>
             </p>
@@ -413,7 +413,7 @@ const Register = () => {
                   onClick={() => setUserType('individual')}
                   className={`p-4 border-2 rounded-lg text-center transition-all ${
                     isIndividual
-                      ? 'border-[#2563EB] bg-[#2563EB]/5'
+                      ? 'border-[#16A34A] bg-[#16A34A]/5'
                       : 'border-gray-300 hover:border-gray-400'
                   }`}
                 >
@@ -426,7 +426,7 @@ const Register = () => {
                   onClick={() => setUserType('product provider')}
                   className={`p-4 border-2 rounded-lg text-center transition-all ${
                     isProductProvider
-                      ? 'border-[#2563EB] bg-[#2563EB]/5'
+                      ? 'border-[#16A34A] bg-[#16A34A]/5'
                       : 'border-gray-300 hover:border-gray-400'
                   }`}
                 >
@@ -448,7 +448,7 @@ const Register = () => {
                     onClick={() => setProviderType(type)}
                     className={`p-4 border-2 rounded-lg text-center transition-all ${
                       providerType === type
-                        ? 'border-[#2563EB] bg-[#2563EB]/5'
+                        ? 'border-[#16A34A] bg-[#16A34A]/5'
                         : 'border-gray-300 hover:border-gray-400'
                     }`}
                   >
@@ -478,7 +478,7 @@ const Register = () => {
                     required={providerType === 'small business' || providerType === 'specialized'}
                     value={formData.companyName}
                     onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                     placeholder="Enter company name"
                   />
                 </div>
@@ -495,7 +495,7 @@ const Register = () => {
                 required
                 value={formData.productType}
                 onChange={(e) => setFormData({ ...formData, productType: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
               >
                 <option value="">Select Product Type</option>
                 {categories.map((category) => (
@@ -516,7 +516,7 @@ const Register = () => {
                 required
                 value={formData.workExperience}
                 onChange={(e) => setFormData({ ...formData, workExperience: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
               >
                 <option value="">Select Work Experience</option>
                 <option value="0">Less than 1 year</option>
@@ -538,7 +538,7 @@ const Register = () => {
                   required={providerType === 'freelancer'}
                   value={formData.gender}
                   onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 >
                   <option value="">Select Gender</option>
                   <option value="male">Male</option>
@@ -560,7 +560,7 @@ const Register = () => {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -580,7 +580,7 @@ const Register = () => {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   placeholder="company@example.com"
                 />
               </div>
@@ -595,7 +595,7 @@ const Register = () => {
                   required
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   placeholder="+251 9X XXX XXXX"
                 />
               </div>
@@ -609,7 +609,7 @@ const Register = () => {
                   type="tel"
                   value={formData.alternativePhone}
                   onChange={(e) => setFormData({ ...formData, alternativePhone: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   placeholder="+251 9X XXX XXXX"
                 />
               </div>
@@ -623,7 +623,7 @@ const Register = () => {
                   type="tel"
                   value={formData.whatsapp}
                   onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   placeholder="+251 9X XXX XXXX"
                 />
               </div>
@@ -637,7 +637,7 @@ const Register = () => {
                   type="text"
                   value={formData.telegram}
                   onChange={(e) => setFormData({ ...formData, telegram: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   placeholder="@company_username"
                 />
               </div>
@@ -656,7 +656,7 @@ const Register = () => {
                   required
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 >
                   <option value="">Select City</option>
                   <option value="addis ababa">Addis Ababa</option>
@@ -677,7 +677,7 @@ const Register = () => {
                   required
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   placeholder="Enter your location"
                 />
               </div>
@@ -699,7 +699,7 @@ const Register = () => {
                     multiple
                     accept=".jpg,.jpeg,.png"
                     onChange={(e) => handleFileChange('serviceCenterPhotos', e.target.files)}
-                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#2563EB] file:text-white hover:file:bg-[#1d4ed8]"
+                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#16A34A] file:text-white hover:file:bg-[#15803D]"
                   />
                   <p className="mt-1 text-xs text-gray-500">Upload photos of your product center/facility</p>
                 </div>
@@ -717,7 +717,7 @@ const Register = () => {
                     multiple
                     accept=".jpg,.jpeg,.png"
                     onChange={(e) => handleFileChange('portfolioPhotos', e.target.files)}
-                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#2563EB] file:text-white hover:file:bg-[#1d4ed8]"
+                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#16A34A] file:text-white hover:file:bg-[#15803D]"
                   />
                   <p className="mt-1 text-xs text-gray-500">Upload photos showing product quality or purchase receipts</p>
                 </div>
@@ -735,7 +735,7 @@ const Register = () => {
                     required={providerType === 'freelancer'}
                     accept=".pdf,.jpg,.jpeg,.png"
                     onChange={(e) => handleFileChange('idDocument', e.target.files)}
-                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#2563EB] file:text-white hover:file:bg-[#1d4ed8]"
+                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#16A34A] file:text-white hover:file:bg-[#15803D]"
                   />
                   <p className="mt-1 text-xs text-gray-500">Upload your government ID, driving licence, or passport</p>
                 </div>
@@ -753,7 +753,7 @@ const Register = () => {
                     required={providerType === 'small business' || providerType === 'specialized'}
                     accept=".pdf,.jpg,.jpeg,.png"
                     onChange={(e) => handleFileChange('crCertificate', e.target.files)}
-                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#2563EB] file:text-white hover:file:bg-[#1d4ed8]"
+                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#16A34A] file:text-white hover:file:bg-[#15803D]"
                   />
                   <p className="mt-1 text-xs text-gray-500">Upload your CR (Commercial Registration) certificate</p>
                 </div>
@@ -770,7 +770,7 @@ const Register = () => {
                     required={providerType === 'small business' || providerType === 'specialized'}
                   accept=".pdf,.jpg,.jpeg,.png"
                   onChange={(e) => handleFileChange('professionalCertificate', e.target.files)}
-                  className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#2563EB] file:text-white hover:file:bg-[#1d4ed8]"
+                  className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#16A34A] file:text-white hover:file:bg-[#15803D]"
                 />
                 <p className="mt-1 text-xs text-gray-500">Upload your business license or registration certificate</p>
               </div>
@@ -785,7 +785,7 @@ const Register = () => {
                   type="file"
                   accept=".pdf"
                   onChange={(e) => handleFileChange('servicePriceList', e.target.files)}
-                  className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#2563EB] file:text-white hover:file:bg-[#1d4ed8]"
+                  className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#16A34A] file:text-white hover:file:bg-[#15803D]"
                 />
                 <p className="mt-1 text-xs text-gray-500">Upload your product pricing document (PDF preferred)</p>
               </div>
@@ -805,7 +805,7 @@ const Register = () => {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   placeholder="••••••••••••"
                 />
               </div>
@@ -820,7 +820,7 @@ const Register = () => {
                   required
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   placeholder="Confirm your password"
                 />
               </div>
@@ -834,11 +834,11 @@ const Register = () => {
                 required
                 checked={formData.privacyConsent}
                 onChange={(e) => setFormData({ ...formData, privacyConsent: e.target.checked })}
-                className="mt-1 h-4 w-4 text-[#2563EB] focus:ring-[#2563EB] border-gray-300 rounded"
+                className="mt-1 h-4 w-4 text-[#16A34A] focus:ring-[#16A34A] border-gray-300 rounded"
               />
               <label htmlFor="privacyConsent" className="ml-2 text-sm text-gray-700">
                 I consent to the collection and processing of my personal data in line with data regulations as described in the{' '}
-                <Link to="/privacy-policy" className="text-[#2563EB] hover:underline">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-[#2563EB] hover:underline">Terms of Service</Link>.
+                <Link to="/privacy-policy" className="text-[#16A34A] hover:underline">Privacy Policy</Link> and <Link to="/terms-of-service" className="text-[#16A34A] hover:underline">Terms of Service</Link>.
               </label>
             </div>
 
@@ -846,14 +846,14 @@ const Register = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#2563EB] hover:bg-[#1d4ed8] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2563EB] disabled:opacity-50"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#16A34A] hover:bg-[#15803D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#16A34A] disabled:opacity-50"
             >
               {loading ? 'Registering...' : 'Register as Product Provider'}
             </button>
 
             <p className="text-center text-sm text-gray-600">
               Already have an account?{' '}
-              <Link to="/login" className="font-medium text-[#2563EB] hover:text-[#1d4ed8]">
+              <Link to="/login" className="font-medium text-[#16A34A] hover:text-[#15803D]">
                 Sign In
               </Link>
             </p>
@@ -878,7 +878,7 @@ const Register = () => {
             <button
               type="button"
               onClick={() => setUserType('individual')}
-              className="p-6 border-2 border-gray-300 rounded-lg text-center hover:border-[#2563EB] hover:bg-[#2563EB]/5 transition-all"
+              className="p-6 border-2 border-gray-300 rounded-lg text-center hover:border-[#16A34A] hover:bg-[#16A34A]/5 transition-all"
             >
               <div className="text-4xl mb-3">👤</div>
               <div className="font-semibold text-lg">Buyer</div>
@@ -887,7 +887,7 @@ const Register = () => {
             <button
               type="button"
               onClick={() => setUserType('product provider')}
-              className="p-6 border-2 border-gray-300 rounded-lg text-center hover:border-[#2563EB] hover:bg-[#2563EB]/5 transition-all"
+              className="p-6 border-2 border-gray-300 rounded-lg text-center hover:border-[#16A34A] hover:bg-[#16A34A]/5 transition-all"
             >
               <div className="text-4xl mb-3">🏢</div>
               <div className="font-semibold text-lg">Product Provider</div>
@@ -897,7 +897,7 @@ const Register = () => {
 
           <p className="text-center text-sm text-gray-600 mt-6">
             Already have an account?{' '}
-            <Link to="/login" className="font-medium text-[#2563EB] hover:text-[#1d4ed8]">
+            <Link to="/login" className="font-medium text-[#16A34A] hover:text-[#15803D]">
               Sign In
             </Link>
           </p>

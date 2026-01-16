@@ -63,3 +63,4 @@ CLOUDINARY_API_SECRET=your-api-secret
 - All new product images are automatically uploaded to Cloudinary
 
 
+

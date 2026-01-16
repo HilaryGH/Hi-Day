@@ -1,6 +1,8 @@
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
+import User from '../models/User.js';
+import { sendOrderConfirmationToCustomer, sendOrderNotificationToSeller } from '../utils/emailService.js';
 
 // Create order from cart or direct purchase
 export const createOrder = async (req, res) => {
@@ -115,7 +117,43 @@ export const createOrder = async (req, res) => {
       await Cart.findOneAndUpdate({ user: req.userId }, { items: [] });
     }
 
-    await order.populate('items.product', 'name images');
+    // Populate order with user and product details including sellers
+    await order.populate('user', 'name email');
+    await order.populate({
+      path: 'items.product',
+      populate: { path: 'seller', select: 'name email _id' }
+    });
+
+    // Send email to customer
+    if (order.user?.email) {
+      sendOrderConfirmationToCustomer(order, order.user.email, order.user.name || 'Customer');
+    }
+
+    // Send emails to sellers (get unique sellers from order items)
+    const sellerMap = new Map();
+    
+    order.items.forEach(item => {
+      const seller = item.product?.seller;
+      if (seller) {
+        const sellerId = seller._id?.toString() || seller.toString();
+        if (!sellerMap.has(sellerId) && seller.email) {
+          sellerMap.set(sellerId, {
+            email: seller.email,
+            name: seller.name || 'Seller',
+            _id: sellerId
+          });
+        }
+      }
+    });
+
+    // Send email to each unique seller
+    for (const [sellerId, sellerInfo] of sellerMap) {
+      try {
+        sendOrderNotificationToSeller(order, sellerInfo.email, sellerId);
+      } catch (error) {
+        console.error(`Error sending email to seller ${sellerId}:`, error);
+      }
+    }
 
     res.status(201).json({
       message: 'Order created successfully',
@@ -161,34 +199,123 @@ export const getOrder = async (req, res) => {
   }
 };
 
-// Update order status (admin or seller)
+// Get seller orders (orders containing products from this seller)
+export const getSellerOrders = async (req, res) => {
+  try {
+    const { orderStatus, paymentStatus, page = 1, limit = 50 } = req.query;
+    
+    // Get all orders and filter by seller's products
+    const query = {};
+    
+    if (orderStatus) {
+      query.orderStatus = orderStatus;
+    }
+    
+    if (paymentStatus) {
+      query.paymentStatus = paymentStatus;
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // Get all orders first, then filter by seller
+    const allOrders = await Order.find(query)
+      .populate('user', 'name email phone')
+      .populate({
+        path: 'items.product',
+        populate: { path: 'seller', select: 'name email _id' }
+      })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit) * 2); // Get more to filter
+
+    // Filter orders that contain products from this seller
+    const sellerOrders = allOrders.filter(order => 
+      order.items.some(item => {
+        const sellerId = item.product?.seller?._id?.toString() || item.product?.seller?.toString();
+        return sellerId === req.userId.toString();
+      })
+    ).slice(0, Number(limit));
+
+    const total = await Order.countDocuments(query);
+    // Note: This is approximate since we filter after querying
+    // For better performance, you might want to add a seller field to orders or use aggregation
+
+    res.json({
+      orders: sellerOrders,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total: sellerOrders.length, // Approximate
+        pages: Math.ceil(sellerOrders.length / Number(limit))
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update order status (admin, super admin, or seller for their products)
 export const updateOrderStatus = async (req, res) => {
   try {
     const { orderStatus, paymentStatus, trackingNumber } = req.body;
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id)
+      .populate({
+        path: 'items.product',
+        populate: { path: 'seller', select: '_id' }
+      });
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Only admin, super admin, or the seller can update order status
-    // For now, only admin can update. Later, we can add seller check.
-    if (req.userRole !== 'admin' && req.userRole !== 'super admin') {
-      return res.status(403).json({ message: 'Not authorized' });
+    // Admin and super admin can update any order
+    const isAdmin = req.userRole === 'admin' || req.userRole === 'super admin';
+    
+    // For sellers, check if this order contains their products
+    let isSellerOfOrder = false;
+    if (!isAdmin && (req.userRole === 'product provider' || req.userRole === 'seller' || req.userRole === 'service provider')) {
+      isSellerOfOrder = order.items.some(item => {
+        const sellerId = item.product?.seller?._id?.toString() || item.product?.seller?.toString();
+        return sellerId === req.userId.toString();
+      });
     }
 
-    if (orderStatus) {
+    if (!isAdmin && !isSellerOfOrder) {
+      return res.status(403).json({ message: 'Not authorized. You can only update orders containing your products.' });
+    }
+
+    // Validate order status transitions
+    const validTransitions = {
+      'pending': ['processing', 'cancelled'],
+      'processing': ['shipped', 'cancelled'],
+      'shipped': ['delivered'],
+      'delivered': [], // Final state
+      'cancelled': [] // Final state
+    };
+
+    if (orderStatus && order.orderStatus !== orderStatus) {
+      const allowedStatuses = validTransitions[order.orderStatus] || [];
+      // Admins can set any status, sellers follow the workflow
+      if (!isAdmin && !allowedStatuses.includes(orderStatus)) {
+        return res.status(400).json({ 
+          message: `Cannot change order status from ${order.orderStatus} to ${orderStatus}. Valid transitions: ${allowedStatuses.join(', ')}` 
+        });
+      }
       order.orderStatus = orderStatus;
     }
-    if (paymentStatus) {
+
+    // Only admins can update payment status
+    if (paymentStatus && isAdmin) {
       order.paymentStatus = paymentStatus;
     }
+
     if (trackingNumber) {
       order.trackingNumber = trackingNumber;
     }
 
     await order.save();
     await order.populate('items.product', 'name images');
+    await order.populate('user', 'name email');
 
     res.json(order);
   } catch (error) {

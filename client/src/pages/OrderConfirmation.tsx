@@ -39,7 +39,7 @@ const OrderConfirmation = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB]"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#16A34A]"></div>
           <p className="mt-4 text-gray-600">Loading order...</p>
         </div>
       </div>
@@ -53,7 +53,7 @@ const OrderConfirmation = () => {
           <p className="text-gray-600 mb-4">Order not found</p>
           <Link
             to="/products"
-            className="inline-block bg-[#2563EB] text-white px-6 py-3 rounded-lg hover:bg-[#1d4ed8]"
+            className="inline-block bg-[#16A34A] text-white px-6 py-3 rounded-lg hover:bg-[#15803D]"
           >
             Continue Shopping
           </Link>
@@ -82,7 +82,7 @@ const OrderConfirmation = () => {
 
         {/* Order Details */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
-          <div className="bg-[#2563EB] text-white px-6 py-4">
+          <div className="bg-[#16A34A] text-white px-6 py-4">
             <h2 className="text-xl font-bold">Order Details</h2>
             <p className="text-sm text-blue-100 mt-1">Order #{order._id.slice(-8).toUpperCase()}</p>
           </div>
@@ -104,7 +104,7 @@ const OrderConfirmation = () => {
                     <div className="flex-1">
                       <h4 className="font-semibold text-gray-900">{item.product?.name || 'Product'}</h4>
                       <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
-                      <p className="text-lg font-bold text-[#2563EB] mt-1">
+                      <p className="text-lg font-bold text-[#16A34A] mt-1">
                         ETB {(item.price * item.quantity).toLocaleString()}
                       </p>
                     </div>
@@ -154,7 +154,7 @@ const OrderConfirmation = () => {
                 </div>
                 <div className="flex justify-between text-xl font-bold pt-2 border-t">
                   <span>Total</span>
-                  <span className="text-[#2563EB]">ETB {order.totalAmount?.toLocaleString()}</span>
+                  <span className="text-[#16A34A]">ETB {order.totalAmount?.toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -162,7 +162,7 @@ const OrderConfirmation = () => {
             {/* Order Status */}
             <div className="bg-blue-50 rounded-lg p-4">
               <p className="text-sm text-gray-600 mb-1">Order Status</p>
-              <p className="text-lg font-semibold text-[#2563EB] capitalize">
+              <p className="text-lg font-semibold text-[#16A34A] capitalize">
                 {order.orderStatus}
               </p>
             </div>
@@ -173,13 +173,13 @@ const OrderConfirmation = () => {
         <div className="flex gap-4 justify-center">
           <Link
             to="/products"
-            className="inline-block bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+            className="inline-block bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-8 rounded-lg transition-colors"
           >
             Continue Shopping
           </Link>
           <Link
             to={`/orders/${order._id}`}
-            className="inline-block border-2 border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB] hover:text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+            className="inline-block border-2 border-[#16A34A] text-[#16A34A] hover:bg-[#16A34A] hover:text-white font-semibold py-3 px-8 rounded-lg transition-colors"
           >
             View Order
           </Link>
@@ -190,6 +190,7 @@ const OrderConfirmation = () => {
 };
 
 export default OrderConfirmation;
+
 
 
 

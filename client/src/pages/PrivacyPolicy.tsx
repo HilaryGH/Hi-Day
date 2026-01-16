@@ -8,9 +8,9 @@ const PrivacyPolicy = () => {
         <div className="mb-8">
           <Link to="/" className="inline-block mb-6">
             <img 
-              src="/logo da-hi.png" 
+              src="/logo2.png" 
               alt="da-hi Logo" 
-              className="h-16 w-auto"
+              className="h-12 w-auto"
             />
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
@@ -119,7 +119,7 @@ const PrivacyPolicy = () => {
               <li><strong>Account Closure:</strong> Close your account at any time</li>
             </ul>
             <p className="mt-4">
-              To exercise these rights, please contact us at <a href="mailto:hilarygebremedhn28@gmail.com" className="text-[#F97316] hover:underline">hilarygebremedhn28@gmail.com</a>.
+              To exercise these rights, please contact us at <a href="mailto:hilarygebremedhn28@gmail.com" className="text-[#16A34A] hover:underline">hilarygebremedhn28@gmail.com</a>.
             </p>
           </section>
 
@@ -164,8 +164,8 @@ const PrivacyPolicy = () => {
               If you have any questions about this Privacy Policy, please contact us:
             </p>
             <div className="bg-gray-50 p-4 rounded-lg mt-4">
-              <p className="mb-2"><strong>Email:</strong> <a href="mailto:hilarygebremedhn28@gmail.com" className="text-[#F97316] hover:underline">hilarygebremedhn28@gmail.com</a></p>
-              <p className="mb-2"><strong>Phone:</strong> <a href="tel:+251989834889" className="text-[#F97316] hover:underline">+251 989 834 889</a></p>
+              <p className="mb-2"><strong>Email:</strong> <a href="mailto:hilarygebremedhn28@gmail.com" className="text-[#16A34A] hover:underline">hilarygebremedhn28@gmail.com</a></p>
+              <p className="mb-2"><strong>Phone:</strong> <a href="tel:+251989834889" className="text-[#16A34A] hover:underline">+251 989 834 889</a></p>
               <p><strong>Address:</strong> Ethiopia</p>
             </div>
           </section>
@@ -175,7 +175,7 @@ const PrivacyPolicy = () => {
         <div className="mt-8 pt-8 border-t border-gray-200">
           <Link 
             to="/" 
-            className="inline-flex items-center text-[#F97316] hover:text-[#EA580C] font-semibold transition-colors"
+            className="inline-flex items-center text-[#16A34A] hover:text-[#15803D] font-semibold transition-colors"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

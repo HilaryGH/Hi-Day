@@ -190,7 +190,7 @@ const PromotionManagement = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB]"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#16A34A]"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
@@ -232,7 +232,7 @@ const PromotionManagement = () => {
               });
               setSelectedProducts([]);
             }}
-            className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+            className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-6 rounded-lg transition-colors"
           >
             {showForm ? 'Cancel' : '+ New Promotion'}
           </button>
@@ -261,7 +261,7 @@ const PromotionManagement = () => {
                     required
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#2563EB] focus:border-[#2563EB]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#16A34A] focus:border-[#16A34A]"
                     placeholder="e.g., Summer Sale 2024"
                   />
                 </div>
@@ -275,7 +275,7 @@ const PromotionManagement = () => {
                     required
                     value={formData.type}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#2563EB] focus:border-[#2563EB]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#16A34A] focus:border-[#16A34A]"
                   >
                     <option value="sale">Sale</option>
                     <option value="discount">Discount</option>
@@ -294,7 +294,7 @@ const PromotionManagement = () => {
                     required
                     value={formData.discountType}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#2563EB] focus:border-[#2563EB]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#16A34A] focus:border-[#16A34A]"
                   >
                     <option value="percentage">Percentage (%)</option>
                     <option value="fixed_amount">Fixed Amount (ETB)</option>
@@ -313,7 +313,7 @@ const PromotionManagement = () => {
                     step="0.01"
                     value={formData.discountValue}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#2563EB] focus:border-[#2563EB]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#16A34A] focus:border-[#16A34A]"
                     placeholder={formData.discountType === 'percentage' ? 'e.g., 20' : 'e.g., 100'}
                   />
                 </div>
@@ -328,7 +328,7 @@ const PromotionManagement = () => {
                     required
                     value={formData.startDate}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#2563EB] focus:border-[#2563EB]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#16A34A] focus:border-[#16A34A]"
                   />
                 </div>
 
@@ -342,7 +342,7 @@ const PromotionManagement = () => {
                     required
                     value={formData.endDate}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#2563EB] focus:border-[#2563EB]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#16A34A] focus:border-[#16A34A]"
                   />
                 </div>
 
@@ -357,7 +357,7 @@ const PromotionManagement = () => {
                     step="0.01"
                     value={formData.maxDiscount}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#2563EB] focus:border-[#2563EB]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#16A34A] focus:border-[#16A34A]"
                     placeholder="Maximum discount amount"
                   />
                 </div>
@@ -371,7 +371,7 @@ const PromotionManagement = () => {
                     name="bannerText"
                     value={formData.bannerText}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#2563EB] focus:border-[#2563EB]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#16A34A] focus:border-[#16A34A]"
                     placeholder="e.g., Up to 50% OFF!"
                   />
                 </div>
@@ -386,7 +386,7 @@ const PromotionManagement = () => {
                   rows={3}
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-[#16A34A] focus:border-[#16A34A]"
                   placeholder="Promotion description..."
                 />
               </div>
@@ -420,7 +420,7 @@ const PromotionManagement = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-2 px-6 rounded-lg transition-colors disabled:opacity-50"
+                  className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-6 rounded-lg transition-colors disabled:opacity-50"
                 >
                   {loading ? 'Saving...' : editingPromotion ? 'Update Promotion' : 'Create Promotion'}
                 </button>

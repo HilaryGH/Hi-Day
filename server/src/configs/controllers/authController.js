@@ -144,7 +144,7 @@ export const googleLogin = async (req, res) => {
 
     // Initialize Google OAuth client
     // Note: Update .env file to use GOOGLE_CLIENT_ID instead of "Client ID" (spaces not supported)
-    const googleClientId = process.env.GOOGLE_CLIENT_ID || '99344341424-dfr39pbsip8a7j7008d037ulvhndjpk1.apps.googleusercontent.com';
+    const googleClientId = process.env.GOOGLE_CLIENT_ID ;
     const client = new OAuth2Client(googleClientId);
 
     // Verify the ID token

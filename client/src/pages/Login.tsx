@@ -101,9 +101,9 @@ const Login = () => {
         <div className="text-center mb-8">
           <Link to="/" className="inline-block mb-4">
             <img 
-              src="/logo da-hi.png" 
+              src="/logo2.png" 
               alt="da-hi Logo" 
-              className="h-20 w-auto mx-auto"
+              className="h-16 w-auto mx-auto"
             />
           </Link>
           <h2 className="text-4xl font-bold text-gray-900 mb-2">
@@ -182,7 +182,7 @@ const Login = () => {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all"
                   placeholder="Enter your email"
                 />
               </div>
@@ -205,7 +205,7 @@ const Login = () => {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all"
                   placeholder="Enter your password"
                 />
               </div>
@@ -217,14 +217,14 @@ const Login = () => {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-[#2563EB] focus:ring-[#2563EB] border-gray-300 rounded"
+                  className="h-4 w-4 text-[#16A34A] focus:ring-[#16A34A] border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                   Remember me
                 </label>
               </div>
               <div className="text-sm">
-                <Link to="#" className="font-medium text-[#2563EB] hover:text-[#1d4ed8]">
+                <Link to="#" className="font-medium text-[#16A34A] hover:text-[#15803D]">
                   Forgot password?
                 </Link>
               </div>
@@ -233,7 +233,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-gradient-to-r from-[#2563EB] to-[#1d4ed8] hover:from-[#1d4ed8] hover:to-[#1e40af] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2563EB] disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-gradient-to-r from-[#16A34A] to-[#15803D] hover:from-[#15803D] hover:to-[#1e40af] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#16A34A] disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98]"
             >
               {loading ? (
                 <>
@@ -258,7 +258,7 @@ const Login = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link to="/register" className="font-semibold text-[#2563EB] hover:text-[#1d4ed8] transition-colors">
+              <Link to="/register" className="font-semibold text-[#16A34A] hover:text-[#15803D] transition-colors">
                 Create a new account
               </Link>
             </p>
@@ -269,9 +269,9 @@ const Login = () => {
         <div className="mt-8 text-center">
           <p className="text-xs text-gray-500">
             By continuing, you agree to da-hi's{' '}
-            <Link to="/terms-of-service" className="text-[#2563EB] hover:underline">Terms of Service</Link>
+            <Link to="/terms-of-service" className="text-[#16A34A] hover:underline">Terms of Service</Link>
             {' '}and{' '}
-            <Link to="/privacy-policy" className="text-[#2563EB] hover:underline">Privacy Policy</Link>
+            <Link to="/privacy-policy" className="text-[#16A34A] hover:underline">Privacy Policy</Link>
           </p>
         </div>
       </div>

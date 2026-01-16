@@ -35,9 +35,9 @@ const Navbar = () => {
             {/* Left - Logo */}
             <Link to="/" className="flex-shrink-0 flex items-center">
               <img 
-                src="/logo da-hi.png" 
+                src="/logo2.png" 
                 alt="da-hi Logo" 
-                className="h-20 md:h-32 lg:h-36 w-auto"
+                className="h-12 md:h-16 lg:h-20 w-auto"
               />
             </Link>
 
@@ -49,7 +49,7 @@ const Navbar = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search for products..."
-                  className="w-full px-4 py-2.5 pl-10 pr-12 border border-[#E5E7EB] rounded-full focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] outline-none"
+                  className="w-full px-4 py-2.5 pl-10 pr-12 border border-[#E5E7EB] rounded-full focus:ring-2 focus:ring-[#16A34A] focus:border-[#16A34A] outline-none"
                 />
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
                   <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,7 +58,7 @@ const Navbar = () => {
                 </div>
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#2563EB] hover:bg-[#1d4ed8] text-white px-4 py-1.5 rounded-full transition-colors text-sm font-medium"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#16A34A] hover:bg-[#15803D] text-white px-4 py-1.5 rounded-full transition-colors text-sm font-medium"
                 >
                   Search
                 </button>
@@ -72,7 +72,7 @@ const Navbar = () => {
                 {/* Home Button */}
                 <Link 
                   to="/" 
-                  className="p-2 text-[#111827] hover:text-[#2563EB] transition-colors"
+                  className="p-2 text-[#111827] hover:text-[#16A34A] transition-colors"
                   title="Home"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,7 +81,7 @@ const Navbar = () => {
                 </Link>
                 {user ? (
                   <>
-                    <Link to="/cart" className="relative p-2 text-[#111827] hover:text-[#2563EB] transition-colors">
+                    <Link to="/cart" className="relative p-2 text-[#111827] hover:text-[#16A34A] transition-colors">
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
@@ -89,7 +89,7 @@ const Navbar = () => {
                     {(user.role === 'product provider' || user.role === 'seller' || user.role === 'service provider') && (
                       <Link 
                         to="/dashboard" 
-                        className="p-2 text-[#111827] hover:text-[#2563EB] transition-colors"
+                        className="p-2 text-[#111827] hover:text-[#16A34A] transition-colors"
                         title="Provider Dashboard"
                       >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +100,7 @@ const Navbar = () => {
                     {(user.role === 'admin' || user.role === 'super admin' || user.role === 'marketing team') && (
                       <Link 
                         to="/promotions" 
-                        className="p-2 text-[#111827] hover:text-[#2563EB] transition-colors"
+                        className="p-2 text-[#111827] hover:text-[#16A34A] transition-colors"
                         title="Promotions"
                       >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +111,7 @@ const Navbar = () => {
                     {(user.role === 'admin' || user.role === 'super admin') && (
                       <Link 
                         to="/admin" 
-                        className="p-2 text-[#111827] hover:text-[#2563EB] transition-colors"
+                        className="p-2 text-[#111827] hover:text-[#16A34A] transition-colors"
                         title="Admin Dashboard"
                       >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +123,7 @@ const Navbar = () => {
                       <span className="text-[#111827] text-sm font-medium">{user.name}</span>
                       <button
                         onClick={logout}
-                        className="text-[#111827] hover:text-[#2563EB] transition-colors font-medium text-sm"
+                        className="text-[#111827] hover:text-[#16A34A] transition-colors font-medium text-sm"
                       >
                         Logout
                       </button>
@@ -133,7 +133,7 @@ const Navbar = () => {
                   <>
                     <Link 
                       to="/register" 
-                      className="bg-[#2563EB] text-white p-2.5 rounded-lg hover:bg-[#1d4ed8] transition-all shadow-sm hover:shadow-md"
+                      className="bg-[#16A34A] text-white p-2.5 rounded-lg hover:bg-[#15803D] transition-all shadow-sm hover:shadow-md"
                       title="Sign Up"
                     >
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,7 +148,7 @@ const Navbar = () => {
               {!user ? (
                 <Link 
                   to="/login" 
-                  className="md:hidden bg-[#2563EB] text-white px-4 py-2 rounded-lg hover:bg-[#1d4ed8] transition-all shadow-sm hover:shadow-md text-sm font-medium"
+                  className="md:hidden bg-[#16A34A] text-white px-4 py-2 rounded-lg hover:bg-[#15803D] transition-all shadow-sm hover:shadow-md text-sm font-medium"
                 >
                   Sign In
                 </Link>
@@ -157,7 +157,7 @@ const Navbar = () => {
                   <span className="text-[#111827] text-sm font-medium truncate max-w-[100px]">{user.name}</span>
                   <button
                     onClick={logout}
-                    className="text-[#2563EB] text-sm font-medium"
+                    className="text-[#16A34A] text-sm font-medium"
                   >
                     Logout
                   </button>
@@ -177,7 +177,7 @@ const Navbar = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for products..."
-              className="w-full px-4 py-3 pl-12 pr-16 border border-[#E5E7EB] rounded-full focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] outline-none text-sm"
+              className="w-full px-4 py-3 pl-12 pr-16 border border-[#E5E7EB] rounded-full focus:ring-2 focus:ring-[#16A34A] focus:border-[#16A34A] outline-none text-sm"
             />
             <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
               <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +186,7 @@ const Navbar = () => {
             </div>
             <button
               type="submit"
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#2563EB] hover:bg-[#1d4ed8] text-white px-4 py-1.5 rounded-full transition-colors text-sm font-medium"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#16A34A] hover:bg-[#15803D] text-white px-4 py-1.5 rounded-full transition-colors text-sm font-medium"
             >
               Search
             </button>
@@ -202,7 +202,7 @@ const Navbar = () => {
               <Link
                 key={category}
                 to={`/products?category=${encodeURIComponent(category)}`}
-                className="flex-shrink-0 px-4 py-2 bg-gray-100 hover:bg-[#2563EB] text-gray-700 hover:text-white rounded-full text-sm font-medium transition-colors whitespace-nowrap"
+                className="flex-shrink-0 px-4 py-2 bg-gray-100 hover:bg-[#16A34A] text-gray-700 hover:text-white rounded-full text-sm font-medium transition-colors whitespace-nowrap"
               >
                 {category}
               </Link>

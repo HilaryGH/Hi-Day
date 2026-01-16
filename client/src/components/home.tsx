@@ -100,11 +100,11 @@ const Home: React.FC = () => {
                   to={`/products?category=${encodeURIComponent(category.categoryName)}`}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors group"
                 >
-                  <span className="text-[#111827] font-medium group-hover:text-[#2563EB] transition-colors">
+                  <span className="text-[#111827] font-medium group-hover:text-[#16A34A] transition-colors">
                     {category.name}
                   </span>
                   <svg 
-                    className="w-5 h-5 text-[#6B7280] ml-auto group-hover:text-[#2563EB] group-hover:translate-x-1 transition-all" 
+                    className="w-5 h-5 text-[#6B7280] ml-auto group-hover:text-[#16A34A] group-hover:translate-x-1 transition-all" 
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
@@ -127,7 +127,7 @@ const Home: React.FC = () => {
               <div className="w-1/2 p-3 md:p-2.5 relative z-10 h-full flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-1 mb-1.5 md:mb-1">
-                    <span className="bg-[#F97316] text-white px-2 py-1 md:px-1.5 md:py-0.5 rounded-full text-[10px] md:text-[9px] font-bold">SALE</span>
+                    <span className="bg-[#16A34A] text-white px-2 py-1 md:px-1.5 md:py-0.5 rounded-full text-[10px] md:text-[9px] font-bold">SALE</span>
                     <span className="text-white/90 text-[10px] md:text-[9px]">Limited Time</span>
                   </div>
                   <h2 className="text-base md:text-sm lg:text-base font-bold mb-1 md:mb-0.5">Used African Shape Mirror</h2>
@@ -154,7 +154,7 @@ const Home: React.FC = () => {
             {/* Right Side - Two Cards Side by Side on Mobile, Stacked on Desktop */}
             <div className="md:col-span-2 flex flex-row md:flex-col gap-3 md:gap-2.5 md:h-full">
               {/* Get up to 20% OFF */}
-              <div className="flex-1 bg-gradient-to-br from-[#F97316] to-[#EA580C] rounded-lg p-3 md:p-2 text-white relative overflow-hidden min-h-[100px] md:flex-1">
+              <div className="flex-1 bg-gradient-to-br from-[#16A34A] to-[#15803D] rounded-lg p-3 md:p-2 text-white relative overflow-hidden min-h-[100px] md:flex-1">
                 <div className="absolute top-0 right-0 w-12 h-12 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
                 <div className="relative z-10 h-full flex flex-col justify-between">
                   <div>
@@ -164,7 +164,7 @@ const Home: React.FC = () => {
                   </div>
                   <Link
                     to="/products"
-                    className="inline-block bg-white text-[#F97316] font-semibold py-1 px-2 md:py-0.5 md:px-2 rounded-md hover:bg-[#F9FAFB] transition-all text-[10px] md:text-[9px] w-fit"
+                    className="inline-block bg-white text-[#16A34A] font-semibold py-1 px-2 md:py-0.5 md:px-2 rounded-md hover:bg-[#F9FAFB] transition-all text-[10px] md:text-[9px] w-fit"
                   >
                     Claim Offer
                   </Link>
@@ -174,7 +174,7 @@ const Home: React.FC = () => {
               {/* New Arrivals */}
               <Link 
                 to="/products?sortBy=createdAt&order=desc"
-                className="flex-1 bg-white rounded-lg border border-[#E5E7EB] relative overflow-hidden group min-h-[100px] md:flex-1 hover:border-[#2563EB] transition-all md:flex"
+                className="flex-1 bg-white rounded-lg border border-[#E5E7EB] relative overflow-hidden group min-h-[100px] md:flex-1 hover:border-[#16A34A] transition-all md:flex"
               >
                 {/* Background Image - Full width/height on mobile, half width on desktop */}
                 <div className="absolute inset-0 md:relative md:w-1/2 md:inset-auto h-full flex items-center justify-center overflow-hidden bg-[#F9FAFB]">
@@ -186,7 +186,7 @@ const Home: React.FC = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <svg className="w-10 h-10 md:w-8 md:h-8 text-[#2563EB]/30 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-10 h-10 md:w-8 md:h-8 text-[#16A34A]/30 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                       </svg>
                     </div>
@@ -197,14 +197,14 @@ const Home: React.FC = () => {
                 <div className="absolute inset-0 md:hidden flex flex-col justify-between z-10">
                   {/* "New Arrivals" text in top right with orange blur background - no gap from top */}
                   <div className="flex justify-end pt-0 pr-3">
-                    <div className="bg-[#F97316]/90 backdrop-blur-md px-3 py-1.5 rounded-lg">
+                    <div className="bg-[#16A34A]/90 backdrop-blur-md px-3 py-1.5 rounded-lg">
                       <h3 className="text-xs font-bold text-white">New Arrivals</h3>
                     </div>
                   </div>
                   
                   {/* Shop Now button at bottom - very small gap from bottom */}
                   <div className="flex justify-start pl-3 pb-1">
-                    <div className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-2 px-4 rounded-md transition-colors text-[10px] w-fit">
+                    <div className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-4 rounded-md transition-colors text-[10px] w-fit">
                       Shop Now
                     </div>
                   </div>
@@ -224,7 +224,7 @@ const Home: React.FC = () => {
                       <p className="text-[8px] text-[#6B7280]">+{newArrivals.length - 1} more</p>
                     )}
                   </div>
-                  <div className="inline-block bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-1 px-2.5 rounded-md transition-colors text-[9px] w-full text-center">
+                  <div className="inline-block bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-1 px-2.5 rounded-md transition-colors text-[9px] w-full text-center">
                     Shop Now
                   </div>
                 </div>
@@ -255,9 +255,9 @@ const Home: React.FC = () => {
                     <Link
                       key={index}
                       to={`/products?category=${encodeURIComponent(category.categoryName)}`}
-                      className="bg-white rounded-lg p-1.5 border border-[#E5E7EB] hover:border-[#2563EB] hover:shadow-sm transition-all group"
+                      className="bg-white rounded-lg p-1.5 border border-[#E5E7EB] hover:border-[#16A34A] hover:shadow-sm transition-all group"
                     >
-                      <div className="aspect-[4/3] bg-[#F9FAFB] rounded-lg mb-1 overflow-hidden group-hover:bg-[#2563EB]/5 transition-colors relative">
+                      <div className="aspect-[4/3] bg-[#F9FAFB] rounded-lg mb-1 overflow-hidden group-hover:bg-[#16A34A]/5 transition-colors relative">
                         {product && product.images && product.images.length > 0 ? (
                           <img
                             src={product.images[0]}
@@ -266,13 +266,13 @@ const Home: React.FC = () => {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <svg className="w-5 h-5 text-[#2563EB]/40 group-hover:text-[#2563EB] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-[#16A34A]/40 group-hover:text-[#16A34A] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                             </svg>
                           </div>
                         )}
                       </div>
-                      <h4 className="text-[9px] font-medium text-[#111827] group-hover:text-[#2563EB] transition-colors text-center line-clamp-2">
+                      <h4 className="text-[9px] font-medium text-[#111827] group-hover:text-[#16A34A] transition-colors text-center line-clamp-2">
                         {category.name}
                       </h4>
                       {product && (
@@ -299,8 +299,8 @@ const Home: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="flex flex-col items-center p-8 rounded-2xl bg-[#F9FAFB] hover:shadow-xl transition-all transform hover:-translate-y-2">
-            <div className="w-20 h-20 bg-[#2563EB]/10 rounded-full flex items-center justify-center mb-6">
-              <svg className="w-10 h-10 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 bg-[#16A34A]/10 rounded-full flex items-center justify-center mb-6">
+              <svg className="w-10 h-10 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
@@ -310,8 +310,8 @@ const Home: React.FC = () => {
             </p>
           </div>
           <div className="flex flex-col items-center p-8 rounded-2xl bg-[#F9FAFB] hover:shadow-xl transition-all transform hover:-translate-y-2">
-            <div className="w-20 h-20 bg-[#2563EB]/10 rounded-full flex items-center justify-center mb-6">
-              <svg className="w-10 h-10 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 bg-[#16A34A]/10 rounded-full flex items-center justify-center mb-6">
+              <svg className="w-10 h-10 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -321,8 +321,8 @@ const Home: React.FC = () => {
             </p>
           </div>
           <div className="flex flex-col items-center p-8 rounded-2xl bg-[#F9FAFB] hover:shadow-xl transition-all transform hover:-translate-y-2">
-            <div className="w-20 h-20 bg-[#2563EB]/10 rounded-full flex items-center justify-center mb-6">
-              <svg className="w-10 h-10 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 bg-[#16A34A]/10 rounded-full flex items-center justify-center mb-6">
+              <svg className="w-10 h-10 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
@@ -350,13 +350,13 @@ const Home: React.FC = () => {
             { name: "Beauty & Personal Care", price: "600+ Items", desc: "Skincare & cosmetics" }
           ].map((product, i) => (
             <div key={i} className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 overflow-hidden group">
-              <div className="relative h-64 bg-gradient-to-br from-[#2563EB]/10 to-[#2563EB]/20 overflow-hidden">
+              <div className="relative h-64 bg-gradient-to-br from-[#16A34A]/10 to-[#16A34A]/20 overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <svg className="w-32 h-32 text-[#2563EB]/30 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-32 h-32 text-[#16A34A]/30 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
                   </svg>
                 </div>
-                <div className="absolute top-4 right-4 bg-[#F97316] text-white px-3 py-1 rounded-full text-sm font-semibold">
+                <div className="absolute top-4 right-4 bg-[#16A34A] text-white px-3 py-1 rounded-full text-sm font-semibold">
                   New
                 </div>
               </div>
@@ -364,8 +364,8 @@ const Home: React.FC = () => {
                 <h3 className="font-bold text-xl mb-2 text-[#111827]">{product.name}</h3>
                 <p className="text-[#6B7280] mb-4 text-sm">{product.desc}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-[#2563EB]">{product.price}</span>
-                  <button className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                  <span className="text-2xl font-bold text-[#16A34A]">{product.price}</span>
+                  <button className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                     View
                   </button>
                 </div>
@@ -380,14 +380,14 @@ const Home: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="relative">
             <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl">
-              <div className="aspect-square bg-gradient-to-br from-[#2563EB]/10 via-[#2563EB]/20 to-[#2563EB]/30 flex items-center justify-center">
-                <svg className="w-64 h-64 text-[#2563EB]/40" fill="currentColor" viewBox="0 0 24 24">
+              <div className="aspect-square bg-gradient-to-br from-[#16A34A]/10 via-[#16A34A]/20 to-[#16A34A]/30 flex items-center justify-center">
+                <svg className="w-64 h-64 text-[#16A34A]/40" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
                 </svg>
               </div>
             </div>
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-[#2563EB]/20 rounded-full opacity-50 blur-2xl"></div>
-            <div className="absolute -top-6 -right-6 w-32 h-32 bg-[#2563EB]/30 rounded-full opacity-50 blur-2xl"></div>
+            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-[#16A34A]/20 rounded-full opacity-50 blur-2xl"></div>
+            <div className="absolute -top-6 -right-6 w-32 h-32 bg-[#16A34A]/30 rounded-full opacity-50 blur-2xl"></div>
           </div>
           <div>
             <h2 className="text-4xl md:text-5xl font-bold text-[#111827] mb-6">About da-hi Marketplace</h2>
@@ -402,39 +402,39 @@ const Home: React.FC = () => {
             </p>
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-[#2563EB]/10 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-[#16A34A]/10 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
                 <span className="font-semibold text-[#111827]">Quality Assured</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-[#2563EB]/10 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-[#16A34A]/10 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <span className="font-semibold text-gray-900">Fast Shipping</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-[#2563EB]/10 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-[#16A34A]/10 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
                 <span className="font-semibold text-gray-900">Secure Payment</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-[#2563EB]/10 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-[#16A34A]/10 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                 </div>
                 <span className="font-semibold text-gray-900">24/7 Support</span>
               </div>
             </div>
-            <button className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg">
+            <button className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg">
               Learn More
             </button>
           </div>
@@ -442,7 +442,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Enhanced CTA Section */}
-      <div className="relative w-full bg-gradient-to-r from-[#2563EB] to-[#1d4ed8] py-20 px-4 overflow-hidden">
+      <div className="relative w-full bg-gradient-to-r from-[#16A34A] to-[#15803D] py-20 px-4 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
@@ -455,10 +455,10 @@ const Home: React.FC = () => {
             Join thousands of buyers and sellers on Ethiopia's fastest-growing marketplace
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="bg-white text-[#2563EB] hover:bg-[#F9FAFB] font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-xl text-lg">
+            <button className="bg-white text-[#16A34A] hover:bg-[#F9FAFB] font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-xl text-lg">
               Start Shopping
             </button>
-            <button className="border-2 border-white text-white hover:bg-white hover:text-[#2563EB] font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 text-lg">
+            <button className="border-2 border-white text-white hover:bg-white hover:text-[#16A34A] font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 text-lg">
               Start Selling
             </button>
           </div>

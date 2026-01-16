@@ -71,7 +71,7 @@ const ProductDetail = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB]"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#16A34A]"></div>
           <p className="mt-4 text-gray-600">Loading product...</p>
         </div>
       </div>
@@ -117,7 +117,7 @@ const ProductDetail = () => {
                       key={index}
                       onClick={() => setSelectedImage(index)}
                       className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                        selectedImage === index ? 'border-[#2563EB]' : 'border-[#E5E7EB]'
+                        selectedImage === index ? 'border-[#16A34A]' : 'border-[#E5E7EB]'
                       }`}
                     >
                       <img src={img} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
@@ -139,7 +139,7 @@ const ProductDetail = () => {
                         key={i}
                         className={`text-xl ${
                           i < Math.round(product.rating.average)
-                            ? 'text-[#F97316]'
+                            ? 'text-[#16A34A]'
                             : 'text-gray-300'
                         }`}
                       >
@@ -155,7 +155,7 @@ const ProductDetail = () => {
 
               <div className="mb-6">
                 <div className="flex items-center gap-4 mb-4">
-                  <span className="text-4xl font-bold text-[#2563EB]">
+                  <span className="text-4xl font-bold text-[#16A34A]">
                     ETB {product.price.toLocaleString()}
                   </span>
                   {product.originalPrice && product.originalPrice > product.price && (
@@ -219,7 +219,7 @@ const ProductDetail = () => {
                 <button
                   onClick={handleAddToCart}
                   disabled={product.stock === 0 || addingToCart}
-                  className="flex-1 bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {addingToCart ? 'Adding...' : 'Add to Cart'}
                 </button>
@@ -243,7 +243,7 @@ const ProductDetail = () => {
                     });
                   }}
                   disabled={product.stock === 0}
-                  className="px-6 py-3 bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Shop Now
                 </button>

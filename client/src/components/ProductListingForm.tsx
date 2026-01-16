@@ -253,7 +253,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
             required
             value={formData.name}
             onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
             placeholder="Enter product name"
           />
         </div>
@@ -270,7 +270,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
             rows={4}
             value={formData.description}
             onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
             placeholder="Describe your product in detail"
           />
         </div>
@@ -290,7 +290,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
               required
               value={formData.price}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
               placeholder="0.00"
             />
           </div>
@@ -306,7 +306,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
               min="0"
               value={formData.originalPrice}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
               placeholder="0.00"
             />
             <p className="mt-1 text-xs text-gray-500">For showing discount percentage</p>
@@ -325,7 +325,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
               required
               value={formData.category}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
             >
               <option value="">Select a category</option>
               {categories.map((cat) => (
@@ -345,7 +345,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
               type="text"
               value={formData.subcategory}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
               placeholder="e.g., Smartphones, Laptops"
             />
           </div>
@@ -363,7 +363,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
               type="text"
               value={formData.brand}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
               placeholder="Brand name"
             />
           </div>
@@ -379,7 +379,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
               required
               value={formData.stock}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
               placeholder="0"
             />
           </div>
@@ -408,7 +408,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
                       handleImageChange(index, file);
                     }
                   }}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB] text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#2563EB] file:text-white hover:file:bg-[#1d4ed8]"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A] text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#16A34A] file:text-white hover:file:bg-[#15803D]"
                 />
                 {formData.images.length > 1 && (
                   <button
@@ -436,7 +436,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
             <button
               type="button"
               onClick={addImageField}
-              className="mt-2 text-sm text-[#2563EB] hover:text-[#1d4ed8]"
+              className="mt-2 text-sm text-[#16A34A] hover:text-[#15803D]"
             >
               + Add another image
             </button>
@@ -453,21 +453,21 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
               type="text"
               value={specKey}
               onChange={(e) => setSpecKey(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+              className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
               placeholder="Key (e.g., Color)"
             />
             <input
               type="text"
               value={specValue}
               onChange={(e) => setSpecValue(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+              className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
               placeholder="Value (e.g., Black)"
             />
           </div>
           <button
             type="button"
             onClick={addSpecification}
-            className="mb-2 text-sm text-[#2563EB] hover:text-[#1d4ed8]"
+            className="mb-2 text-sm text-[#16A34A] hover:text-[#15803D]"
           >
             + Add Specification
           </button>
@@ -507,13 +507,13 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
                   addTag();
                 }
               }}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
               placeholder="Enter tag and press Enter"
             />
             <button
               type="button"
               onClick={addTag}
-              className="px-4 py-2 bg-[#2563EB] text-white rounded-md hover:bg-[#1d4ed8]"
+              className="px-4 py-2 bg-[#16A34A] text-white rounded-md hover:bg-[#15803D]"
             >
               Add
             </button>
@@ -566,7 +566,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-[#2563EB] text-white rounded-md hover:bg-[#1d4ed8] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 bg-[#16A34A] text-white rounded-md hover:bg-[#15803D] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Listing Product...' : 'List Product'}
           </button>

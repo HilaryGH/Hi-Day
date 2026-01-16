@@ -8,7 +8,9 @@ import {
   getDashboardStats,
   getAllProducts,
   deleteProduct,
-  toggleProductStatus
+  toggleProductStatus,
+  getAllOrders,
+  getOrderStats
 } from '../controllers/adminController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -30,6 +32,10 @@ router.put('/providers/:id/verify', protect, authorize('admin', 'super admin'), 
 router.get('/products', protect, authorize('admin', 'super admin'), getAllProducts);
 router.delete('/products/:id', protect, authorize('admin', 'super admin'), deleteProduct);
 router.put('/products/:id/toggle', protect, authorize('admin', 'super admin'), toggleProductStatus);
+
+// Order management - requires authentication and admin role
+router.get('/orders', protect, authorize('admin', 'super admin'), getAllOrders);
+router.get('/orders/stats', protect, authorize('admin', 'super admin'), getOrderStats);
 
 export default router;
 

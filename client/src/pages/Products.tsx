@@ -141,7 +141,7 @@ const Products = () => {
                   value={filters.search}
                   onChange={(e) => handleFilterChange('search', e.target.value)}
                   placeholder="Search products..."
-                  className="w-full px-3 py-2 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-[#16A34A] focus:border-transparent"
                 />
               </div>
 
@@ -153,7 +153,7 @@ const Products = () => {
                 <select
                   value={filters.category}
                   onChange={(e) => handleFilterChange('category', e.target.value)}
-                  className="w-full px-3 py-2 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-[#2563EB]"
+                  className="w-full px-3 py-2 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-[#16A34A]"
                 >
                   <option value="">All Categories</option>
                   {categories.map((cat) => (
@@ -215,7 +215,7 @@ const Products = () => {
           <div className="flex-1">
             {loading ? (
               <div className="text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB]"></div>
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#16A34A]"></div>
                 <p className="mt-4 text-gray-600">Loading products...</p>
               </div>
             ) : products.length === 0 ? (
@@ -244,7 +244,7 @@ const Products = () => {
                       });
                       setSearchParams({}, { replace: true });
                     }}
-                    className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                    className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-6 rounded-lg transition-colors"
                   >
                     Clear Filters
                   </button>
@@ -275,11 +275,11 @@ const Products = () => {
                           )}
                         </div>
                         <div className="p-4 flex-1 flex flex-col">
-                          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-[#2563EB] transition-colors">
+                          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-[#16A34A] transition-colors">
                             {product.name}
                           </h3>
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="text-2xl font-bold text-[#2563EB]">
+                            <span className="text-2xl font-bold text-[#16A34A]">
                               ETB {product.price.toLocaleString()}
                             </span>
                             {product.originalPrice && product.originalPrice > product.price && (
@@ -290,7 +290,7 @@ const Products = () => {
                           </div>
                           {product.rating.count > 0 && (
                             <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
-                              <span className="text-[#F97316]">★</span>
+                              <span className="text-[#16A34A]">★</span>
                               <span>{product.rating.average.toFixed(1)}</span>
                               <span>({product.rating.count})</span>
                             </div>
@@ -329,13 +329,13 @@ const Products = () => {
                             });
                           }}
                           disabled={product.stock === 0}
-                          className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Shop Now
                         </button>
                         <Link
                           to={`/products/${product._id}`}
-                          className="block w-full text-center text-[#2563EB] hover:text-[#1d4ed8] font-medium py-2 px-4 rounded-lg transition-colors border border-[#2563EB] hover:bg-[#2563EB]/5"
+                          className="block w-full text-center text-[#16A34A] hover:text-[#15803D] font-medium py-2 px-4 rounded-lg transition-colors border border-[#16A34A] hover:bg-[#16A34A]/5"
                         >
                           View Details
                         </Link>

@@ -148,6 +148,22 @@ export const orderAPI = {
       body: JSON.stringify(data),
     }),
   getMyOrders: () => fetchAPI('/orders/my-orders'),
+  getSellerOrders: (params?: {
+    orderStatus?: string;
+    paymentStatus?: string;
+    page?: number;
+    limit?: number;
+  }) => {
+    const queryString = new URLSearchParams(
+      Object.entries(params || {}).reduce((acc, [key, value]) => {
+        if (value !== undefined && value !== null) {
+          acc[key] = String(value);
+        }
+        return acc;
+      }, {} as Record<string, string>)
+    ).toString();
+    return fetchAPI(`/orders/seller-orders?${queryString}`);
+  },
   getOne: (id: string) => fetchAPI(`/orders/${id}`),
   updateStatus: (id: string, data: any) =>
     fetchAPI(`/orders/${id}/status`, {
@@ -219,6 +235,26 @@ export const adminAPI = {
     fetchAPI(`/admin/products/${id}/toggle`, {
       method: 'PUT',
     }),
+
+  // Order management
+  getAllOrders: (params?: {
+    orderStatus?: string;
+    paymentStatus?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  }) => {
+    const queryString = new URLSearchParams(
+      Object.entries(params || {}).reduce((acc, [key, value]) => {
+        if (value !== undefined && value !== null) {
+          acc[key] = String(value);
+        }
+        return acc;
+      }, {} as Record<string, string>)
+    ).toString();
+    return fetchAPI(`/admin/orders?${queryString}`);
+  },
+  getOrderStats: () => fetchAPI('/admin/orders/stats'),
 };
 
 // Promotion API

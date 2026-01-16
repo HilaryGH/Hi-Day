@@ -6,14 +6,18 @@ import { adminAPI } from '../utils/api';
 const AdminDashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'stats' | 'users' | 'providers' | 'products' | 'promotions'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'users' | 'providers' | 'products' | 'promotions' | 'orders'>('stats');
   const [stats, setStats] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [orderStats, setOrderStats] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [orderStatusFilter, setOrderStatusFilter] = useState<string>('');
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState<string>('');
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -33,9 +37,12 @@ const AdminDashboard = () => {
         loadProviders();
       } else if (activeTab === 'products') {
         loadProducts();
+      } else if (activeTab === 'orders') {
+        loadOrders();
+        loadOrderStats();
       }
     }
-  }, [user, activeTab, currentPage]);
+  }, [user, activeTab, currentPage, orderStatusFilter, paymentStatusFilter]);
 
   const loadStats = async () => {
     setLoading(true);
@@ -106,6 +113,35 @@ const AdminDashboard = () => {
       setProducts([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadOrders = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await adminAPI.getAllOrders({ 
+        orderStatus: orderStatusFilter || undefined,
+        paymentStatus: paymentStatusFilter || undefined,
+        search: searchTerm.trim() || undefined,
+        page: currentPage,
+        limit: 50 
+      });
+      setOrders(response.orders || []);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load orders');
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadOrderStats = async () => {
+    try {
+      const response = await adminAPI.getOrderStats();
+      setOrderStats(response.stats || null);
+    } catch (err: any) {
+      console.error('Failed to load order stats:', err);
     }
   };
 
@@ -212,6 +248,7 @@ const AdminDashboard = () => {
               { id: 'users', label: 'Users' },
               { id: 'providers', label: 'Providers' },
               { id: 'products', label: 'Products' },
+              { id: 'orders', label: 'Orders & Transactions' },
               { id: 'promotions', label: 'Promotions' }
             ].map((tab) => (
               <button
@@ -223,7 +260,7 @@ const AdminDashboard = () => {
                 }}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
-                    ? 'border-[#2563EB] text-[#2563EB]'
+                    ? 'border-[#16A34A] text-[#16A34A]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -255,7 +292,7 @@ const AdminDashboard = () => {
                   </div>
                   <div className="bg-white rounded-lg shadow p-6">
                     <h3 className="text-sm font-medium text-gray-500 mb-2">Pending Verification</h3>
-                    <p className="text-3xl font-bold text-[#F97316]">{stats.pendingVerification}</p>
+                    <p className="text-3xl font-bold text-[#16A34A]">{stats.pendingVerification}</p>
                   </div>
                   <div className="bg-white rounded-lg shadow p-6">
                     <h3 className="text-sm font-medium text-gray-500 mb-2">Total Products</h3>
@@ -265,6 +302,18 @@ const AdminDashboard = () => {
                     <h3 className="text-sm font-medium text-gray-500 mb-2">Active Products</h3>
                     <p className="text-3xl font-bold text-green-600">{stats.activeProducts}</p>
                   </div>
+                  {stats.totalOrders !== undefined && (
+                    <div className="bg-white rounded-lg shadow p-6">
+                      <h3 className="text-sm font-medium text-gray-500 mb-2">Total Orders</h3>
+                      <p className="text-3xl font-bold text-gray-900">{stats.totalOrders}</p>
+                    </div>
+                  )}
+                  {stats.pendingOrders !== undefined && (
+                    <div className="bg-white rounded-lg shadow p-6">
+                      <h3 className="text-sm font-medium text-gray-500 mb-2">Pending Orders</h3>
+                      <p className="text-3xl font-bold text-[#16A34A]">{stats.pendingOrders}</p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="text-center py-12 text-gray-500">No statistics available</div>
@@ -293,7 +342,7 @@ const AdminDashboard = () => {
                       }
                     }
                   }}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 />
                 <button
                   onClick={() => {
@@ -304,7 +353,7 @@ const AdminDashboard = () => {
                       loadProviders();
                     }
                   }}
-                  className="px-6 py-2 bg-[#2563EB] text-white rounded-md hover:bg-[#1d4ed8]"
+                  className="px-6 py-2 bg-[#16A34A] text-white rounded-md hover:bg-[#15803D]"
                 >
                   Search
                 </button>
@@ -411,14 +460,14 @@ const AdminDashboard = () => {
                       loadProducts();
                     }
                   }}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 />
                 <button
                   onClick={() => {
                     setCurrentPage(1);
                     loadProducts();
                   }}
-                  className="px-6 py-2 bg-[#2563EB] text-white rounded-md hover:bg-[#1d4ed8]"
+                  className="px-6 py-2 bg-[#16A34A] text-white rounded-md hover:bg-[#15803D]"
                 >
                   Search
                 </button>
@@ -461,7 +510,7 @@ const AdminDashboard = () => {
                       </div>
                       <div className="p-4">
                         <h3 className="font-semibold text-lg mb-2 line-clamp-2">{product.name}</h3>
-                        <p className="text-[#2563EB] font-bold text-xl mb-2">
+                        <p className="text-[#16A34A] font-bold text-xl mb-2">
                           ETB {product.price?.toLocaleString()}
                         </p>
                         <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
@@ -501,13 +550,196 @@ const AdminDashboard = () => {
             </div>
           )}
 
+          {activeTab === 'orders' && (
+            <div>
+              {/* Order Statistics */}
+              {orderStats && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-white rounded-lg shadow p-4">
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Total Orders</h3>
+                    <p className="text-2xl font-bold text-gray-900">{orderStats.totalOrders || 0}</p>
+                  </div>
+                  <div className="bg-white rounded-lg shadow p-4">
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Total Revenue</h3>
+                    <p className="text-2xl font-bold text-[#16A34A]">ETB {(orderStats.totalRevenue || 0).toLocaleString()}</p>
+                  </div>
+                  <div className="bg-white rounded-lg shadow p-4">
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Pending Payment</h3>
+                    <p className="text-2xl font-bold text-orange-600">ETB {(orderStats.pendingPayment || 0).toLocaleString()}</p>
+                  </div>
+                  <div className="bg-white rounded-lg shadow p-4">
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Delivered Orders</h3>
+                    <p className="text-2xl font-bold text-green-600">{orderStats.deliveredOrders || 0}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Filters */}
+              <div className="mb-4 flex flex-wrap gap-4">
+                <input
+                  type="text"
+                  placeholder="Search by Order ID, Customer Name, or Email..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      setCurrentPage(1);
+                      loadOrders();
+                    }
+                  }}
+                  className="flex-1 min-w-[200px] px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
+                />
+                <select
+                  value={orderStatusFilter}
+                  onChange={(e) => {
+                    setOrderStatusFilter(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
+                >
+                  <option value="">All Order Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="processing">Processing</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <select
+                  value={paymentStatusFilter}
+                  onChange={(e) => {
+                    setPaymentStatusFilter(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
+                >
+                  <option value="">All Payment Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="paid">Paid</option>
+                  <option value="failed">Failed</option>
+                  <option value="refunded">Refunded</option>
+                </select>
+                <button
+                  onClick={() => {
+                    setCurrentPage(1);
+                    loadOrders();
+                  }}
+                  className="px-6 py-2 bg-[#16A34A] text-white rounded-md hover:bg-[#15803D]"
+                >
+                  Search
+                </button>
+                {(searchTerm || orderStatusFilter || paymentStatusFilter) && (
+                  <button
+                    onClick={() => {
+                      setSearchTerm('');
+                      setOrderStatusFilter('');
+                      setPaymentStatusFilter('');
+                      setCurrentPage(1);
+                      loadOrders();
+                    }}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              {/* Orders Table */}
+              {loading ? (
+                <div className="text-center py-12">Loading orders...</div>
+              ) : orders.length === 0 ? (
+                <div className="text-center py-12 bg-white rounded-lg shadow">
+                  <div className="text-gray-500">No orders found</div>
+                </div>
+              ) : (
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order Status</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {orders.map((order) => (
+                          <tr key={order._id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
+                              {order._id.substring(0, 8)}...
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm font-medium text-gray-900">{order.user?.name || 'N/A'}</div>
+                              <div className="text-sm text-gray-500">{order.user?.email || 'N/A'}</div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm text-gray-900">
+                                {order.items?.length || 0} item(s)
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {order.items?.slice(0, 2).map((item: any) => item.product?.name || 'Product').join(', ')}
+                                {order.items?.length > 2 ? '...' : ''}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              ETB {order.totalAmount?.toLocaleString() || '0'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-2 py-1 text-xs rounded-full ${
+                                order.orderStatus === 'delivered' ? 'bg-green-100 text-green-800' :
+                                order.orderStatus === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                order.orderStatus === 'shipped' ? 'bg-blue-100 text-blue-800' :
+                                order.orderStatus === 'processing' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-gray-100 text-gray-800'
+                              }`}>
+                                {order.orderStatus || 'pending'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-2 py-1 text-xs rounded-full ${
+                                order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
+                                order.paymentStatus === 'failed' ? 'bg-red-100 text-red-800' :
+                                order.paymentStatus === 'refunded' ? 'bg-orange-100 text-orange-800' :
+                                'bg-yellow-100 text-yellow-800'
+                              }`}>
+                                {order.paymentStatus || 'pending'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <Link
+                                to={`/orders/${order._id}`}
+                                className="text-[#16A34A] hover:text-[#15803D]"
+                              >
+                                View Details
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {activeTab === 'promotions' && (
             <div className="text-center py-12 bg-white rounded-lg shadow">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">Promotion Management</h3>
               <p className="text-gray-600 mb-6">Create and manage sales, discounts, and promotions</p>
               <Link
                 to="/promotions"
-                className="inline-block bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                className="inline-block bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
               >
                 Go to Promotion Management Page
               </Link>

@@ -8,11 +8,11 @@ const Footer: React.FC = () => {
           {/* Brand Section */}
           <div>
             <img 
-              src="/logo da-hi.png" 
+              src="/logo2.png" 
               alt="da-hi Logo" 
-              className="h-20 md:h-24 lg:h-28 w-auto mb-4"
+              className="h-12 md:h-16 lg:h-18 w-auto mb-4"
             />
-            <h3 className="text-2xl font-bold text-[#F97316] mb-4">da-hi Marketplace</h3>
+            <h3 className="text-2xl font-bold text-[#16A34A] mb-4">da-hi Marketplace</h3>
             <p className="text-gray-400 mb-4">
               Ethiopia's Premier Online Marketplace - Buy and Sell with Confidence
             </p>
@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
                 href="https://facebook.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#16A34A] transition-colors"
                 aria-label="Facebook"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
                 href="https://instagram.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#16A34A] transition-colors"
                 aria-label="Instagram"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -44,7 +44,7 @@ const Footer: React.FC = () => {
                 href="https://x.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#16A34A] transition-colors"
                 aria-label="X (Twitter)"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
                 href="https://tiktok.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#16A34A] transition-colors"
                 aria-label="TikTok"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
                 href="https://whatsapp.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#16A34A] transition-colors"
                 aria-label="WhatsApp"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -82,7 +82,7 @@ const Footer: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <svg 
-                  className="w-5 h-5 text-[#F97316]" 
+                  className="w-5 h-5 text-[#16A34A]" 
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -96,14 +96,14 @@ const Footer: React.FC = () => {
                 </svg>
                 <a 
                   href="tel:+251989834889" 
-                  className="text-gray-300 hover:text-[#F97316] transition-colors"
+                  className="text-gray-300 hover:text-[#16A34A] transition-colors"
                 >
                   +251989834889
                 </a>
               </div>
               <div className="flex items-center gap-3">
                 <svg 
-                  className="w-5 h-5 text-[#F97316]" 
+                  className="w-5 h-5 text-[#16A34A]" 
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -117,7 +117,7 @@ const Footer: React.FC = () => {
                 </svg>
                 <a 
                   href="mailto:hilarygebremedhn28@gmail.com" 
-                  className="text-gray-300 hover:text-[#F97316] transition-colors break-all"
+                  className="text-gray-300 hover:text-[#16A34A] transition-colors break-all"
                 >
                   hilarygebremedhn28@gmail.com
                 </a>
@@ -130,27 +130,27 @@ const Footer: React.FC = () => {
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#home" className="text-gray-300 hover:text-[#F97316] transition-colors">
+                <a href="#home" className="text-gray-300 hover:text-[#16A34A] transition-colors">
                   Home
                 </a>
               </li>
               <li>
-                <a href="#categories" className="text-gray-300 hover:text-[#F97316] transition-colors">
+                <a href="#categories" className="text-gray-300 hover:text-[#16A34A] transition-colors">
                   Categories
                 </a>
               </li>
               <li>
-                <a href="#sellers" className="text-gray-300 hover:text-[#F97316] transition-colors">
+                <a href="#sellers" className="text-gray-300 hover:text-[#16A34A] transition-colors">
                   Sellers
                 </a>
               </li>
               <li>
-                <a href="#about" className="text-gray-300 hover:text-[#F97316] transition-colors">
+                <a href="#about" className="text-gray-300 hover:text-[#16A34A] transition-colors">
                   About
                 </a>
               </li>
               <li>
-                <a href="#contact" className="text-gray-300 hover:text-[#F97316] transition-colors">
+                <a href="#contact" className="text-gray-300 hover:text-[#16A34A] transition-colors">
                   Contact
                 </a>
               </li>
@@ -166,11 +166,11 @@ const Footer: React.FC = () => {
                 © {new Date().getFullYear()} da-hi. All rights reserved.
               </p>
               <div className="flex gap-4 justify-center md:justify-start text-sm">
-                <Link to="/terms-of-service" className="text-gray-400 hover:text-[#F97316] transition-colors">
+                <Link to="/terms-of-service" className="text-gray-400 hover:text-[#16A34A] transition-colors">
                   Terms of Service
                 </Link>
                 <span className="text-gray-600">|</span>
-                <Link to="/privacy-policy" className="text-gray-400 hover:text-[#F97316] transition-colors">
+                <Link to="/privacy-policy" className="text-gray-400 hover:text-[#16A34A] transition-colors">
                   Privacy Policy
                 </Link>
               </div>
@@ -181,7 +181,7 @@ const Footer: React.FC = () => {
                 href="https://facebook.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#16A34A] transition-colors"
                 aria-label="Facebook"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -192,7 +192,7 @@ const Footer: React.FC = () => {
                 href="https://instagram.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#16A34A] transition-colors"
                 aria-label="Instagram"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -203,7 +203,7 @@ const Footer: React.FC = () => {
                 href="https://x.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#16A34A] transition-colors"
                 aria-label="X (Twitter)"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -214,7 +214,7 @@ const Footer: React.FC = () => {
                 href="https://tiktok.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#16A34A] transition-colors"
                 aria-label="TikTok"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -225,7 +225,7 @@ const Footer: React.FC = () => {
                 href="https://whatsapp.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#16A34A] transition-colors"
                 aria-label="WhatsApp"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

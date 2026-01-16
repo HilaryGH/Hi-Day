@@ -87,7 +87,7 @@ const Cart = () => {
           <p className="text-gray-600 mb-4">Please login to view your cart</p>
           <Link
             to="/login"
-            className="inline-block bg-[#2563EB] text-white px-6 py-3 rounded-lg hover:bg-[#1d4ed8]"
+            className="inline-block bg-[#16A34A] text-white px-6 py-3 rounded-lg hover:bg-[#15803D]"
           >
             Login
           </Link>
@@ -100,7 +100,7 @@ const Cart = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB]"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#16A34A]"></div>
           <p className="mt-4 text-gray-600">Loading cart...</p>
         </div>
       </div>
@@ -129,7 +129,7 @@ const Cart = () => {
             <p className="text-gray-600 mb-4">Your cart is empty</p>
             <Link
               to="/products"
-              className="inline-block bg-[#2563EB] text-white px-6 py-3 rounded-lg hover:bg-[#1d4ed8]"
+              className="inline-block bg-[#16A34A] text-white px-6 py-3 rounded-lg hover:bg-[#15803D]"
             >
               Start Shopping
             </Link>
@@ -174,11 +174,11 @@ const Cart = () => {
 
                   <div className="flex-1">
                     <Link to={`/products/${item.product._id}`}>
-                      <h3 className="font-semibold text-[#111827] hover:text-[#2563EB] mb-2">
+                      <h3 className="font-semibold text-[#111827] hover:text-[#16A34A] mb-2">
                         {item.product.name}
                       </h3>
                     </Link>
-                    <p className="text-lg font-bold text-[#2563EB] mb-4">
+                    <p className="text-lg font-bold text-[#16A34A] mb-4">
                       ETB {item.product.price.toLocaleString()}
                     </p>
 
@@ -234,13 +234,13 @@ const Cart = () => {
                 </div>
                 <div className="border-t pt-4 flex justify-between text-xl font-bold">
                   <span>Total</span>
-                  <span className="text-[#2563EB]">ETB {calculateTotal().toLocaleString()}</span>
+                  <span className="text-[#16A34A]">ETB {calculateTotal().toLocaleString()}</span>
                 </div>
               </div>
               <Link
                 to="/checkout"
                 state={{ fromCart: true }}
-                className="block w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center"
+                className="block w-full bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center"
               >
                 Proceed to Checkout
               </Link>

@@ -164,7 +164,7 @@ const Checkout = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB]"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#16A34A]"></div>
           <p className="mt-4 text-gray-600">Loading checkout...</p>
         </div>
       </div>
@@ -205,7 +205,7 @@ const Checkout = () => {
                       required
                       value={formData.street}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                       placeholder="Street name and house number"
                     />
                   </div>
@@ -222,7 +222,7 @@ const Checkout = () => {
                         required
                         value={formData.city}
                         onChange={handleInputChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                         placeholder="City"
                       />
                     </div>
@@ -236,7 +236,7 @@ const Checkout = () => {
                         type="text"
                         value={formData.state}
                         onChange={handleInputChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                         placeholder="State or Region"
                       />
                     </div>
@@ -253,7 +253,7 @@ const Checkout = () => {
                         type="text"
                         value={formData.zipCode}
                         onChange={handleInputChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                         placeholder="Postal code"
                       />
                     </div>
@@ -267,7 +267,7 @@ const Checkout = () => {
                         type="text"
                         value={formData.country}
                         onChange={handleInputChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                       />
                     </div>
                   </div>
@@ -283,7 +283,7 @@ const Checkout = () => {
                       required
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                       placeholder="+251 9X XXX XXXX"
                     />
                   </div>
@@ -304,7 +304,7 @@ const Checkout = () => {
                       key={method.value}
                       className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition-all ${
                         formData.paymentMethod === method.value
-                          ? 'border-[#2563EB] bg-[#2563EB]/5'
+                          ? 'border-[#16A34A] bg-[#16A34A]/5'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -314,7 +314,7 @@ const Checkout = () => {
                         value={method.value}
                         checked={formData.paymentMethod === method.value}
                         onChange={handleInputChange}
-                        className="mt-1 h-4 w-4 text-[#2563EB] focus:ring-[#2563EB]"
+                        className="mt-1 h-4 w-4 text-[#16A34A] focus:ring-[#16A34A]"
                       />
                       <div className="ml-3 flex-1">
                         <div className="font-medium text-gray-900">{method.label}</div>
@@ -347,7 +347,7 @@ const Checkout = () => {
                           {item.productName || 'Product'}
                         </p>
                         <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
-                        <p className="text-sm font-semibold text-[#2563EB] mt-1">
+                        <p className="text-sm font-semibold text-[#16A34A] mt-1">
                           ETB {((item.price || 0) * item.quantity).toLocaleString()}
                         </p>
                       </div>
@@ -367,7 +367,7 @@ const Checkout = () => {
                   </div>
                   <div className="border-t pt-3 flex justify-between text-lg font-bold">
                     <span>Total</span>
-                    <span className="text-[#2563EB]">ETB {calculateTotal().toLocaleString()}</span>
+                    <span className="text-[#16A34A]">ETB {calculateTotal().toLocaleString()}</span>
                   </div>
                 </div>
 
@@ -384,7 +384,7 @@ const Checkout = () => {
                     step="0.01"
                     value={formData.shippingCost}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2563EB] focus:border-[#2563EB]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   />
                 </div>
 
@@ -392,14 +392,14 @@ const Checkout = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? 'Processing Order...' : 'Place Order'}
                 </button>
 
                 <Link
                   to={fromCart ? '/cart' : '/products'}
-                  className="block text-center mt-4 text-sm text-gray-600 hover:text-[#2563EB]"
+                  className="block text-center mt-4 text-sm text-gray-600 hover:text-[#16A34A]"
                 >
                   {fromCart ? '← Back to Cart' : '← Continue Shopping'}
                 </Link>
