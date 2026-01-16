@@ -342,93 +342,23 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* Enhanced About Section */}
-      <div className="max-w-7xl mx-auto py-20 px-4">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="relative">
-            <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl">
-              <div className="aspect-square bg-gradient-to-br from-[#16A34A]/10 via-[#16A34A]/20 to-[#16A34A]/30 flex items-center justify-center">
-                <svg className="w-64 h-64 text-[#16A34A]/40" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                </svg>
-              </div>
-            </div>
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-[#16A34A]/20 rounded-full opacity-50 blur-2xl"></div>
-            <div className="absolute -top-6 -right-6 w-32 h-32 bg-[#16A34A]/30 rounded-full opacity-50 blur-2xl"></div>
-          </div>
-          <div>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#111827] mb-6">About da-hi Marketplace</h2>
-            <p className="text-lg text-[#111827] mb-4 leading-relaxed">
-              da-hi Marketplace is Ethiopia's premier online shopping destination, connecting buyers and sellers 
-              across the country. We're building a vibrant community where everyone can buy and sell with confidence.
-            </p>
-            <p className="text-lg text-[#111827] mb-6 leading-relaxed">
-              Our mission is to empower local businesses and provide customers with access to a wide variety of 
-              quality products. Whether you're looking to shop or start selling, da-hi Marketplace offers a secure, 
-              user-friendly platform for all your needs.
-            </p>
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-[#16A34A]/10 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <span className="font-semibold text-[#111827]">Quality Assured</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-[#16A34A]/10 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <span className="font-semibold text-gray-900">Fast Shipping</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-[#16A34A]/10 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-                <span className="font-semibold text-gray-900">Secure Payment</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-[#16A34A]/10 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                </div>
-                <span className="font-semibold text-gray-900">24/7 Support</span>
-              </div>
-            </div>
-            <button className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg">
-              Learn More
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Compact CTA Section */}
-      <div className="max-w-7xl mx-auto py-8 px-4">
-        <div className="bg-gradient-to-r from-[#16A34A] to-[#15803D] rounded-lg px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-white text-center sm:text-left">
-            <p className="text-sm font-medium mb-1">Ready to Get Started?</p>
-            <p className="text-xs text-white/90">Join thousands of buyers and sellers on Ethiopia's fastest-growing marketplace</p>
-          </div>
-          <div className="flex gap-3">
-            <Link
-              to="/products"
-              className="bg-white text-[#16A34A] hover:bg-[#F9FAFB] font-semibold py-2 px-4 rounded-md transition-colors text-sm whitespace-nowrap"
-            >
-              Start Shopping
-            </Link>
-            <Link
-              to="/register"
-              className="border-2 border-white text-white hover:bg-white hover:text-[#16A34A] font-semibold py-2 px-4 rounded-md transition-colors text-sm whitespace-nowrap"
-            >
-              Start Selling
-            </Link>
-          </div>
+      {/* Short About Section */}
+      <div className="max-w-7xl mx-auto py-12 px-4 bg-[#F9FAFB]">
+        <div className="text-center max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#111827] mb-4">About da-hi Marketplace</h2>
+          <p className="text-base md:text-lg text-[#6B7280] mb-6 leading-relaxed">
+            Ethiopia's premier online shopping destination, connecting buyers and sellers across the country. 
+            We're building a vibrant community where everyone can buy and sell with confidence.
+          </p>
+          <Link
+            to="/about"
+            className="inline-flex items-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg"
+          >
+            <span>Learn More</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
       </div>
     </section>

@@ -8,6 +8,7 @@ import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import ProviderDashboard from './pages/ProviderDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Checkout from './pages/Checkout';
@@ -17,6 +18,7 @@ import Cart from './components/Cart';
 import './App.css';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+import About from './pages/About';
 
 function App() {
   return (
@@ -32,13 +34,15 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/dashboard" element={<ProviderDashboard />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/promotions" element={<PromotionManagement />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/orders/:id" element={<OrderConfirmation />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} /> 
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/about" element={<About />} /> 
             </Routes>
           </main>
           <Footer />

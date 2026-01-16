@@ -84,12 +84,12 @@ const TopSellers: React.FC = () => {
             {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
               <div
                 key={item}
-                className="bg-white rounded-2xl border border-gray-200 shadow-md overflow-hidden animate-pulse"
+                className="bg-white rounded-2xl border border-gray-200 shadow-md overflow-visible animate-pulse"
               >
-                <div className="aspect-square bg-gray-200"></div>
-                <div className="p-4 space-y-3">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-48 bg-gray-200 rounded-t-2xl"></div>
+                <div className="p-3 space-y-2 -mt-24 bg-white rounded-b-2xl pt-20">
+                  <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-2 bg-gray-200 rounded w-1/2"></div>
                 </div>
               </div>
             ))}
@@ -100,10 +100,10 @@ const TopSellers: React.FC = () => {
               <Link
                 key={seller._id}
                 to={`/products?seller=${seller._id}`}
-                className="group bg-white rounded-2xl border border-gray-200 hover:border-[#16A34A] shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
+                className="group bg-white rounded-2xl border border-gray-200 hover:border-[#16A34A] shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-visible"
               >
-                {/* Logo/Avatar Container */}
-                <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
+                {/* Logo/Avatar Container - Reduced height */}
+                <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 rounded-t-2xl">
                   {seller.avatar ? (
                     <img
                       src={seller.avatar}
@@ -122,9 +122,9 @@ const TopSellers: React.FC = () => {
                   
                   {/* Verified Badge */}
                   {seller.isVerified && (
-                    <div className="absolute top-3 right-3">
-                      <div className="bg-[#16A34A] text-white p-1.5 rounded-full shadow-lg">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="absolute top-2 right-2">
+                      <div className="bg-[#16A34A] text-white p-1 rounded-full shadow-lg">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                       </div>
@@ -132,15 +132,15 @@ const TopSellers: React.FC = () => {
                   )}
                 </div>
 
-                {/* Seller Info */}
-                <div className="p-4 md:p-5">
-                  <h3 className="font-bold text-lg mb-2 text-gray-900 line-clamp-2 group-hover:text-[#16A34A] transition-colors">
+                {/* Seller Info - Overlapping the image (half height) */}
+                <div className="relative -mt-24 bg-white rounded-2xl rounded-t-none p-3 md:p-4 pt-20 shadow-lg border-t border-gray-100 z-10">
+                  <h3 className="font-bold text-sm md:text-base mb-1.5 text-gray-900 line-clamp-2 group-hover:text-[#16A34A] transition-colors">
                     {getDisplayName(seller)}
                   </h3>
                   
                   {/* Location */}
-                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                    <svg className="w-4 h-4 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-1.5 text-xs text-gray-600 mb-2">
+                    <svg className="w-3 h-3 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -148,10 +148,10 @@ const TopSellers: React.FC = () => {
                   </div>
 
                   {/* Stats */}
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <div className="flex items-center gap-3 text-[10px] text-gray-500 mb-2">
                     {seller.productCount > 0 && (
                       <div className="flex items-center gap-1">
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                         </svg>
                         <span>{seller.productCount} Products</span>
@@ -159,7 +159,7 @@ const TopSellers: React.FC = () => {
                     )}
                     {seller.avgRating > 0 && (
                       <div className="flex items-center gap-1">
-                        <svg className="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
                         <span>{seller.avgRating.toFixed(1)}</span>
@@ -168,8 +168,8 @@ const TopSellers: React.FC = () => {
                   </div>
 
                   {/* View Shop Button */}
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <span className="text-sm font-semibold text-[#16A34A] group-hover:text-[#15803D] transition-colors">
+                  <div className="mt-2 pt-2 border-t border-gray-100">
+                    <span className="text-xs font-semibold text-[#16A34A] group-hover:text-[#15803D] transition-colors">
                       View Shop →
                     </span>
                   </div>

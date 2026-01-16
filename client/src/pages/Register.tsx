@@ -138,10 +138,6 @@ const Register = () => {
     }
   };
 
-  // Helper variables for type checking (outside conditional blocks)
-  const isIndividual = userType === 'individual';
-  const isProductProvider = userType === 'product provider';
-
   // Individual Registration Form
   if (userType === 'individual') {
     return (
@@ -158,39 +154,6 @@ const Register = () => {
                 {error}
               </div>
             )}
-
-            {/* Role Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">I am registering as:</label>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setUserType('individual')}
-                  className={`p-4 border-2 rounded-lg text-center transition-all ${
-                    isIndividual
-                      ? 'border-[#16A34A] bg-[#16A34A]/5'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                >
-                  <div className="text-2xl mb-2">👤</div>
-                  <div className="font-semibold">Buyer</div>
-                  <div className="text-xs text-gray-500 mt-1">Find products</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setUserType('product provider')}
-                  className={`p-4 border-2 rounded-lg text-center transition-all ${
-                    isProductProvider
-                      ? 'border-[#16A34A] bg-[#16A34A]/5'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                >
-                  <div className="text-2xl mb-2">🏢</div>
-                  <div className="font-semibold">Product Provider</div>
-                  <div className="text-xs text-gray-500 mt-1">Offer products</div>
-                </button>
-              </div>
-            </div>
 
             {/* Full Name */}
             <div>
@@ -403,39 +366,6 @@ const Register = () => {
                 {error}
               </div>
             )}
-
-            {/* Role Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">I am registering as:</label>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setUserType('individual')}
-                  className={`p-4 border-2 rounded-lg text-center transition-all ${
-                    isIndividual
-                      ? 'border-[#16A34A] bg-[#16A34A]/5'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                >
-                  <div className="text-2xl mb-2">👤</div>
-                  <div className="font-semibold">Buyer</div>
-                  <div className="text-xs text-gray-500 mt-1">Find products</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setUserType('product provider')}
-                  className={`p-4 border-2 rounded-lg text-center transition-all ${
-                    isProductProvider
-                      ? 'border-[#16A34A] bg-[#16A34A]/5'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                >
-                  <div className="text-2xl mb-2">🏢</div>
-                  <div className="font-semibold">Product Provider</div>
-                  <div className="text-xs text-gray-500 mt-1">Offer products</div>
-                </button>
-              </div>
-            </div>
 
             {/* Provider Type */}
             <div>
@@ -865,41 +795,109 @@ const Register = () => {
 
   // Initial Role Selection Screen
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl w-full">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl w-full">
+        {/* Logo Section */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-extrabold text-gray-900">Create Your Account</h2>
-          <p className="mt-2 text-sm text-gray-600">Join thousands of satisfied customers</p>
+          <Link to="/" className="inline-block mb-4">
+            <img 
+              src="/logo2.png" 
+              alt="da-hi Logo" 
+              className="h-16 w-auto mx-auto"
+            />
+          </Link>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+            Create Your Account
+          </h2>
+          <p className="text-lg text-gray-600">
+            Join thousands of satisfied customers
+          </p>
         </div>
 
-        <div className="bg-white shadow-lg rounded-lg p-8">
-          <label className="block text-sm font-medium text-gray-700 mb-4">I am registering as:</label>
-          <div className="grid grid-cols-2 gap-6">
+        {/* Registration Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
+          <label className="block text-base font-semibold text-gray-900 mb-6 text-center">
+            I am registering as:
+          </label>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* Buyer Card */}
             <button
               type="button"
               onClick={() => setUserType('individual')}
-              className="p-6 border-2 border-gray-300 rounded-lg text-center hover:border-[#16A34A] hover:bg-[#16A34A]/5 transition-all"
+              className="group relative p-8 border-2 border-gray-200 rounded-xl text-center hover:border-[#16A34A] hover:bg-gradient-to-br hover:from-[#16A34A]/5 hover:to-[#16A34A]/10 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
             >
-              <div className="text-4xl mb-3">👤</div>
-              <div className="font-semibold text-lg">Buyer</div>
-              <div className="text-sm text-gray-500 mt-2">Find products</div>
+              <div className="mb-4 flex justify-center">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-4xl group-hover:from-[#16A34A] group-hover:to-[#15803D] group-hover:scale-110 transition-all duration-300">
+                  <svg className="w-10 h-10 text-blue-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="font-bold text-xl text-gray-900 group-hover:text-[#16A34A] transition-colors mb-2">
+                Buyer
+              </div>
+              <div className="text-sm text-gray-600 group-hover:text-gray-700">
+                Find products
+              </div>
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <svg className="w-5 h-5 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
             </button>
+
+            {/* Product Provider Card */}
             <button
               type="button"
               onClick={() => setUserType('product provider')}
-              className="p-6 border-2 border-gray-300 rounded-lg text-center hover:border-[#16A34A] hover:bg-[#16A34A]/5 transition-all"
+              className="group relative p-8 border-2 border-gray-200 rounded-xl text-center hover:border-[#16A34A] hover:bg-gradient-to-br hover:from-[#16A34A]/5 hover:to-[#16A34A]/10 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
             >
-              <div className="text-4xl mb-3">🏢</div>
-              <div className="font-semibold text-lg">Product Provider</div>
-              <div className="text-sm text-gray-500 mt-2">Offer products</div>
+              <div className="mb-4 flex justify-center">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center text-4xl group-hover:from-[#16A34A] group-hover:to-[#15803D] group-hover:scale-110 transition-all duration-300">
+                  <svg className="w-10 h-10 text-green-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+              </div>
+              <div className="font-bold text-xl text-gray-900 group-hover:text-[#16A34A] transition-colors mb-2">
+                Product Provider
+              </div>
+              <div className="text-sm text-gray-600 group-hover:text-gray-700">
+                Offer products
+              </div>
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <svg className="w-5 h-5 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
             </button>
           </div>
 
-          <p className="text-center text-sm text-gray-600 mt-6">
-            Already have an account?{' '}
-            <Link to="/login" className="font-medium text-[#16A34A] hover:text-[#15803D]">
-              Sign In
-            </Link>
+          {/* Sign In Link */}
+          <div className="text-center pt-6 border-t border-gray-200">
+            <p className="text-sm text-gray-600">
+              Already have an account?{' '}
+              <Link 
+                to="/login" 
+                className="font-semibold text-[#16A34A] hover:text-[#15803D] transition-colors inline-flex items-center gap-1"
+              >
+                Sign In
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 text-center">
+          <p className="text-xs text-gray-500">
+            By continuing, you agree to da-hi's{' '}
+            <Link to="/terms-of-service" className="text-[#16A34A] hover:underline">Terms of Service</Link>
+            {' '}and{' '}
+            <Link to="/privacy-policy" className="text-[#16A34A] hover:underline">Privacy Policy</Link>
           </p>
         </div>
       </div>
