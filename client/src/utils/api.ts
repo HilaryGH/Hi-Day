@@ -115,6 +115,14 @@ export const productsAPI = {
     fetchAPI(`/products/${id}`, {
       method: 'DELETE',
     }),
+  getBestSellers: (limit?: number) => {
+    const queryString = limit ? `?limit=${limit}` : '';
+    return fetchAPI(`/products/bestsellers${queryString}`);
+  },
+  toggleBestSeller: (id: string) =>
+    fetchAPI(`/products/${id}/bestseller`, {
+      method: 'PUT',
+    }),
 };
 
 // Cart API
@@ -255,6 +263,28 @@ export const adminAPI = {
     return fetchAPI(`/admin/orders?${queryString}`);
   },
   getOrderStats: () => fetchAPI('/admin/orders/stats'),
+};
+
+// Sellers API
+export const sellersAPI = {
+  getTopSellers: (limit?: number) => {
+    const queryString = limit ? `?limit=${limit}` : '';
+    return fetchAPI(`/admin/top-sellers${queryString}`);
+  },
+};
+
+// Subscription API
+export const subscriptionAPI = {
+  subscribe: (email: string) =>
+    fetchAPI('/subscriptions/subscribe', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+  unsubscribe: (email: string) =>
+    fetchAPI('/subscriptions/unsubscribe', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
 };
 
 // Promotion API

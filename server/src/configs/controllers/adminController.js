@@ -312,6 +312,105 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
+// Get top sellers (based on product sales and ratings)
+export const getTopSellers = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 8;
+    
+    // Get sellers with their products - prioritize verified but include all active sellers
+    const sellerRoles = ['seller', 'product provider'];
+    
+    // First try to get verified sellers
+    let sellers = await User.find({ 
+      role: { $in: sellerRoles },
+      isActive: true,
+      isVerified: true
+    })
+      .select('name companyName location city avatar isVerified role email phone')
+      .limit(limit * 3);
+    
+    // If not enough verified sellers, include unverified ones too
+    if (sellers.length < limit) {
+      const additionalSellers = await User.find({ 
+        role: { $in: sellerRoles },
+        isActive: true,
+        isVerified: false,
+        _id: { $nin: sellers.map(s => s._id) }
+      })
+        .select('name companyName location city avatar isVerified role email phone')
+        .limit(limit * 3 - sellers.length);
+      
+      sellers = [...sellers, ...additionalSellers];
+    }
+
+    // Get all orders to calculate seller performance
+    const allOrders = await Order.find({
+      orderStatus: { $in: ['delivered', 'shipped', 'processing'] }
+    }).populate('items.product', 'seller');
+
+    // Get products for each seller and calculate stats
+    const sellersWithStats = await Promise.all(
+      sellers.map(async (seller) => {
+        // Count products
+        const productCount = await Product.countDocuments({ 
+          seller: seller._id,
+          isActive: true 
+        });
+
+        // Get products to calculate average rating and find order count
+        const products = await Product.find({ 
+          seller: seller._id,
+          isActive: true 
+        }).select('_id rating');
+
+        const productIds = products.map(p => p._id.toString());
+
+        // Calculate average rating across all products
+        let totalRating = 0;
+        let totalReviews = 0;
+        products.forEach(product => {
+          if (product.rating && product.rating.average) {
+            totalRating += product.rating.average * product.rating.count;
+            totalReviews += product.rating.count;
+          }
+        });
+        const avgRating = totalReviews > 0 ? totalRating / totalReviews : 0;
+
+        // Count orders that contain at least one product from this seller
+        let orderCount = 0;
+        allOrders.forEach(order => {
+          const hasSellerProduct = order.items.some(item => 
+            item.product && productIds.includes(item.product._id.toString())
+          );
+          if (hasSellerProduct) {
+            orderCount++;
+          }
+        });
+
+        return {
+          ...seller.toObject(),
+          productCount,
+          avgRating: parseFloat(avgRating.toFixed(1)),
+          totalReviews,
+          orderCount,
+          score: (orderCount * 10) + (avgRating * 2) + productCount // Simple scoring
+        };
+      })
+    );
+
+    // Sort by score and limit
+    const topSellers = sellersWithStats
+      .filter(seller => seller.productCount > 0) // Only sellers with products
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+      .map(({ score, ...seller }) => seller); // Remove score from response
+
+    res.json({ sellers: topSellers });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Get order statistics for dashboard
 export const getOrderStats = async (req, res) => {
   try {

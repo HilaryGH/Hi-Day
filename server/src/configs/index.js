@@ -13,6 +13,7 @@ import Cart from './models/Cart.js';
 import Order from './models/Order.js';
 import Review from './models/Review.js'; // Register Review model even if not used yet
 import Promotion from './models/Promotion.js';
+import Subscription from './models/Subscription.js';
 
 // Import routes
 import authRoutes from './routes/authRoutes.js';
@@ -21,6 +22,7 @@ import cartRoutes from './routes/cartRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import promotionRoutes from './routes/promotionRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import subscriptionRoutes from './routes/subscriptionRoutes.js';
 
 dotenv.config();
 
@@ -71,6 +73,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/promotions', promotionRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 
 // MongoDB connection
 mongoose

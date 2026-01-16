@@ -10,11 +10,15 @@ import {
   deleteProduct,
   toggleProductStatus,
   getAllOrders,
-  getOrderStats
+  getOrderStats,
+  getTopSellers
 } from '../controllers/adminController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
+
+// Public route - Top sellers (no authentication required)
+router.get('/top-sellers', getTopSellers);
 
 // Dashboard stats - requires authentication and admin role
 router.get('/stats', protect, authorize('admin', 'super admin'), getDashboardStats);

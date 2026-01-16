@@ -5,7 +5,9 @@ import {
   getProduct,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  getBestSellers,
+  toggleBestSeller
 } from '../controllers/productController.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { uploadProductImages } from '../middleware/upload.js';
@@ -13,6 +15,7 @@ import { uploadProductImages } from '../middleware/upload.js';
 const router = express.Router();
 
 router.get('/', getProducts);
+router.get('/bestsellers', getBestSellers);
 router.get('/:id', getProduct);
 
 // Create product with file upload - middleware order: protect -> authorize -> upload -> create
@@ -43,6 +46,7 @@ router.post('/',
   createProduct
 );
 router.put('/:id', protect, updateProduct);
+router.put('/:id/bestseller', protect, authorize('admin', 'super admin'), toggleBestSeller);
 router.delete('/:id', protect, deleteProduct);
 
 export default router;

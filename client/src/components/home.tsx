@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { productsAPI } from "../utils/api";
+import BestSellers from "./BestSellers";
+import TopSellers from "./TopSellers";
+import RecentProducts from "./RecentProducts";
 
 const categories = [
   { name: "Fashion & Apparel", categoryName: "Fashion & Apparel" },
@@ -289,50 +292,14 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* Enhanced Features Section */}
-      <div className="max-w-7xl mx-auto py-20 px-4 bg-white">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-[#111827] mb-4">Why Choose da-hi Marketplace?</h2>
-          <p className="text-xl text-[#6B7280] max-w-2xl mx-auto">
-            Your trusted platform for buying and selling with confidence
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-[#F9FAFB] hover:shadow-xl transition-all transform hover:-translate-y-2">
-            <div className="w-20 h-20 bg-[#16A34A]/10 rounded-full flex items-center justify-center mb-6">
-              <svg className="w-10 h-10 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-            </div>
-            <h3 className="font-bold text-2xl mb-3 text-[#111827]">Secure Transactions</h3>
-            <p className="text-[#6B7280] text-center leading-relaxed">
-              Safe and secure payment processing with buyer protection. Your transactions are always protected.
-            </p>
-          </div>
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-[#F9FAFB] hover:shadow-xl transition-all transform hover:-translate-y-2">
-            <div className="w-20 h-20 bg-[#16A34A]/10 rounded-full flex items-center justify-center mb-6">
-              <svg className="w-10 h-10 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="font-bold text-2xl mb-3 text-gray-900">Verified Sellers</h3>
-            <p className="text-gray-600 text-center leading-relaxed">
-              All sellers are verified and rated by our community. Shop with confidence from trusted vendors.
-            </p>
-          </div>
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-[#F9FAFB] hover:shadow-xl transition-all transform hover:-translate-y-2">
-            <div className="w-20 h-20 bg-[#16A34A]/10 rounded-full flex items-center justify-center mb-6">
-              <svg className="w-10 h-10 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <h3 className="font-bold text-2xl mb-3 text-gray-900">Fast Delivery</h3>
-            <p className="text-gray-600 text-center leading-relaxed">
-              Nationwide delivery to all cities in Ethiopia. Fast, secure, and reliable shipping options.
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Best Sellers Section */}
+      <BestSellers />
+
+      {/* Top Sellers Section */}
+      <TopSellers />
+
+      {/* Recent Products Section */}
+      <RecentProducts />
 
       {/* Enhanced Categories Section */}
       <div className="max-w-7xl mx-auto py-20 px-4 bg-[#F9FAFB]">
@@ -441,26 +408,26 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* Enhanced CTA Section */}
-      <div className="relative w-full bg-gradient-to-r from-[#16A34A] to-[#15803D] py-20 px-4 overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
-        </div>
-        <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Ready to Get Started?
-          </h2>
-          <p className="text-xl md:text-2xl mb-8 text-white/90">
-            Join thousands of buyers and sellers on Ethiopia's fastest-growing marketplace
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="bg-white text-[#16A34A] hover:bg-[#F9FAFB] font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-xl text-lg">
+      {/* Compact CTA Section */}
+      <div className="max-w-7xl mx-auto py-8 px-4">
+        <div className="bg-gradient-to-r from-[#16A34A] to-[#15803D] rounded-lg px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-white text-center sm:text-left">
+            <p className="text-sm font-medium mb-1">Ready to Get Started?</p>
+            <p className="text-xs text-white/90">Join thousands of buyers and sellers on Ethiopia's fastest-growing marketplace</p>
+          </div>
+          <div className="flex gap-3">
+            <Link
+              to="/products"
+              className="bg-white text-[#16A34A] hover:bg-[#F9FAFB] font-semibold py-2 px-4 rounded-md transition-colors text-sm whitespace-nowrap"
+            >
               Start Shopping
-            </button>
-            <button className="border-2 border-white text-white hover:bg-white hover:text-[#16A34A] font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 text-lg">
+            </Link>
+            <Link
+              to="/register"
+              className="border-2 border-white text-white hover:bg-white hover:text-[#16A34A] font-semibold py-2 px-4 rounded-md transition-colors text-sm whitespace-nowrap"
+            >
               Start Selling
-            </button>
+            </Link>
           </div>
         </div>
       </div>

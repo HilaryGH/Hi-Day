@@ -230,6 +230,46 @@ export const deleteProduct = async (req, res) => {
   }
 };
 
+// Get best sellers
+export const getBestSellers = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 4;
+    
+    const products = await Product.find({ 
+      isActive: true, 
+      isBestSeller: true 
+    })
+      .populate('seller', 'name email')
+      .sort({ createdAt: -1 })
+      .limit(limit);
+
+    res.json({ products });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Toggle best seller status (admin/super admin only)
+export const toggleBestSeller = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    product.isBestSeller = !product.isBestSeller;
+    await product.save();
+
+    res.json({ 
+      product, 
+      message: product.isBestSeller ? 'Product marked as best seller' : 'Product removed from best sellers' 
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 
 
