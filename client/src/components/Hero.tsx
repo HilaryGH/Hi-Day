@@ -4,20 +4,16 @@ import { promotionAPI } from '../utils/api';
 
 const Hero = () => {
   const [promotion, setPromotion] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPromotion = async () => {
       try {
-        setLoading(true);
         const response = await promotionAPI.getAll({ active: true, limit: 1 });
         if (response.promotions && response.promotions.length > 0) {
           setPromotion(response.promotions[0]);
         }
       } catch (error) {
         console.error('Error fetching promotion:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
