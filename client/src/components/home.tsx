@@ -29,6 +29,7 @@ const Home: React.FC = () => {
   const [promotion, setPromotion] = useState<any>(null);
   const [discountedProduct, setDiscountedProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const fetchCategoryProducts = async () => {
@@ -131,6 +132,16 @@ const Home: React.FC = () => {
     fetchNewArrivals();
     fetchPromotion();
   }, []);
+
+  // Auto-slide carousel for New Arrivals
+  useEffect(() => {
+    if (newArrivals.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % newArrivals.length);
+      }, 3000); // Change slide every 3 seconds
+      return () => clearInterval(interval);
+    }
+  }, [newArrivals.length]);
 
 
   return (
@@ -260,22 +271,6 @@ const Home: React.FC = () => {
                       </span>
                     </div>
                   )}
-
-                  {/* CTA Button */}
-                  <Link
-                    to="/products"
-                    className="inline-flex items-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2.5 px-6 md:py-3 md:px-8 rounded-lg transition-all transform hover:scale-105 shadow-xl w-fit mt-2"
-                  >
-                    <span className="text-sm md:text-base">Explore Now</span>
-                    <svg 
-                      className="w-4 h-4 md:w-5 md:h-5" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </Link>
                 </div>
 
                 {/* Decorative Elements */}
@@ -287,9 +282,45 @@ const Home: React.FC = () => {
             {/* Right Side - Two Cards Side by Side on Mobile, Stacked on Desktop */}
             <div className="md:col-span-2 flex flex-row md:flex-col gap-3 md:gap-2.5 md:h-full">
               {/* Get up to 20% OFF */}
-              <div className="flex-1 bg-gradient-to-br from-[#16A34A] to-[#15803D] rounded-lg p-3 md:p-2 text-white relative overflow-hidden min-h-[100px] md:flex-1">
-                <div className="absolute top-0 right-0 w-12 h-12 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                <div className="relative z-10 h-full flex flex-col justify-between">
+              <div className="flex-1 rounded-lg p-3 md:p-2 text-white relative overflow-hidden min-h-[100px] md:flex-1 flex">
+                {/* Background Gradient for Content Section - Left */}
+                <div className="absolute left-0 top-0 bottom-0 w-1/2 bg-gradient-to-br from-[#16A34A] to-[#15803D] z-0"></div>
+                
+                {/* Background Image - Right Side */}
+                <div 
+                  className="absolute right-0 top-0 bottom-0 w-1/2"
+                  style={{
+                    backgroundImage: 'url(/dahi.png)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                  }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-l from-[#16A34A]/80 to-transparent"></div>
+                </div>
+
+                {/* Wave Separator */}
+                <div className="absolute left-1/2 top-0 bottom-0 w-12 md:w-16 transform -translate-x-1/2 z-0">
+                  <svg 
+                    className="absolute inset-0 w-full h-full" 
+                    viewBox="0 0 100 200" 
+                    preserveAspectRatio="none"
+                  >
+                    {/* Main Wave */}
+                    <path 
+                      d="M0,0 Q50,50 0,100 T0,200 L0,200 L100,200 L100,0 Z" 
+                      fill="rgba(255, 255, 255, 0.15)"
+                    />
+                    {/* Secondary Wave */}
+                    <path 
+                      d="M0,20 Q50,70 0,120 T0,200 L0,200 L100,200 L100,20 Z" 
+                      fill="rgba(255, 255, 255, 0.1)"
+                    />
+                  </svg>
+                </div>
+
+                {/* Content Section - Left Side */}
+                <div className="relative z-10 w-1/2 flex flex-col justify-between pr-2 md:pr-1">
                   <div>
                     <h3 className="text-xs md:text-xs font-bold mb-1 md:mb-0.5">Get up to</h3>
                     <div className="text-xl md:text-xl font-bold mb-1 md:mb-0.5">20% OFF</div>
@@ -302,66 +333,113 @@ const Home: React.FC = () => {
                     Claim Offer
                   </Link>
                 </div>
+                
+                <div className="absolute top-0 right-0 w-12 h-12 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" style={{ zIndex: 10 }}></div>
               </div>
 
-              {/* New Arrivals */}
-              <Link 
-                to="/products?sortBy=createdAt&order=desc"
-                className="flex-1 bg-white rounded-lg border border-[#E5E7EB] relative overflow-hidden group min-h-[100px] md:flex-1 hover:border-[#16A34A] transition-all md:flex"
-              >
-                {/* Background Image - Full width/height on mobile, half width on desktop */}
-                <div className="absolute inset-0 md:relative md:w-1/2 md:inset-auto h-full flex items-center justify-center overflow-hidden bg-[#F9FAFB]">
-                  {newArrivals.length > 0 && newArrivals[0]?.images && newArrivals[0].images.length > 0 ? (
-                    <img 
-                      src={newArrivals[0].images[0]} 
-                      alt={newArrivals[0].name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <svg className="w-10 h-10 md:w-8 md:h-8 text-[#16A34A]/30 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {/* New Arrivals - Sliding Carousel */}
+              <div className="flex-1 bg-white rounded-lg border border-[#E5E7EB] relative overflow-hidden min-h-[100px] md:flex-1 hover:border-[#16A34A] transition-all md:flex">
+                {newArrivals.length > 0 ? (
+                  <>
+                    {/* Image Carousel Container - Full width on mobile, half on desktop */}
+                    <div className="absolute inset-0 md:relative md:w-1/2 h-full overflow-hidden bg-[#F9FAFB]">
+                      <div 
+                        className="flex transition-transform duration-500 ease-in-out h-full"
+                        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                      >
+                        {newArrivals.slice(0, 3).map((product, index) => (
+                          <div 
+                            key={index}
+                            className="min-w-full h-full flex items-center justify-center p-2"
+                          >
+                            {product?.images && product.images.length > 0 ? (
+                              <img 
+                                src={product.images[0]} 
+                                alt={product.name}
+                                className="max-w-full max-h-full object-contain"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <svg className="w-10 h-10 md:w-8 md:h-8 text-[#16A34A]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Mobile View - Overlaid Content */}
+                    <div className="absolute inset-0 md:hidden flex flex-col justify-between z-10 pointer-events-none">
+                      <div className="flex justify-end pt-0 pr-3">
+                        <div className="bg-[#16A34A]/90 backdrop-blur-md px-3 py-1.5 rounded-lg pointer-events-auto">
+                          <h3 className="text-xs font-bold text-white">New Arrivals</h3>
+                        </div>
+                      </div>
+                      <div className="flex justify-start pl-3 pb-1">
+                        <Link
+                          to="/products?sortBy=createdAt&order=desc"
+                          className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-4 rounded-md transition-colors text-[10px] pointer-events-auto"
+                        >
+                          Shop Now
+                        </Link>
+                      </div>
+                    </div>
+                    
+                    {/* Desktop View - Side-by-side content */}
+                    <div className="hidden md:flex md:w-1/2 p-2 flex flex-col justify-between h-full">
+                      <div>
+                        <h3 className="text-[10px] font-bold text-[#111827] mb-0.5">New Arrivals</h3>
+                        <p className="text-[9px] text-[#6B7280] mb-1">Discover the latest products</p>
+                        {newArrivals[currentSlide] && (
+                          <p className="text-[8px] font-medium text-[#111827] line-clamp-2 mb-1">
+                            {newArrivals[currentSlide].name}
+                          </p>
+                        )}
+                        {newArrivals.length > 1 && (
+                          <p className="text-[8px] text-[#6B7280]">
+                            {currentSlide + 1} of {Math.min(newArrivals.length, 3)}
+                          </p>
+                        )}
+                      </div>
+                      <Link
+                        to="/products?sortBy=createdAt&order=desc"
+                        className="inline-block bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-1 px-2.5 rounded-md transition-colors text-[9px] w-full text-center"
+                      >
+                        Shop Now
+                      </Link>
+                    </div>
+
+                    {/* Carousel Indicators */}
+                    {newArrivals.length > 1 && (
+                      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-20">
+                        {newArrivals.slice(0, 3).map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setCurrentSlide(index)}
+                            className={`h-1.5 rounded-full transition-all ${
+                              index === currentSlide 
+                                ? 'bg-[#16A34A] w-6' 
+                                : 'bg-white/50 w-1.5 hover:bg-white/70'
+                            }`}
+                            aria-label={`Go to slide ${index + 1}`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex-1 flex items-center justify-center bg-[#F9FAFB]">
+                    <div className="text-center">
+                      <svg className="w-10 h-10 md:w-8 md:h-8 text-[#16A34A]/30 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                       </svg>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Mobile View - Overlaid Content */}
-                <div className="absolute inset-0 md:hidden flex flex-col justify-between z-10">
-                  {/* "New Arrivals" text in top right with orange blur background - no gap from top */}
-                  <div className="flex justify-end pt-0 pr-3">
-                    <div className="bg-[#16A34A]/90 backdrop-blur-md px-3 py-1.5 rounded-lg">
-                      <h3 className="text-xs font-bold text-white">New Arrivals</h3>
+                      <p className="text-[8px] text-[#6B7280]">No new arrivals</p>
                     </div>
                   </div>
-                  
-                  {/* Shop Now button at bottom - very small gap from bottom */}
-                  <div className="flex justify-start pl-3 pb-1">
-                    <div className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-4 rounded-md transition-colors text-[10px] w-fit">
-                      Shop Now
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Desktop View - Side-by-side content */}
-                <div className="hidden md:flex md:w-1/2 p-2 flex flex-col justify-between h-full">
-                  <div>
-                    <h3 className="text-[10px] font-bold text-[#111827] mb-0.5">New Arrivals</h3>
-                    <p className="text-[9px] text-[#6B7280] mb-1">Discover the latest products</p>
-                    {newArrivals.length > 0 && newArrivals[0] && (
-                      <p className="text-[8px] font-medium text-[#111827] line-clamp-2 mb-1">
-                        {newArrivals[0].name}
-                      </p>
-                    )}
-                    {newArrivals.length > 1 && (
-                      <p className="text-[8px] text-[#6B7280]">+{newArrivals.length - 1} more</p>
-                    )}
-                  </div>
-                  <div className="inline-block bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-1 px-2.5 rounded-md transition-colors text-[9px] w-full text-center">
-                    Shop Now
-                  </div>
-                </div>
-              </Link>
+                )}
+              </div>
             </div>
           </div>
 
@@ -448,7 +526,7 @@ const Home: React.FC = () => {
                 <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {Array.from({ length: 4 }).map((_, j) => (
-                    <div key={j} className="h-48 bg-gray-200 rounded-lg"></div>
+                    <div key={j} className="h-32 md:h-36 bg-gray-200 rounded-lg"></div>
                   ))}
                 </div>
               </div>
@@ -479,16 +557,16 @@ const Home: React.FC = () => {
                           to={`/products/${product._id}`}
                           className="group bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition-all"
                         >
-                          <div className="relative h-48 bg-gray-100 overflow-hidden">
+                          <div className="relative h-32 md:h-36 bg-gray-100 overflow-hidden">
                             {product.images && product.images.length > 0 ? (
                               <img
                                 src={product.images[0]}
                                 alt={product.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-12 h-12 md:w-16 md:h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                               </div>
