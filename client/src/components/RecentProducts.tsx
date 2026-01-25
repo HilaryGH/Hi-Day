@@ -43,26 +43,31 @@ const RecentProducts: React.FC = () => {
     <section className="w-full bg-gradient-to-br from-gray-50 via-white to-gray-50 py-16 md:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <svg 
-              className="w-6 h-6 text-[#16A34A]" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="text-sm font-semibold text-[#16A34A] uppercase tracking-wider">
-              New Arrivals
-            </span>
-          </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+        <div className="mb-12 flex items-center justify-between">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
             Recent Products
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Discover our latest additions to the marketplace
-          </p>
+          {!loading && products.length > 0 && (
+            <Link
+              to="/products?sortBy=createdAt&order=desc"
+              className="inline-flex items-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-4 md:py-2.5 md:px-6 rounded-lg transition-all transform hover:scale-105 shadow-lg text-sm md:text-base"
+            >
+              <span>View All Recent Products</span>
+              <svg 
+                className="w-4 h-4 md:w-5 md:h-5" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M13 7l5 5m0 0l-5 5m5-5H6" 
+                />
+              </svg>
+            </Link>
+          )}
         </div>
 
         {/* Products Grid */}
@@ -221,31 +226,6 @@ const RecentProducts: React.FC = () => {
         ) : (
           <div className="text-center py-12 text-gray-500">
             <p>No recent products available at the moment.</p>
-          </div>
-        )}
-
-        {/* View All Button */}
-        {!loading && products.length > 0 && (
-          <div className="text-center mt-12">
-            <Link
-              to="/products?sortBy=createdAt&order=desc"
-              className="inline-flex items-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg"
-            >
-              <span>View All Recent Products</span>
-              <svg 
-                className="w-5 h-5" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M13 7l5 5m0 0l-5 5m5-5H6" 
-                />
-              </svg>
-            </Link>
           </div>
         )}
       </div>

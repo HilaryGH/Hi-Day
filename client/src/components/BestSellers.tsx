@@ -251,3 +251,7 @@ const BestSellers: React.FC = () => {
 
 export default BestSellers;
 
+
+
+
+

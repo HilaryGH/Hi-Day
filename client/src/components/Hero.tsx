@@ -1,4 +1,29 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { promotionAPI } from '../utils/api';
+
 const Hero = () => {
+  const [promotion, setPromotion] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPromotion = async () => {
+      try {
+        setLoading(true);
+        const response = await promotionAPI.getAll({ active: true, limit: 1 });
+        if (response.promotions && response.promotions.length > 0) {
+          setPromotion(response.promotions[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching promotion:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPromotion();
+  }, []);
+
   return (
     <section id="home" className="relative bg-gradient-to-br from-green-50 via-white to-green-50 overflow-hidden">
       {/* Decorative background elements */}
@@ -12,22 +37,44 @@ const Hero = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left Column - Text Content */}
           <div className="text-center md:text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Premium Hair & Wigs
-              <span className="block text-[#16A34A] mt-2">From China to Ethiopia</span>
+            {/* Promotion Banner */}
+            <div className="mb-4">
+              <div className="inline-block bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold mb-2 animate-pulse">
+                {promotion?.bannerText || 'SALE'}
+              </div>
+              <div className="text-sm text-orange-600 font-semibold">
+                Limited Time
+              </div>
+            </div>
+
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+              {promotion?.name || 'Used African Shape Mirror'}
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
-              Discover our exquisite collection of high-quality human hair and wigs, 
-              carefully imported from China and distributed across Ethiopia. 
-              Elevate your style with premium products you can trust.
+            
+            <p className="text-xl md:text-2xl lg:text-3xl text-[#16A34A] font-semibold mb-6 leading-relaxed">
+              {promotion?.description || 'Beautiful Handcrafted African Design'}
             </p>
+            
+            {/* Discount Badge */}
+            {promotion && promotion.discountValue && (
+              <div className="mb-6">
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-lg shadow-lg">
+                  <span className="text-2xl font-bold">
+                    {promotion.discountType === 'percentage' 
+                      ? `${promotion.discountValue}% OFF`
+                      : `Save ${promotion.discountValue} ETB`}
+                  </span>
+                </div>
+              </div>
+            )}
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <button className="bg-[#16A34A] text-white px-8 py-4 rounded-lg hover:bg-[#15803D] transition-all transform hover:scale-105 font-semibold text-lg shadow-lg">
-                Browse Collection
-              </button>
-              <button className="bg-white text-[#16A34A] border-2 border-[#16A34A] px-8 py-4 rounded-lg hover:bg-green-50 transition-all transform hover:scale-105 font-semibold text-lg">
-                Learn More
-              </button>
+              <Link 
+                to="/products"
+                className="bg-[#16A34A] text-white px-8 py-4 rounded-lg hover:bg-[#15803D] transition-all transform hover:scale-105 font-semibold text-lg shadow-lg text-center"
+              >
+                Shop Now
+              </Link>
             </div>
             
             {/* Stats */}
@@ -50,17 +97,12 @@ const Hero = () => {
           {/* Right Column - Image/Visual */}
           <div className="relative">
             <div className="relative z-10">
-              {/* Placeholder for hero image - you can replace this with an actual image */}
-              <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-8 shadow-2xl">
-                <div className="aspect-square bg-white rounded-xl flex items-center justify-center">
-                  <svg 
-                    className="w-full h-full text-green-300" 
-                    fill="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                  </svg>
-                </div>
+              <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-4 shadow-2xl overflow-hidden">
+                <img 
+                  src={promotion?.image || '/africa mirror.jpg'} 
+                  alt={promotion?.name || 'African Shape Mirror'}
+                  className="w-full h-full object-cover rounded-xl aspect-square"
+                />
               </div>
             </div>
             {/* Decorative elements */}

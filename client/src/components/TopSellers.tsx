@@ -49,25 +49,31 @@ const TopSellers: React.FC = () => {
     <section className="w-full bg-white py-16 md:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <svg 
-              className="w-6 h-6 text-[#16A34A]" 
-              fill="currentColor" 
-              viewBox="0 0 20 20"
-            >
-              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-            </svg>
-            <span className="text-sm font-semibold text-[#16A34A] uppercase tracking-wider">
-              Top Sellers
-            </span>
-          </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Featured Sellers
+        <div className="mb-12 flex items-center justify-between">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
+            Top Sellers
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Shop from our verified and trusted sellers across Ethiopia
-          </p>
+          {!loading && sellers.length > 0 && (
+            <Link
+              to="/products"
+              className="inline-flex items-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-4 md:py-2.5 md:px-6 rounded-lg transition-all transform hover:scale-105 shadow-lg text-sm md:text-base"
+            >
+              <span>View All Sellers</span>
+              <svg 
+                className="w-4 h-4 md:w-5 md:h-5" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M13 7l5 5m0 0l-5 5m5-5H6" 
+                />
+              </svg>
+            </Link>
+          )}
         </div>
 
         {/* Error Message */}
@@ -180,31 +186,6 @@ const TopSellers: React.FC = () => {
         ) : (
           <div className="text-center py-12 text-gray-500">
             <p>No top sellers available at the moment.</p>
-          </div>
-        )}
-
-        {/* View All Button */}
-        {!loading && sellers.length > 0 && (
-          <div className="text-center mt-12">
-            <Link
-              to="/products"
-              className="inline-flex items-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg"
-            >
-              <span>View All Sellers</span>
-              <svg 
-                className="w-5 h-5" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M13 7l5 5m0 0l-5 5m5-5H6" 
-                />
-              </svg>
-            </Link>
           </div>
         )}
       </div>

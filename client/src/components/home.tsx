@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { productsAPI } from "../utils/api";
+import { productsAPI, promotionAPI } from "../utils/api";
 import BestSellers from "./BestSellers";
 import TopSellers from "./TopSellers";
 import RecentProducts from "./RecentProducts";
@@ -18,37 +18,44 @@ const categories = [
 
 interface CategoryProduct {
   category: string;
-  product: any | null;
+  categoryName: string;
+  products: any[];
+  total: number;
 }
 
 const Home: React.FC = () => {
   const [categoryProducts, setCategoryProducts] = useState<CategoryProduct[]>([]);
   const [newArrivals, setNewArrivals] = useState<any[]>([]);
+  const [promotion, setPromotion] = useState<any>(null);
+  const [discountedProduct, setDiscountedProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCategoryProducts = async () => {
       try {
         setLoading(true);
-        // Fetch first product from each of the first 4 categories
-        const popularCategories = categories.slice(0, 4);
-        const productPromises = popularCategories.map(async (category) => {
+        // Fetch products from all categories
+        const productPromises = categories.map(async (category) => {
           try {
             const response = await productsAPI.getAll({
               category: category.categoryName,
-              limit: 1,
+              limit: 4, // Fetch up to 4 products per category
               sortBy: 'createdAt',
               order: 'desc'
             });
             return {
               category: category.name,
-              product: response.products && response.products.length > 0 ? response.products[0] : null
+              categoryName: category.categoryName,
+              products: response.products || [],
+              total: response.pagination?.total || 0
             };
           } catch (error) {
             console.error(`Error fetching products for ${category.name}:`, error);
             return {
               category: category.name,
-              product: null
+              categoryName: category.categoryName,
+              products: [],
+              total: 0
             };
           }
         });
@@ -78,13 +85,53 @@ const Home: React.FC = () => {
       }
     };
 
+    const fetchPromotion = async () => {
+      try {
+        const response = await promotionAPI.getAll({ active: true, limit: 1 });
+        if (response.promotions && response.promotions.length > 0) {
+          const fetchedPromotion = response.promotions[0];
+          setPromotion(fetchedPromotion);
+          
+          // If promotion has products, fetch the first one
+          if (fetchedPromotion.products && fetchedPromotion.products.length > 0) {
+            try {
+              const productId = fetchedPromotion.products[0]._id || fetchedPromotion.products[0];
+              const productResponse = await productsAPI.getOne(productId);
+              if (productResponse) {
+                setDiscountedProduct(productResponse);
+                return; // Exit early if we got a product from promotion
+              }
+            } catch (error) {
+              console.error('Error fetching discounted product from promotion:', error);
+            }
+          }
+          
+          // If no product from promotion, fetch any discounted product
+          try {
+            const productsResponse = await productsAPI.getAll({ limit: 20 });
+            if (productsResponse.products && productsResponse.products.length > 0) {
+              // Find a product that is on sale or has a promotion
+              const onSaleProduct = productsResponse.products.find(
+                (p: any) => p.onSale === true || p.promotion || (p.originalPrice && p.price < p.originalPrice)
+              );
+              if (onSaleProduct) {
+                setDiscountedProduct(onSaleProduct);
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching discounted product:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching promotion:', error);
+      }
+    };
+
     fetchCategoryProducts();
     fetchNewArrivals();
+    fetchPromotion();
   }, []);
 
-  const getProductForCategory = (categoryName: string) => {
-    return categoryProducts.find(cp => cp.category === categoryName)?.product || null;
-  };
 
   return (
     <section className="w-full">
@@ -124,34 +171,117 @@ const Home: React.FC = () => {
         <div className="flex-1 px-4 md:px-8 lg:px-12 py-4 md:py-8 lg:py-6">
           {/* Top Section - Mega Sale Event on Left, Two Cards Stacked on Right */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-8 lg:gap-12 min-h-[140px] md:h-[7vh] w-full">
-            {/* African Shape Mirror */}
-            <div className="md:col-span-3 bg-gradient-to-r from-[#93C5FD] to-[#60A5FA] rounded-lg text-white relative overflow-hidden min-h-[140px] md:h-full flex">
-              {/* Text content on the left */}
-              <div className="w-1/2 p-3 md:p-2.5 relative z-10 h-full flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-1 mb-1.5 md:mb-1">
-                    <span className="bg-[#16A34A] text-white px-2 py-1 md:px-1.5 md:py-0.5 rounded-full text-[10px] md:text-[9px] font-bold">SALE</span>
-                    <span className="text-white/90 text-[10px] md:text-[9px]">Limited Time</span>
-                  </div>
-                  <h2 className="text-base md:text-sm lg:text-base font-bold mb-1 md:mb-0.5">Used African Shape Mirror</h2>
-                  <p className="text-white/90 mb-2 md:mb-1.5 text-xs md:text-[10px] lg:text-xs">Beautiful Handcrafted African Design</p>
+            {/* Promotional Section - Creative Banner with Wave Overlay */}
+            <div className="md:col-span-3 rounded-lg relative overflow-hidden min-h-[140px] md:h-full group">
+              {/* Background Image or Gradient Fallback */}
+              {(discountedProduct?.images?.[0] || promotion?.image) ? (
+                <div className="absolute inset-0">
+                  <img 
+                    src={discountedProduct?.images?.[0] || promotion?.image} 
+                    alt={discountedProduct?.name || promotion?.name || 'Promotional Image'} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    key={discountedProduct?.images?.[0] || promotion?.image}
+                  />
+                  {/* Dark overlay for better text readability */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
                 </div>
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-[#16A34A] via-[#15803D] to-[#16A34A]"></div>
+              )}
+              
+              {/* Wave SVG Overlay - Brand Colors with Creative Design */}
+              <div className="absolute inset-0 z-0 overflow-hidden">
+                <svg 
+                  className="absolute bottom-0 left-0 w-full" 
+                  viewBox="0 0 1440 320" 
+                  preserveAspectRatio="none"
+                  style={{ height: '70%', minHeight: '200px' }}
+                >
+                  {/* Main Wave */}
+                  <path 
+                    d="M0,192L48,197.3C96,203,192,213,288,213.3C384,213,480,203,576,186.7C672,171,768,149,864,154.7C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" 
+                    fill="url(#waveGradient1)"
+                    className="opacity-95"
+                  />
+                  {/* Secondary Wave for Depth */}
+                  <path 
+                    d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,208C672,213,768,203,864,197.3C960,192,1056,192,1152,186.7C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" 
+                    fill="url(#waveGradient2)"
+                    className="opacity-80"
+                  />
+                  <defs>
+                    <linearGradient id="waveGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#16A34A" stopOpacity="0.95" />
+                      <stop offset="50%" stopColor="#15803D" stopOpacity="0.92" />
+                      <stop offset="100%" stopColor="#16A34A" stopOpacity="0.88" />
+                    </linearGradient>
+                    <linearGradient id="waveGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#15803D" stopOpacity="0.85" />
+                      <stop offset="50%" stopColor="#16A34A" stopOpacity="0.80" />
+                      <stop offset="100%" stopColor="#15803D" stopOpacity="0.75" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+
+              {/* Content Overlay - Left Aligned */}
+              <div className="relative z-10 h-full flex flex-col justify-between p-4 md:p-6 lg:p-8">
+                {/* Shop Now Button - Top Right */}
                 <Link
                   to="/products"
-                  className="inline-block bg-white text-[#3B82F6] font-semibold py-1.5 px-4 md:py-1 md:px-3 rounded-md hover:bg-[#F9FAFB] transition-all transform hover:scale-105 text-xs md:text-[10px] w-fit"
+                  className="absolute top-3 right-3 md:top-4 md:right-4 z-20 bg-white text-[#16A34A] font-semibold py-1.5 px-3 md:py-2 md:px-4 rounded-lg hover:bg-[#16A34A] hover:text-white transition-all transform hover:scale-105 text-xs md:text-sm shadow-lg"
                 >
                   Shop Now
                 </Link>
+
+                {/* Main Content */}
+                <div className="flex-1 flex flex-col justify-center max-w-md">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs md:text-sm font-bold border border-white/30">
+                      {promotion?.bannerText || 'SALE'}
+                    </span>
+                    <span className="text-white/90 text-xs md:text-sm font-medium">Limited Time</span>
+                  </div>
+                  
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-2 md:mb-3 leading-tight drop-shadow-lg">
+                    {promotion?.name || 'Used African Shape Mirror'}
+                  </h2>
+                  
+                  <p className="text-white/90 mb-3 md:mb-4 text-sm md:text-base leading-relaxed drop-shadow-md">
+                    {promotion?.description || 'Beautiful Handcrafted African Design'}
+                  </p>
+                  
+                  {promotion && promotion.discountValue && (
+                    <div className="mb-4">
+                      <span className="inline-block bg-white text-[#16A34A] px-4 py-2 rounded-lg text-sm md:text-base font-bold shadow-lg">
+                        {promotion.discountType === 'percentage' 
+                          ? `${promotion.discountValue}% OFF`
+                          : `Save ${promotion.discountValue} ETB`}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* CTA Button */}
+                  <Link
+                    to="/products"
+                    className="inline-flex items-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2.5 px-6 md:py-3 md:px-8 rounded-lg transition-all transform hover:scale-105 shadow-xl w-fit mt-2"
+                  >
+                    <span className="text-sm md:text-base">Explore Now</span>
+                    <svg 
+                      className="w-4 h-4 md:w-5 md:h-5" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </Link>
+                </div>
+
+                {/* Decorative Elements */}
+                <div className="absolute top-0 right-0 w-32 h-32 md:w-40 md:h-40 bg-[#16A34A]/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 md:w-32 md:h-32 bg-[#15803D]/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-xl"></div>
               </div>
-              {/* Image on the right - half width, 80% height, centered */}
-              <div className="w-1/2 h-full flex items-center justify-center overflow-hidden">
-                <img 
-                  src="/africa mirror.jpg" 
-                  alt="African Shape Mirror" 
-                  className="w-full h-[80%] object-cover"
-                />
-              </div>
-              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             </div>
 
             {/* Right Side - Two Cards Side by Side on Mobile, Stacked on Desktop */}
@@ -253,7 +383,8 @@ const Home: React.FC = () => {
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
                 {categories.slice(0, 4).map((category, index) => {
-                  const product = getProductForCategory(category.categoryName);
+                  const categoryData = categoryProducts.find(cp => cp.category === category.name);
+                  const product = categoryData?.products?.[0] || null;
                   return (
                     <Link
                       key={index}
@@ -303,42 +434,98 @@ const Home: React.FC = () => {
 
       {/* Enhanced Categories Section */}
       <div className="max-w-7xl mx-auto py-20 px-4 bg-[#F9FAFB]">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-[#111827] mb-4">Shop by Category</h2>
-          <p className="text-xl text-[#6B7280] max-w-2xl mx-auto">
+          <p className="text-xl text-[#6B7280] max-w-2xl">
             Browse thousands of products across multiple categories
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { name: "Fashion & Apparel", price: "1000+ Items", desc: "Clothing, shoes & accessories" },
-            { name: "Electronics", price: "500+ Items", desc: "Phones, laptops & gadgets" },
-            { name: "Home & Living", price: "800+ Items", desc: "Furniture & home decor" },
-            { name: "Beauty & Personal Care", price: "600+ Items", desc: "Skincare & cosmetics" }
-          ].map((product, i) => (
-            <div key={i} className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 overflow-hidden group">
-              <div className="relative h-64 bg-gradient-to-br from-[#16A34A]/10 to-[#16A34A]/20 overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <svg className="w-32 h-32 text-[#16A34A]/30 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                  </svg>
-                </div>
-                <div className="absolute top-4 right-4 bg-[#16A34A] text-white px-3 py-1 rounded-full text-sm font-semibold">
-                  New
+        <div className="space-y-6">
+          {loading ? (
+            // Loading skeleton
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-lg p-6 animate-pulse">
+                <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {Array.from({ length: 4 }).map((_, j) => (
+                    <div key={j} className="h-48 bg-gray-200 rounded-lg"></div>
+                  ))}
                 </div>
               </div>
-              <div className="p-6">
-                <h3 className="font-bold text-xl mb-2 text-[#111827]">{product.name}</h3>
-                <p className="text-[#6B7280] mb-4 text-sm">{product.desc}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-[#16A34A]">{product.price}</span>
-                  <button className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                    View
-                  </button>
+            ))
+          ) : (
+            categoryProducts.map((categoryData, i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="font-bold text-2xl md:text-3xl text-[#111827] mb-2">{categoryData.category}</h3>
+                      <p className="text-[#6B7280] text-sm md:text-base">
+                        {categoryData.total > 0 ? `${categoryData.total}+ Items Available` : 'No items available'}
+                      </p>
+                    </div>
+                    <Link
+                      to={`/products?category=${encodeURIComponent(categoryData.categoryName)}`}
+                      className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-6 rounded-lg transition-colors whitespace-nowrap"
+                    >
+                      View All
+                    </Link>
+                  </div>
+                  {categoryData.products.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {categoryData.products.map((product, j) => (
+                        <Link
+                          key={j}
+                          to={`/products/${product._id}`}
+                          className="group bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition-all"
+                        >
+                          <div className="relative h-48 bg-gray-100 overflow-hidden">
+                            {product.images && product.images.length > 0 ? (
+                              <img
+                                src={product.images[0]}
+                                alt={product.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                              </div>
+                            )}
+                            {product.onSale && (
+                              <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
+                                SALE
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-3">
+                            <h4 className="font-semibold text-sm text-[#111827] mb-1 line-clamp-2 group-hover:text-[#16A34A] transition-colors">
+                              {product.name}
+                            </h4>
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg font-bold text-[#16A34A]">
+                                ETB {product.price?.toLocaleString() || '0'}
+                              </span>
+                              {product.originalPrice && product.originalPrice > product.price && (
+                                <span className="text-sm text-gray-500 line-through">
+                                  ETB {product.originalPrice.toLocaleString()}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <p>No products available in this category yet.</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
