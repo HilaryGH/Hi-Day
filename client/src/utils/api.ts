@@ -111,6 +111,11 @@ export const authAPI = {
       method: 'POST',
       body: JSON.stringify({ idToken }),
     }),
+  facebookLogin: (accessToken: string) =>
+    fetchAPI('/auth/facebook', {
+      method: 'POST',
+      body: JSON.stringify({ accessToken }),
+    }),
   getMe: () => fetchAPI('/auth/me'),
 };
 

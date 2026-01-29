@@ -26,6 +26,11 @@ const userSchema = new mongoose.Schema({
     unique: true,
     sparse: true // Allows multiple null values
   },
+  facebookId: {
+    type: String,
+    unique: true,
+    sparse: true // Allows multiple null values
+  },
   role: {
     type: String,
     enum: ['individual', 'product provider', 'buyer', 'seller', 'admin', 'super admin', 'marketing team', 'customer support', 'support team'],

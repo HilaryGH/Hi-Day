@@ -14,6 +14,7 @@ interface AuthContextType {
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   googleLogin: (idToken: string) => Promise<void>;
+  facebookLogin: (accessToken: string) => Promise<void>;
   register: (data: any) => Promise<void>;
   logout: () => void;
   loading: boolean;
@@ -72,6 +73,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const facebookLogin = async (accessToken: string) => {
+    try {
+      const response = await authAPI.facebookLogin(accessToken);
+      localStorage.setItem('token', response.token);
+      setToken(response.token);
+      setUser(response.user);
+    } catch (error: any) {
+      // Re-throw the error so it can be handled by the calling component
+      throw error;
+    }
+  };
+
   const register = async (data: any) => {
     try {
       const response = await authAPI.register(data);
@@ -91,7 +104,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, googleLogin, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, googleLogin, facebookLogin, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

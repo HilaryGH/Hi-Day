@@ -5,12 +5,14 @@ import { useAuth } from '../context/AuthContext';
 declare global {
   interface Window {
     google?: any;
+    FB?: any;
+    fbAsyncInit?: () => void;
   }
 }
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, googleLogin } = useAuth();
+  const { login, googleLogin, facebookLogin } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -18,6 +20,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [facebookLoading, setFacebookLoading] = useState(false);
   const googleButtonRef = useRef<HTMLDivElement>(null);
 
   const handleGoogleCallback = useCallback(async (response: any) => {
@@ -48,11 +51,32 @@ const Login = () => {
     }
   };
 
-  const handleSocialLogin = (provider: 'google' | 'facebook') => {
-    if (provider === 'facebook') {
-      alert('Facebook login coming soon!');
+  const handleFacebookLogin = async () => {
+    try {
+      setFacebookLoading(true);
+      setError('');
+
+      if (!window.FB) {
+        throw new Error('Facebook SDK not loaded');
+      }
+
+      window.FB.login(
+        async (response: any) => {
+          if (response.authResponse) {
+            const accessToken = response.authResponse.accessToken;
+            await facebookLogin(accessToken);
+            navigate('/products');
+          } else {
+            setError('Facebook login was cancelled or failed');
+          }
+          setFacebookLoading(false);
+        },
+        { scope: 'email,public_profile' }
+      );
+    } catch (err: any) {
+      setError(err.message || 'Facebook login failed');
+      setFacebookLoading(false);
     }
-    // Google login is handled by the button rendered by Google Identity Services
   };
 
   useEffect(() => {
@@ -113,6 +137,41 @@ const Login = () => {
       }
     };
   }, [handleGoogleCallback, googleLoading]);
+
+  useEffect(() => {
+    // Load Facebook SDK
+    const facebookAppId = import.meta.env.VITE_FACEBOOK_APP_ID;
+    
+    if (!facebookAppId) {
+      console.warn('Facebook App ID not found in environment variables');
+      return;
+    }
+
+    // Initialize Facebook SDK
+    window.fbAsyncInit = () => {
+      if (window.FB) {
+        window.FB.init({
+          appId: facebookAppId,
+          cookie: true,
+          xfbml: true,
+          version: 'v18.0'
+        });
+      }
+    };
+
+    // Load Facebook SDK script
+    if (!document.querySelector('script[src*="connect.facebook.net"]')) {
+      const script = document.createElement('script');
+      script.src = 'https://connect.facebook.net/en_US/sdk.js';
+      script.async = true;
+      script.defer = true;
+      script.crossOrigin = 'anonymous';
+      document.body.appendChild(script);
+    } else if (window.FB) {
+      // SDK already loaded, initialize it
+      window.fbAsyncInit();
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -262,16 +321,26 @@ const Login = () => {
               <div ref={googleButtonRef} className="w-full"></div>
             )}
 
-            <button
-              type="button"
-              onClick={() => handleSocialLogin('facebook')}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-[#1877F2] border-2 border-[#1877F2] rounded-xl text-white font-semibold hover:bg-[#166FE5] hover:border-[#166FE5] transition-all shadow-sm hover:shadow-md"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-              <span>Continue with Facebook</span>
-            </button>
+            {facebookLoading ? (
+              <div className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-[#1877F2] border-2 border-[#1877F2] rounded-xl text-white">
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span className="font-semibold">Signing in with Facebook...</span>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleFacebookLogin}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-[#1877F2] border-2 border-[#1877F2] rounded-xl text-white font-semibold hover:bg-[#166FE5] hover:border-[#166FE5] transition-all shadow-sm hover:shadow-md"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                <span>Continue with Facebook</span>
+              </button>
+            )}
           </div>
 
           {/* Sign Up Link */}

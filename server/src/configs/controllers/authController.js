@@ -256,6 +256,110 @@ export const googleLogin = async (req, res) => {
   }
 };
 
+// Facebook OAuth Login
+export const facebookLogin = async (req, res) => {
+  try {
+    const { accessToken } = req.body;
+
+    if (!accessToken) {
+      return res.status(400).json({ message: 'Access token is required' });
+    }
+
+    // Verify the access token with Facebook Graph API
+    const facebookAppId = process.env.FACEBOOK_APP_ID;
+    const facebookAppSecret = process.env.FACEBOOK_APP_SECRET;
+
+    if (!facebookAppId || !facebookAppSecret) {
+      return res.status(500).json({ message: 'Facebook credentials not configured' });
+    }
+
+    // First, verify the token and get app info
+    const debugTokenResponse = await fetch(
+      `https://graph.facebook.com/debug_token?input_token=${accessToken}&access_token=${facebookAppId}|${facebookAppSecret}`
+    );
+
+    if (!debugTokenResponse.ok) {
+      return res.status(401).json({ message: 'Invalid Facebook access token' });
+    }
+
+    const debugTokenData = await debugTokenResponse.json();
+    
+    if (!debugTokenData.data || !debugTokenData.data.is_valid) {
+      return res.status(401).json({ message: 'Invalid Facebook access token' });
+    }
+
+    const facebookId = debugTokenData.data.user_id;
+
+    // Get user info from Facebook Graph API
+    const userInfoResponse = await fetch(
+      `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${accessToken}`
+    );
+
+    if (!userInfoResponse.ok) {
+      return res.status(401).json({ message: 'Failed to fetch user info from Facebook' });
+    }
+
+    const userInfo = await userInfoResponse.json();
+    const { email, name, picture } = userInfo;
+    const profilePicture = picture?.data?.url || '';
+
+    // Check if user exists with this Facebook ID
+    let user = await User.findOne({ facebookId });
+
+    if (!user) {
+      // Check if user exists with this email
+      if (email) {
+        user = await User.findOne({ email });
+
+        if (user) {
+          // Link Facebook account to existing user
+          user.facebookId = facebookId;
+          if (profilePicture && !user.avatar) {
+            user.avatar = profilePicture;
+          }
+          await user.save();
+        }
+      }
+
+      if (!user) {
+        // Create new user with Facebook OAuth
+        user = await User.create({
+          facebookId,
+          email: email || `${facebookId}@facebook.com`, // Fallback email if not provided
+          name: name || 'Facebook User',
+          avatar: profilePicture || '',
+          role: 'buyer', // Set role to 'buyer' for Facebook OAuth users as requested
+          privacyConsent: true,
+          isVerified: true, // Facebook accounts are pre-verified
+        });
+      }
+    } else {
+      // Update avatar if not set
+      if (profilePicture && !user.avatar) {
+        user.avatar = profilePicture;
+        await user.save();
+      }
+    }
+
+    const token = generateToken(user._id);
+
+    res.json({
+      message: 'Facebook login successful',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+      },
+    });
+  } catch (error) {
+    console.error('Facebook login error:', error);
+    res.status(500).json({ message: 'Facebook authentication failed', error: error.message });
+  }
+};
+
 // Get current user
 export const getMe = async (req, res) => {
   try {
