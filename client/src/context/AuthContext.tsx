@@ -49,24 +49,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login = async (email: string, password: string) => {
-    const response = await authAPI.login({ email, password });
-    localStorage.setItem('token', response.token);
-    setToken(response.token);
-    setUser(response.user);
+    try {
+      const response = await authAPI.login({ email, password });
+      localStorage.setItem('token', response.token);
+      setToken(response.token);
+      setUser(response.user);
+    } catch (error: any) {
+      // Re-throw the error so it can be handled by the calling component
+      throw error;
+    }
   };
 
   const googleLogin = async (idToken: string) => {
-    const response = await authAPI.googleLogin(idToken);
-    localStorage.setItem('token', response.token);
-    setToken(response.token);
-    setUser(response.user);
+    try {
+      const response = await authAPI.googleLogin(idToken);
+      localStorage.setItem('token', response.token);
+      setToken(response.token);
+      setUser(response.user);
+    } catch (error: any) {
+      // Re-throw the error so it can be handled by the calling component
+      throw error;
+    }
   };
 
   const register = async (data: any) => {
-    const response = await authAPI.register(data);
-    localStorage.setItem('token', response.token);
-    setToken(response.token);
-    setUser(response.user);
+    try {
+      const response = await authAPI.register(data);
+      localStorage.setItem('token', response.token);
+      setToken(response.token);
+      setUser(response.user);
+    } catch (error: any) {
+      // Re-throw the error so it can be handled by the calling component
+      throw error;
+    }
   };
 
   const logout = () => {

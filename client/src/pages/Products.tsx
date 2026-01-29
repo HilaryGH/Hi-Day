@@ -16,6 +16,11 @@ interface Product {
     count: number;
   };
   stock: number;
+  seller?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
 }
 
 const Products = () => {
@@ -252,97 +257,144 @@ const Products = () => {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.map((product) => (
-                    <div
-                      key={product._id}
-                      className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group flex flex-col"
-                    >
-                      <Link to={`/products/${product._id}`} className="flex-1 flex flex-col">
-                        <div className="aspect-square bg-gray-100 overflow-hidden">
-                          {product.images && product.images.length > 0 ? (
-                            <img
-                              src={product.images[0]}
-                              alt={product.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                              <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                        <div className="p-4 flex-1 flex flex-col">
-                          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-[#16A34A] transition-colors">
-                            {product.name}
-                          </h3>
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-2xl font-bold text-[#16A34A]">
-                              ETB {product.price.toLocaleString()}
+                {/* Group products by seller */}
+                {(() => {
+                  // Group products by seller
+                  const groupedBySeller = products.reduce((acc, product) => {
+                    const sellerId = product.seller?._id || 'unknown';
+                    const sellerName = product.seller?.name || 'Unknown Seller';
+                    
+                    if (!acc[sellerId]) {
+                      acc[sellerId] = {
+                        seller: product.seller || { _id: sellerId, name: sellerName, email: '' },
+                        products: []
+                      };
+                    }
+                    acc[sellerId].products.push(product);
+                    return acc;
+                  }, {} as Record<string, { seller: { _id: string; name: string; email: string }; products: Product[] }>);
+
+                  return Object.values(groupedBySeller).map((sellerGroup, groupIndex) => (
+                    <div key={sellerGroup.seller._id || groupIndex} className="mb-8">
+                      {/* Seller Header */}
+                      <div className="bg-white rounded-lg shadow p-4 mb-4 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-[#16A34A]/10 rounded-full flex items-center justify-center">
+                            <span className="text-[#16A34A] font-bold text-lg">
+                              {sellerGroup.seller.name.charAt(0).toUpperCase()}
                             </span>
-                            {product.originalPrice && product.originalPrice > product.price && (
-                              <span className="text-sm text-gray-500 line-through">
-                                ETB {product.originalPrice.toLocaleString()}
-                              </span>
-                            )}
                           </div>
-                          {product.rating.count > 0 && (
-                            <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
-                              <span className="text-[#16A34A]">★</span>
-                              <span>{product.rating.average.toFixed(1)}</span>
-                              <span>({product.rating.count})</span>
-                            </div>
-                          )}
-                          {product.stock === 0 && (
-                            <span className="inline-block mt-auto text-sm text-red-600 font-medium mb-2">
-                              Out of Stock
-                            </span>
-                          )}
+                          <div>
+                            <h2 className="text-xl font-bold text-gray-900">{sellerGroup.seller.name}</h2>
+                            <p className="text-sm text-gray-600">{sellerGroup.products.length} {sellerGroup.products.length === 1 ? 'product' : 'products'}</p>
+                          </div>
                         </div>
-                      </Link>
-                      <div className="p-4 pt-0 space-y-2">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (!user) {
-                              navigate('/login');
-                              return;
-                            }
-                            if (product.stock === 0) {
-                              alert('This product is out of stock');
-                              return;
-                            }
-                            navigate('/checkout', {
-                              state: {
-                                product: {
-                                  _id: product._id,
-                                  name: product.name,
-                                  price: product.price,
-                                  images: product.images,
-                                  quantity: 1
-                                },
-                                fromCart: false
-                              }
-                            });
-                          }}
-                          disabled={product.stock === 0}
-                          className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          Shop Now
-                        </button>
                         <Link
-                          to={`/products/${product._id}`}
-                          className="block w-full text-center text-[#16A34A] hover:text-[#15803D] font-medium py-2 px-4 rounded-lg transition-colors border border-[#16A34A] hover:bg-[#16A34A]/5"
+                          to={`/seller/${sellerGroup.seller._id}`}
+                          className="text-[#16A34A] hover:text-[#15803D] font-medium text-sm flex items-center gap-1 transition-colors"
                         >
-                          View Details
+                          View Store
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
                         </Link>
                       </div>
+
+                      {/* Products Grid for this seller */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                        {sellerGroup.products.map((product) => (
+                          <div
+                            key={product._id}
+                            className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group flex flex-col"
+                          >
+                            <Link to={`/products/${product._id}`} className="flex-1 flex flex-col">
+                              <div className="h-32 bg-gray-100 overflow-hidden">
+                                {product.images && product.images.length > 0 ? (
+                                  <img
+                                    src={product.images[0]}
+                                    alt={product.name}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="p-2 flex-1 flex flex-col">
+                                <h3 className="font-medium text-xs text-gray-900 mb-1 line-clamp-2 hover:text-[#16A34A] transition-colors leading-tight">
+                                  {product.name}
+                                </h3>
+                                <div className="flex items-center gap-1 mb-1 flex-wrap">
+                                  <span className="text-sm font-bold text-[#16A34A]">
+                                    ETB {product.price.toLocaleString()}
+                                  </span>
+                                  {product.originalPrice && product.originalPrice > product.price && (
+                                    <span className="text-xs text-gray-500 line-through">
+                                      ETB {product.originalPrice.toLocaleString()}
+                                    </span>
+                                  )}
+                                </div>
+                                {product.rating.count > 0 && (
+                                  <div className="flex items-center gap-1 text-xs text-gray-600 mb-1">
+                                    <span className="text-[#16A34A] text-xs">★</span>
+                                    <span className="text-xs">{product.rating.average.toFixed(1)}</span>
+                                    <span className="text-xs">({product.rating.count})</span>
+                                  </div>
+                                )}
+                                {product.stock === 0 && (
+                                  <span className="inline-block mt-auto text-xs text-red-600 font-medium mb-1">
+                                    Out of Stock
+                                  </span>
+                                )}
+                              </div>
+                            </Link>
+                            <div className="p-2 pt-0 space-y-1.5">
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  if (!user) {
+                                    navigate('/login');
+                                    return;
+                                  }
+                                  if (product.stock === 0) {
+                                    alert('This product is out of stock');
+                                    return;
+                                  }
+                                  navigate('/checkout', {
+                                    state: {
+                                      product: {
+                                        _id: product._id,
+                                        name: product.name,
+                                        price: product.price,
+                                        images: product.images,
+                                        quantity: 1
+                                      },
+                                      fromCart: false
+                                    }
+                                  });
+                                }}
+                                disabled={product.stock === 0}
+                                className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white font-medium text-xs py-1.5 px-2 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                Shop Now
+                              </button>
+                              <Link
+                                to={`/products/${product._id}`}
+                                className="block w-full text-center text-[#16A34A] hover:text-[#15803D] font-medium text-xs py-1.5 px-2 rounded transition-colors border border-[#16A34A] hover:bg-[#16A34A]/5"
+                              >
+                                View Details
+                              </Link>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  ));
+                })()}
 
                 {/* Pagination */}
                 {pagination.pages > 1 && (

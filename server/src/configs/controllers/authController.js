@@ -32,10 +32,21 @@ export const register = async (req, res) => {
       privacyConsent
     } = req.body;
 
+    // Validate required fields
+    if (!name || !email) {
+      return res.status(400).json({ message: 'Name and email are required' });
+    }
+
+    // Validate email format
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Please provide a valid email address' });
+    }
+
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: 'User with this email already exists' });
     }
 
     // Valid roles
@@ -49,6 +60,11 @@ export const register = async (req, res) => {
     // Validate privacy consent
     if (!privacyConsent) {
       return res.status(400).json({ message: 'Privacy consent is required' });
+    }
+
+    // Validate password if provided (not required for Google OAuth users)
+    if (!req.body.googleId && (!password || password.length < 6)) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters long' });
     }
 
     // Create user
@@ -95,7 +111,25 @@ export const register = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    // Handle Mongoose validation errors
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({ message: messages.join(', ') });
+    }
+    
+    // Handle duplicate key errors (e.g., duplicate email)
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({ message: `${field.charAt(0).toUpperCase() + field.slice(1)} already exists` });
+    }
+    
+    // Log the error for debugging
+    console.error('Registration error:', error);
+    
+    // Return generic error message
+    res.status(500).json({ 
+      message: error.message || 'An error occurred during registration. Please try again.' 
+    });
   }
 };
 
@@ -104,16 +138,26 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Check if user has a password (Google OAuth users might not have one)
+    if (!user.password) {
+      return res.status(401).json({ message: 'Please use Google login for this account' });
     }
 
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     const token = generateToken(user._id);
@@ -129,7 +173,10 @@ export const login = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Login error:', error);
+    res.status(500).json({ 
+      message: error.message || 'An error occurred during login. Please try again.' 
+    });
   }
 };
 

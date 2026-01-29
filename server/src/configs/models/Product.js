@@ -94,6 +94,10 @@ const productSchema = new mongoose.Schema({
   isBestSeller: {
     type: Boolean,
     default: false
+  },
+  isImported: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true
@@ -105,6 +109,7 @@ productSchema.index({ category: 1 });
 productSchema.index({ seller: 1 });
 productSchema.index({ 'rating.average': -1 });
 productSchema.index({ isBestSeller: 1, isActive: 1 });
+productSchema.index({ isImported: 1, isActive: 1 });
 
 export default mongoose.model('Product', productSchema);
 

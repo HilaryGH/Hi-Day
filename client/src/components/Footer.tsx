@@ -250,6 +250,10 @@ const Footer: React.FC = () => {
                 <Link to="/privacy-policy" className="text-gray-600 hover:text-[#16A34A] transition-colors">
                   Privacy Policy
                 </Link>
+                <span className="text-gray-400">|</span>
+                <Link to="/user-data-deletion" className="text-gray-600 hover:text-[#16A34A] transition-colors">
+                  Data Deletion
+                </Link>
               </div>
             </div>
             {/* Social Media Icons - Bottom */}

@@ -72,6 +72,44 @@ const Register = () => {
       return;
     }
 
+    // Validate required fields based on provider type
+    if (userType === 'product provider') {
+      // For small business and specialized, company name is required
+      if ((providerType === 'small business' || providerType === 'specialized') && 
+          (!formData.companyName || formData.companyName.trim() === '')) {
+        setError('Company name is required');
+        return;
+      }
+      // For freelancer, individual name is required
+      if (providerType === 'freelancer' && (!formData.name || formData.name.trim() === '')) {
+        setError('Name is required');
+        return;
+      }
+    } else {
+      // For individual users, name is required
+      if (!formData.name || formData.name.trim() === '') {
+        setError('Name is required');
+        return;
+      }
+    }
+
+    if (!formData.email || formData.email.trim() === '') {
+      setError('Email is required');
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    if (!formData.password || formData.password.trim() === '') {
+      setError('Password is required');
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -82,30 +120,91 @@ const Register = () => {
       return;
     }
 
+    // Validate address/location based on user type
+    if (userType === 'product provider') {
+      // For product providers, city and location are required instead of address
+      if (!formData.city || formData.city.trim() === '') {
+        setError('City is required');
+        return;
+      }
+      if (!formData.location || formData.location.trim() === '') {
+        setError('Location is required');
+        return;
+      }
+    } else {
+      // For individual users, address is required
+      if (!formData.address || formData.address.trim() === '') {
+        setError('Address is required');
+        return;
+      }
+    }
+
+    if (!formData.phone || formData.phone.trim() === '') {
+      setError('Phone number is required');
+      return;
+    }
+
     if (!formData.privacyConsent) {
       setError('Please consent to the Privacy Policy & Merchant Service Agreement');
       return;
     }
 
     setLoading(true);
+    setError(''); // Clear any previous errors
 
     try {
-      // Prepare registration data
+      // Prepare registration data - trim all string values
       const registrationData: any = {
-        name: formData.name,
-        email: formData.email,
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
         role: userType === 'individual' ? 'individual' : 'product provider',
-        phone: formData.phone,
-        alternativePhone: formData.alternativePhone || undefined,
-        whatsapp: formData.whatsapp || undefined,
-        telegram: formData.telegram || undefined,
-        address: formData.address,
-        city: formData.city || undefined,
-        location: formData.location || undefined,
-        referralCode: formData.referralCode || undefined,
+        phone: formData.phone.trim(),
         privacyConsent: formData.privacyConsent,
       };
+
+      // Set address based on user type
+      if (userType === 'product provider') {
+        // For product providers, use location as address, or combine city and location
+        registrationData.address = formData.location.trim();
+        registrationData.city = formData.city.trim();
+      } else {
+        // For individual users, use the address field
+        registrationData.address = formData.address.trim();
+      }
+
+      // Set name based on user type
+      if (userType === 'product provider') {
+        if (providerType === 'small business' || providerType === 'specialized') {
+          // Use company name as the name for small business and specialized
+          registrationData.name = formData.companyName.trim();
+        } else if (providerType === 'freelancer') {
+          // Use individual name for freelancer
+          registrationData.name = formData.name.trim();
+        }
+      } else {
+        // For individual users, use the name field
+        registrationData.name = formData.name.trim();
+      }
+
+      // Add optional fields only if they have values
+      if (formData.alternativePhone?.trim()) {
+        registrationData.alternativePhone = formData.alternativePhone.trim();
+      }
+      if (formData.whatsapp?.trim()) {
+        registrationData.whatsapp = formData.whatsapp.trim();
+      }
+      if (formData.telegram?.trim()) {
+        registrationData.telegram = formData.telegram.trim();
+      }
+      if (formData.city?.trim()) {
+        registrationData.city = formData.city.trim();
+      }
+      if (formData.location?.trim()) {
+        registrationData.location = formData.location.trim();
+      }
+      if (formData.referralCode?.trim()) {
+        registrationData.referralCode = formData.referralCode.trim();
+      }
 
       // Add product provider specific fields
       if (userType === 'product provider') {
@@ -118,21 +217,44 @@ const Register = () => {
         }
         
         if (providerType === 'small business' || providerType === 'specialized') {
-          registrationData.companyName = formData.companyName;
+          registrationData.companyName = formData.companyName.trim();
         }
       }
-
-      // Remove undefined values
-      Object.keys(registrationData).forEach(key => {
-        if (registrationData[key] === undefined || registrationData[key] === '') {
-          delete registrationData[key];
-        }
-      });
 
       await register(registrationData);
       navigate('/products');
     } catch (err: any) {
-      setError(err.message || 'Registration failed');
+      // Handle different error formats
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      try {
+        if (err instanceof Error) {
+          errorMessage = err.message || errorMessage;
+        } else if (typeof err === 'string') {
+          errorMessage = err;
+        } else if (err?.message) {
+          errorMessage = err.message;
+        } else if (err?.data?.message) {
+          errorMessage = err.data.message;
+        } else if (err?.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        } else if (err?.originalError) {
+          // Handle converted errors
+          errorMessage = err.message || errorMessage;
+        } else if (typeof err === 'object' && err !== null) {
+          // Try to extract message from error object
+          const stringified = JSON.stringify(err);
+          if (stringified !== '{}') {
+            errorMessage = stringified;
+          }
+        }
+      } catch (parseErr) {
+        // If we can't parse the error, use default message
+        console.error('Error parsing registration error:', parseErr);
+      }
+      
+      console.error('Registration error:', err);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

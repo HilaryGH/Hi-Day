@@ -93,6 +93,44 @@ export const createOrder = async (req, res) => {
     // Calculate total amount
     const totalAmount = orderItems.reduce((total, item) => total + (item.price * item.quantity), 0) + shippingCost;
 
+    // Generate order number based on category
+    // Get category from first product
+    const firstProductId = orderItems[0].product;
+    const firstProduct = await Product.findById(firstProductId);
+    let categoryPrefix = 'ORD'; // Default prefix
+    
+    if (firstProduct && firstProduct.category) {
+      // Extract first 3 letters from category name
+      // Remove spaces, special characters, and take only letters
+      const categoryName = firstProduct.category.replace(/[^a-zA-Z]/g, ''); // Remove non-letters
+      
+      if (categoryName.length >= 3) {
+        categoryPrefix = categoryName.substring(0, 3).toUpperCase();
+      } else if (categoryName.length > 0) {
+        // If category name is less than 3 letters, pad with first letter repeated
+        const firstLetter = categoryName[0].toUpperCase();
+        categoryPrefix = (categoryName.toUpperCase() + firstLetter.repeat(3 - categoryName.length)).substring(0, 3);
+      }
+    }
+    
+    // Generate 6-digit random number (ensure it's always 6 digits)
+    const randomDigits = Math.floor(100000 + Math.random() * 900000).toString().padStart(6, '0');
+    const orderNumber = `${categoryPrefix}${randomDigits}`;
+    
+    // Ensure uniqueness by checking if order number already exists
+    let finalOrderNumber = orderNumber;
+    let attempts = 0;
+    while (attempts < 10) {
+      const existingOrder = await Order.findOne({ orderNumber: finalOrderNumber });
+      if (!existingOrder) {
+        break;
+      }
+      // If exists, generate new random digits
+      const newRandomDigits = Math.floor(100000 + Math.random() * 900000).toString().padStart(6, '0');
+      finalOrderNumber = `${categoryPrefix}${newRandomDigits}`;
+      attempts++;
+    }
+
     // Create order
     const order = await Order.create({
       user: req.userId,
@@ -109,7 +147,8 @@ export const createOrder = async (req, res) => {
       paymentStatus: paymentMethod === 'cash_on_delivery' ? 'pending' : 'pending',
       orderStatus: 'pending',
       totalAmount,
-      shippingCost
+      shippingCost,
+      orderNumber: finalOrderNumber
     });
 
     // Clear cart if order was created from cart

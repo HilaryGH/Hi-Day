@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { adminAPI, productsAPI } from '../utils/api';
+import ProductListingForm from '../components/ProductListingForm';
 
 const AdminDashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'stats' | 'users' | 'providers' | 'products' | 'promotions' | 'orders'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'users' | 'providers' | 'products' | 'create-product' | 'promotions' | 'orders'>('stats');
   const [stats, setStats] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -258,6 +259,7 @@ const AdminDashboard = () => {
               { id: 'users', label: 'Users' },
               { id: 'providers', label: 'Providers' },
               { id: 'products', label: 'Products' },
+              { id: 'create-product', label: 'Create Product' },
               { id: 'orders', label: 'Orders & Transactions' },
               { id: 'promotions', label: 'Promotions' }
             ].map((tab) => (
@@ -579,6 +581,21 @@ const AdminDashboard = () => {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {activeTab === 'create-product' && (
+            <div>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Imported Product</h2>
+                <p className="text-gray-600">
+                  As an admin, you can list imported products. Check the "Mark as Imported Product" checkbox when creating the product.
+                </p>
+              </div>
+              <ProductListingForm onSuccess={() => {
+                setActiveTab('products');
+                loadProducts();
+              }} />
             </div>
           )}
 

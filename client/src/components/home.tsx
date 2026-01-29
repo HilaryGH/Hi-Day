@@ -4,6 +4,7 @@ import { productsAPI, promotionAPI } from "../utils/api";
 import BestSellers from "./BestSellers";
 import TopSellers from "./TopSellers";
 import RecentProducts from "./RecentProducts";
+import CommunicationWidget from "./CommunicationWidget";
 
 const categories = [
   { name: "Fashion & Apparel", categoryName: "Fashion & Apparel" },
@@ -89,8 +90,23 @@ const Home: React.FC = () => {
     const fetchPromotion = async () => {
       try {
         const response = await promotionAPI.getAll({ active: true, limit: 1 });
-        if (response.promotions && response.promotions.length > 0) {
-          const fetchedPromotion = response.promotions[0];
+        console.log('Promotion API response:', response); // Debug log
+        
+        // Handle different response formats
+        let promotions = [];
+        if (response) {
+          if (Array.isArray(response)) {
+            promotions = response;
+          } else if (response.promotions && Array.isArray(response.promotions)) {
+            promotions = response.promotions;
+          } else if (response.data && Array.isArray(response.data)) {
+            promotions = response.data;
+          }
+        }
+        
+        if (promotions.length > 0) {
+          const fetchedPromotion = promotions[0];
+          console.log('Fetched promotion:', fetchedPromotion); // Debug log
           setPromotion(fetchedPromotion);
           
           // If promotion has products, fetch the first one
@@ -110,7 +126,7 @@ const Home: React.FC = () => {
           // If no product from promotion, fetch any discounted product
           try {
             const productsResponse = await productsAPI.getAll({ limit: 20 });
-            if (productsResponse.products && productsResponse.products.length > 0) {
+            if (productsResponse && productsResponse.products && productsResponse.products.length > 0) {
               // Find a product that is on sale or has a promotion
               const onSaleProduct = productsResponse.products.find(
                 (p: any) => p.onSale === true || p.promotion || (p.originalPrice && p.price < p.originalPrice)
@@ -121,17 +137,74 @@ const Home: React.FC = () => {
             }
           } catch (error) {
             console.error('Error fetching discounted product:', error);
+            // Try to get any product as fallback
+            try {
+              const fallbackResponse = await productsAPI.getAll({ limit: 1 });
+              if (fallbackResponse && fallbackResponse.products && fallbackResponse.products.length > 0) {
+                setDiscountedProduct(fallbackResponse.products[0]);
+              }
+            } catch (fallbackError) {
+              console.error('Error fetching fallback product:', fallbackError);
+            }
+          }
+        } else {
+          // No promotions found, try to get a featured product
+          console.log('No promotions found, fetching featured product');
+          try {
+            const productsResponse = await productsAPI.getAll({ limit: 10 });
+            if (productsResponse && productsResponse.products && productsResponse.products.length > 0) {
+              const featuredProduct = productsResponse.products.find(
+                (p: any) => p.onSale === true || p.featured || (p.originalPrice && p.price < p.originalPrice)
+              ) || productsResponse.products[0];
+              setDiscountedProduct(featuredProduct);
+            }
+          } catch (error) {
+            console.error('Error fetching featured product:', error);
+            // Silently fail - this is not critical for the page to function
           }
         }
-      } catch (error) {
-        console.error('Error fetching promotion:', error);
+      } catch (error: any) {
+        // Only log if it's not a 404 or expected error
+        if (error?.status !== 404) {
+          console.error('Error fetching promotion:', error);
+        }
+        // Fallback: try to get any product to display
+        try {
+          const fallbackResponse = await productsAPI.getAll({ limit: 1 });
+          if (fallbackResponse && fallbackResponse.products && fallbackResponse.products.length > 0) {
+            setDiscountedProduct(fallbackResponse.products[0]);
+          }
+        } catch (fallbackError) {
+          // Silently fail - this is not critical for the page to function
+          console.error('Error fetching fallback product:', fallbackError);
+        }
       }
     };
 
     fetchCategoryProducts();
     fetchNewArrivals();
     fetchPromotion();
+    fetchImportedProduct();
   }, []);
+
+  const fetchImportedProduct = async () => {
+    try {
+      // Fetch imported products directly
+      const response = await productsAPI.getAll({
+        isImported: true,
+        limit: 1,
+        sortBy: 'createdAt',
+        order: 'desc'
+      });
+      
+      // Imported products fetched (for future use if needed)
+      if (response.products && response.products.length > 0) {
+        // Product available for future use
+      }
+    } catch (error) {
+      console.error('Error fetching imported product:', error);
+    }
+  };
 
   // Auto-slide carousel for New Arrivals
   useEffect(() => {
@@ -249,25 +322,27 @@ const Home: React.FC = () => {
                 <div className="flex-1 flex flex-col justify-center max-w-md">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs md:text-sm font-bold border border-white/30">
-                      {promotion?.bannerText || 'SALE'}
+                      {promotion?.bannerText || promotion?.title || discountedProduct?.name ? 'SALE' : 'SALE'}
                     </span>
                     <span className="text-white/90 text-xs md:text-sm font-medium">Limited Time</span>
                   </div>
                   
                   <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-2 md:mb-3 leading-tight drop-shadow-lg">
-                    {promotion?.name || 'Used African Shape Mirror'}
+                    {promotion?.name || promotion?.title || discountedProduct?.name || 'Special Offer'}
                   </h2>
                   
-                  <p className="text-white/90 mb-3 md:mb-4 text-sm md:text-base leading-relaxed drop-shadow-md">
-                    {promotion?.description || 'Beautiful Handcrafted African Design'}
-                  </p>
-                  
-                  {promotion && promotion.discountValue && (
+                  {(promotion?.discountValue || (discountedProduct?.originalPrice && discountedProduct?.price)) && (
                     <div className="mb-4">
                       <span className="inline-block bg-white text-[#16A34A] px-4 py-2 rounded-lg text-sm md:text-base font-bold shadow-lg">
-                        {promotion.discountType === 'percentage' 
-                          ? `${promotion.discountValue}% OFF`
-                          : `Save ${promotion.discountValue} ETB`}
+                        {promotion?.discountValue ? (
+                          promotion.discountType === 'percentage' 
+                            ? `${promotion.discountValue}% OFF`
+                            : `Save ${promotion.discountValue} ETB`
+                        ) : (
+                          discountedProduct?.originalPrice && discountedProduct?.price ? (
+                            `${Math.round(((discountedProduct.originalPrice - discountedProduct.price) / discountedProduct.originalPrice) * 100)}% OFF`
+                          ) : 'Special Offer'
+                        )}
                       </span>
                     </div>
                   )}
@@ -281,60 +356,60 @@ const Home: React.FC = () => {
 
             {/* Right Side - Two Cards Side by Side on Mobile, Stacked on Desktop */}
             <div className="md:col-span-2 flex flex-row md:flex-col gap-3 md:gap-2.5 md:h-full">
-              {/* Get up to 20% OFF */}
-              <div className="flex-1 rounded-lg p-3 md:p-2 text-white relative overflow-hidden min-h-[100px] md:flex-1 flex">
+              {/* Imported Products Card */}
+              <div className="flex-1 rounded-lg p-4 md:p-3 text-white relative overflow-hidden min-h-[120px] md:flex-1 flex shadow-lg hover:shadow-xl transition-shadow">
                 {/* Background Gradient for Content Section - Left */}
-                <div className="absolute left-0 top-0 bottom-0 w-1/2 bg-gradient-to-br from-[#16A34A] to-[#15803D] z-0"></div>
+                <div className="absolute left-0 top-0 bottom-0 w-1/2 bg-gradient-to-br from-[#16A34A] via-[#15803D] to-[#16A34A] z-0"></div>
                 
-                {/* Background Image - Right Side */}
+                {/* Background Image - Right Side - Enhanced Clarity */}
                 <div 
                   className="absolute right-0 top-0 bottom-0 w-1/2"
                   style={{
                     backgroundImage: 'url(/dahi.png)',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
+                    backgroundRepeat: 'no-repeat',
+                    imageRendering: 'crisp-edges',
+                    filter: 'brightness(1.1) contrast(1.1)'
                   }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-l from-[#16A34A]/80 to-transparent"></div>
+                 
                 </div>
 
-                {/* Wave Separator */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-12 md:w-16 transform -translate-x-1/2 z-0">
+                {/* Simple Wave Separator - Single Curve */}
+                <div className="absolute left-1/2 top-0 bottom-0 w-16 md:w-20 transform -translate-x-1/2 z-10">
                   <svg 
                     className="absolute inset-0 w-full h-full" 
                     viewBox="0 0 100 200" 
                     preserveAspectRatio="none"
                   >
-                    {/* Main Wave */}
+                    {/* Single smooth curve from bottom to bottom */}
                     <path 
-                      d="M0,0 Q50,50 0,100 T0,200 L0,200 L100,200 L100,0 Z" 
-                      fill="rgba(255, 255, 255, 0.15)"
-                    />
-                    {/* Secondary Wave */}
-                    <path 
-                      d="M0,20 Q50,70 0,120 T0,200 L0,200 L100,200 L100,20 Z" 
-                      fill="rgba(255, 255, 255, 0.1)"
+                      d="M0,200 Q50,100 0,0 L0,200 L100,200 L100,0 Q50,100 100,200 Z" 
+                      fill="rgba(255, 255, 255, 0.3)"
+                      className="drop-shadow-lg"
                     />
                   </svg>
                 </div>
 
-                {/* Content Section - Left Side */}
-                <div className="relative z-10 w-1/2 flex flex-col justify-between pr-2 md:pr-1">
+                {/* Content Section - Left Side - Imported Products */}
+                <div className="relative z-10 w-1/2 flex flex-col justify-between pr-3 md:pr-2">
                   <div>
-                    <h3 className="text-xs md:text-xs font-bold mb-1 md:mb-0.5">Get up to</h3>
-                    <div className="text-xl md:text-xl font-bold mb-1 md:mb-0.5">20% OFF</div>
-                    <p className="text-white/90 mb-2 md:mb-0.5 text-[10px] md:text-[9px]">On your first purchase</p>
+                    <h3 className="text-lg md:text-base font-bold mb-2 md:mb-1.5 text-white drop-shadow-md">Imported Products</h3>
+                    <p className="text-white/95 mb-2 md:mb-1.5 text-sm md:text-xs font-medium leading-tight drop-shadow-sm">are here</p>
+                    <p className="text-white/90 mb-4 md:mb-3 text-xs md:text-[11px] font-medium drop-shadow-sm">browse to see</p>
                   </div>
                   <Link
                     to="/products"
-                    className="inline-block bg-white text-[#16A34A] font-semibold py-1 px-2 md:py-0.5 md:px-2 rounded-md hover:bg-[#F9FAFB] transition-all text-[10px] md:text-[9px] w-fit"
+                    className="inline-block bg-white text-[#16A34A] font-bold py-2.5 px-5 md:py-2 md:px-4 rounded-lg hover:bg-[#F9FAFB] hover:scale-105 transition-all text-sm md:text-xs w-fit shadow-lg"
                   >
-                    Claim Offer
+                    Browse Now
                   </Link>
                 </div>
                 
-                <div className="absolute top-0 right-0 w-12 h-12 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" style={{ zIndex: 10 }}></div>
+                {/* Decorative Elements */}
+                <div className="absolute top-0 right-0 w-12 h-12 md:w-8 md:h-8 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-xl" style={{ zIndex: 5 }}></div>
+                <div className="absolute bottom-0 left-0 w-12 h-12 md:w-8 md:h-8 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-lg" style={{ zIndex: 5 }}></div>
               </div>
 
               {/* New Arrivals - Sliding Carousel */}
@@ -626,6 +701,9 @@ const Home: React.FC = () => {
           </Link>
         </div>
       </div>
+
+      {/* Communication Widget - Floating Button */}
+      <CommunicationWidget />
     </section>
   );
 };

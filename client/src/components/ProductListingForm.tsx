@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { productsAPI } from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 
 const categories = [
   'Fashion & Apparel',
@@ -24,6 +25,7 @@ interface ProductFormData {
   stock: string;
   specifications: { [key: string]: string };
   tags: string[];
+  isImported: boolean;
 }
 
 interface ProductListingFormProps {
@@ -31,6 +33,9 @@ interface ProductListingFormProps {
 }
 
 const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin' || user?.role === 'super admin';
+  
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
@@ -43,6 +48,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
     stock: '',
     specifications: {},
     tags: [],
+    isImported: false,
   });
 
   const [specKey, setSpecKey] = useState('');
@@ -187,6 +193,11 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
         formDataToSend.append('tags', JSON.stringify(formData.tags));
       }
       
+      // Add isImported field (only for admins and super admins)
+      if (isAdmin && formData.isImported) {
+        formDataToSend.append('isImported', 'true');
+      }
+      
       // Add image files
       validImages.forEach((image) => {
         if (image) {
@@ -210,6 +221,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
         stock: '',
         specifications: {},
         tags: [],
+        isImported: false,
       });
 
       if (onSuccess) {
@@ -491,6 +503,41 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
           )}
         </div>
 
+        {/* Imported Product Checkbox - Only for Admins and Super Admins */}
+        {isAdmin && (
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
+            <div className="flex items-start">
+              <div className="flex items-center h-5">
+                <input
+                  id="isImported"
+                  name="isImported"
+                  type="checkbox"
+                  checked={formData.isImported}
+                  onChange={(e) => setFormData({ ...formData, isImported: e.target.checked })}
+                  className="h-5 w-5 text-[#16A34A] focus:ring-[#16A34A] border-gray-300 rounded cursor-pointer"
+                />
+              </div>
+              <div className="ml-3 flex-1">
+                <label htmlFor="isImported" className="font-bold text-lg text-gray-900 cursor-pointer flex items-center gap-2">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  Mark as Imported Product
+                </label>
+                <p className="text-gray-700 mt-1 font-medium">Check this box to mark this product as imported. Imported products will be featured in the homepage hero section.</p>
+                {formData.isImported && (
+                  <div className="mt-2 flex items-center gap-2 text-blue-700 font-semibold">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    This product will be marked as imported
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Tags */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -556,6 +603,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
                 stock: '',
                 specifications: {},
                 tags: [],
+                isImported: false,
               });
               setError('');
             }}

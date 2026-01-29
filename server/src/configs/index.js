@@ -52,7 +52,10 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
+  preflightContinue: false,
 };
 
 app.use(cors(corsOptions));
@@ -74,6 +77,42 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/promotions', promotionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+
+// Global error handler middleware (must be after all routes)
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  
+  // Mongoose validation error
+  if (err.name === 'ValidationError') {
+    const messages = Object.values(err.errors).map(error => error.message);
+    return res.status(400).json({ message: messages.join(', ') });
+  }
+  
+  // Mongoose duplicate key error
+  if (err.code === 11000) {
+    const field = Object.keys(err.keyPattern)[0];
+    return res.status(400).json({ 
+      message: `${field.charAt(0).toUpperCase() + field.slice(1)} already exists` 
+    });
+  }
+  
+  // JWT errors
+  if (err.name === 'JsonWebTokenError') {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+  
+  if (err.name === 'TokenExpiredError') {
+    return res.status(401).json({ message: 'Token expired' });
+  }
+  
+  // Default error
+  const statusCode = err.statusCode || err.status || 500;
+  const message = err.message || 'Internal server error';
+  
+  res.status(statusCode).json({ 
+    message: statusCode === 500 ? 'An error occurred. Please try again later.' : message 
+  });
+});
 
 // MongoDB connection
 mongoose

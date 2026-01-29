@@ -33,7 +33,7 @@ const Checkout = () => {
     country: 'Ethiopia',
     phone: '',
     paymentMethod: 'cash_on_delivery',
-    shippingCost: 0,
+    shippingCost: 200,
   });
 
   useEffect(() => {
@@ -295,32 +295,114 @@ const Checkout = () => {
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Payment Method</h2>
                 <div className="space-y-3">
                   {[
-                    { value: 'cash_on_delivery', label: 'Cash on Delivery', desc: 'Pay when you receive your order' },
-                    { value: 'mobile_money', label: 'Mobile Money', desc: 'M-Pesa, Telebirr, or other mobile payment' },
-                    { value: 'bank_transfer', label: 'Bank Transfer', desc: 'Direct bank transfer' },
-                    { value: 'card', label: 'Card Payment', desc: 'Credit or debit card' }
+                    { 
+                      value: 'cash_on_delivery', 
+                      label: 'Cash on Delivery', 
+                      desc: 'Pay when you receive your order',
+                      available: true
+                    },
+                    { 
+                      value: 'cbe_bank_transfer', 
+                      label: 'CBE Bank Transfer', 
+                      desc: 'Commercial Bank of Ethiopia',
+                      available: true,
+                      details: {
+                        accountNumber: '1000140713949',
+                        accountName: 'Hilary Gebremedhn'
+                      }
+                    },
+                    { 
+                      value: 'telebirr', 
+                      label: 'Telebirr Transfer', 
+                      desc: 'Mobile money transfer',
+                      available: true,
+                      details: {
+                        phoneNumber: '0943056001',
+                        accountName: 'Hilary Gebremedhn'
+                      }
+                    },
+                    { 
+                      value: 'mobile_money', 
+                      label: 'Other Mobile Money', 
+                      desc: 'M-Pesa and other mobile payment methods',
+                      available: false
+                    },
+                    { 
+                      value: 'bank_transfer', 
+                      label: 'Other Bank Transfer', 
+                      desc: 'Other bank transfer methods',
+                      available: false
+                    },
+                    { 
+                      value: 'card', 
+                      label: 'Card Payment', 
+                      desc: 'Credit or debit card',
+                      available: false
+                    }
                   ].map((method) => (
-                    <label
-                      key={method.value}
-                      className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                        formData.paymentMethod === method.value
-                          ? 'border-[#16A34A] bg-[#16A34A]/5'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value={method.value}
-                        checked={formData.paymentMethod === method.value}
-                        onChange={handleInputChange}
-                        className="mt-1 h-4 w-4 text-[#16A34A] focus:ring-[#16A34A]"
-                      />
-                      <div className="ml-3 flex-1">
-                        <div className="font-medium text-gray-900">{method.label}</div>
-                        <div className="text-sm text-gray-500">{method.desc}</div>
-                      </div>
-                    </label>
+                    <div key={method.value}>
+                      <label
+                        className={`flex items-start p-4 border-2 rounded-lg transition-all ${
+                          method.available
+                            ? formData.paymentMethod === method.value
+                              ? 'border-[#16A34A] bg-[#16A34A]/5 cursor-pointer'
+                              : 'border-gray-200 hover:border-gray-300 cursor-pointer'
+                            : 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value={method.value}
+                          checked={formData.paymentMethod === method.value}
+                          onChange={handleInputChange}
+                          disabled={!method.available}
+                          className="mt-1 h-4 w-4 text-[#16A34A] focus:ring-[#16A34A] disabled:opacity-50"
+                        />
+                        <div className="ml-3 flex-1">
+                          <div className="font-medium text-gray-900 flex items-center gap-2">
+                            {method.label}
+                            {!method.available && (
+                              <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">Coming Soon</span>
+                            )}
+                          </div>
+                          <div className="text-sm text-gray-500">{method.desc}</div>
+                          {method.available && method.details && formData.paymentMethod === method.value && (
+                            <div className="mt-3 p-3 bg-[#16A34A]/10 rounded-lg border border-[#16A34A]/20">
+                              {method.value === 'cbe_bank_transfer' && (
+                                <>
+                                  <p className="text-sm font-semibold text-gray-900 mb-2">Bank Transfer Details:</p>
+                                  <p className="text-sm text-gray-700">Bank: Commercial Bank of Ethiopia (CBE)</p>
+                                  <p className="text-sm text-gray-700">Account Number: <span className="font-mono font-semibold">{method.details.accountNumber}</span></p>
+                                  <p className="text-sm text-gray-700">Account Name: <span className="font-semibold">{method.details.accountName}</span></p>
+                                  <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                                    <p className="text-sm font-semibold text-yellow-900 mb-1">⚠️ Important Payment Instructions:</p>
+                                    <p className="text-sm text-yellow-800">• Please transfer <span className="font-bold">200 ETB</span> as initial payment for delivery</p>
+                                    <p className="text-sm text-yellow-800">• After payment, send screenshot or receipt to our Telegram account:</p>
+                                    <p className="text-sm text-yellow-800 font-semibold">📱 @da_hi market place</p>
+                                    <p className="text-sm text-yellow-800 mt-1">• Your order will be processed after we receive your payment confirmation</p>
+                                  </div>
+                                </>
+                              )}
+                              {method.value === 'telebirr' && (
+                                <>
+                                  <p className="text-sm font-semibold text-gray-900 mb-2">Telebirr Transfer Details:</p>
+                                  <p className="text-sm text-gray-700">Phone Number: <span className="font-mono font-semibold">{method.details.phoneNumber}</span></p>
+                                  <p className="text-sm text-gray-700">Account Name: <span className="font-semibold">{method.details.accountName}</span></p>
+                                  <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                                    <p className="text-sm font-semibold text-yellow-900 mb-1">⚠️ Important Payment Instructions:</p>
+                                    <p className="text-sm text-yellow-800">• Please transfer <span className="font-bold">200 ETB</span> as initial payment for delivery</p>
+                                    <p className="text-sm text-yellow-800">• After payment, send screenshot or receipt to our Telegram account:</p>
+                                    <p className="text-sm text-yellow-800 font-semibold">📱 @da_hi market place</p>
+                                    <p className="text-sm text-yellow-800 mt-1">• Your order will be processed after we receive your payment confirmation</p>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </label>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -374,7 +456,7 @@ const Checkout = () => {
                 {/* Shipping Cost Input */}
                 <div className="mb-6">
                   <label htmlFor="shippingCost" className="block text-sm font-medium text-gray-700 mb-1">
-                    Shipping Cost (ETB)
+                    Delivery Fee (ETB)
                   </label>
                   <input
                     id="shippingCost"
@@ -386,6 +468,7 @@ const Checkout = () => {
                     onChange={handleInputChange}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   />
+                  <p className="mt-1 text-xs text-gray-500">Standard delivery fee: 200 ETB</p>
                 </div>
 
                 {/* Submit Button */}

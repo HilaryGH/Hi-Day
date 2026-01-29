@@ -18,7 +18,9 @@ import Cart from './components/Cart';
 import './App.css';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+import UserDataDeletion from './pages/UserDataDeletion';
 import About from './pages/About';
+import SellerStore from './pages/SellerStore';
 
 function App() {
   return (
@@ -42,7 +44,9 @@ function App() {
               <Route path="/orders/:id" element={<OrderConfirmation />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="/about" element={<About />} /> 
+              <Route path="/user-data-deletion" element={<UserDataDeletion />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/seller/:sellerId" element={<SellerStore />} /> 
             </Routes>
           </main>
           <Footer />

@@ -36,9 +36,41 @@ const Cart = () => {
     try {
       setLoading(true);
       const data = await cartAPI.get();
-      setCart(data);
-    } catch (error) {
+      
+      // Debug logging for admin users
+      if (user && (user.role === 'admin' || user.role === 'super admin')) {
+        console.log('Cart data received:', data);
+        console.log('Cart items:', data?.items);
+        console.log('Cart items length:', data?.items?.length);
+      }
+      
+      // Ensure cart has items array even if empty
+      if (data) {
+        // Normalize the cart data structure
+        const normalizedCart: Cart = {
+          _id: data._id || '',
+          items: Array.isArray(data.items) ? data.items : []
+        };
+        
+        // Filter out any items with null or missing products
+        normalizedCart.items = normalizedCart.items.filter(item => {
+          return item && item.product && item.product._id;
+        });
+        
+        setCart(normalizedCart);
+      } else {
+        // If no data returned, create empty cart
+        setCart({ _id: '', items: [] } as Cart);
+      }
+    } catch (error: any) {
       console.error('Error loading cart:', error);
+      // If it's a 404 or cart doesn't exist, create empty cart state
+      if (error?.status === 404 || error?.message?.includes('not found')) {
+        setCart({ _id: '', items: [] } as Cart);
+      } else {
+        // For other errors, still show empty cart but log the error
+        setCart({ _id: '', items: [] } as Cart);
+      }
     } finally {
       setLoading(false);
     }

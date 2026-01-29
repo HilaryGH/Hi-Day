@@ -5,14 +5,54 @@ import Product from '../models/Product.js';
 export const getCart = async (req, res) => {
   try {
     let cart = await Cart.findOne({ user: req.userId })
-      .populate('items.product');
+      .populate({
+        path: 'items.product',
+        select: 'name price images stock isActive'
+      });
 
     if (!cart) {
       cart = await Cart.create({ user: req.userId, items: [] });
     }
 
-    res.json(cart);
+    // Filter out items with null, deleted, or inactive products
+    if (cart.items && cart.items.length > 0) {
+      const validItems = cart.items.filter(item => {
+        // Check if product exists and is populated (not null)
+        if (!item.product) return false;
+        
+        // If product is an object (populated), check if it's active
+        if (typeof item.product === 'object' && item.product._id) {
+          // Product is populated, check if active
+          return item.product.isActive !== false;
+        }
+        
+        // Product ID exists but not populated (shouldn't happen, but handle it)
+        return true;
+      });
+      
+      // Only update if we removed items
+      if (validItems.length !== cart.items.length) {
+        cart.items = validItems;
+        await cart.save();
+        // Re-populate after filtering
+        await cart.populate({
+          path: 'items.product',
+          select: 'name price images stock isActive'
+        });
+      }
+    }
+
+    // Ensure items array exists and is an array
+    if (!cart.items || !Array.isArray(cart.items)) {
+      cart.items = [];
+    }
+
+    // Convert to plain object to ensure proper JSON serialization
+    const cartData = cart.toObject ? cart.toObject() : cart;
+    
+    res.json(cartData);
   } catch (error) {
+    console.error('Error getting cart:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -124,6 +164,10 @@ export const clearCart = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+
+
 
 
 

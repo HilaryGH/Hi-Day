@@ -34,7 +34,7 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['cash_on_delivery', 'mobile_money', 'bank_transfer', 'card'],
+    enum: ['cash_on_delivery', 'cbe_bank_transfer', 'telebirr', 'mobile_money', 'bank_transfer', 'card'],
     required: true
   },
   paymentStatus: {
@@ -60,6 +60,11 @@ const orderSchema = new mongoose.Schema({
   trackingNumber: {
     type: String,
     default: ''
+  },
+  orderNumber: {
+    type: String,
+    unique: true,
+    sparse: true
   }
 }, {
   timestamps: true
@@ -70,6 +75,10 @@ orderSchema.index({ orderStatus: 1 });
 orderSchema.index({ createdAt: -1 });
 
 export default mongoose.model('Order', orderSchema);
+
+
+
+
 
 
 

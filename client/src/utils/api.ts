@@ -23,27 +23,75 @@ const getToken = () => {
 
 // Generic fetch function
 const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
-  const token = getToken();
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string> || {}),
-  };
+  try {
+    const token = getToken();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(options.headers as Record<string, string> || {}),
+    };
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'An error occurred' }));
-    throw new Error(error.message || 'Request failed');
-  }
+        let errorMessage = 'An error occurred';
+        let errorData: any = { message: errorMessage };
+        
+        try {
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            errorData = await response.json();
+            errorMessage = errorData.message || errorData.error || errorData.msg || `Request failed with status ${response.status}`;
+          } else {
+            const text = await response.text();
+            errorMessage = text || `Request failed with status ${response.status}`;
+            errorData = { message: errorMessage };
+          }
+        } catch (parseError) {
+          // If we can't parse the error, use status-based message
+          errorMessage = `Request failed with status ${response.status}`;
+          errorData = { message: errorMessage };
+        }
+        
+        // Always create a proper Error object
+        const error = new Error(errorMessage);
+        (error as any).status = response.status;
+        (error as any).statusCode = response.status;
+        (error as any).data = errorData;
+        (error as any).response = {
+          status: response.status,
+          data: errorData
+        };
+        throw error;
+      }
 
-  return response.json();
+    return response.json();
+  } catch (error: any) {
+    // If it's already an Error with our custom properties, re-throw it
+    if (error instanceof Error && (error as any).status) {
+      throw error;
+    }
+    // Otherwise, wrap network errors or other errors
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      const networkError = new Error('Network error: Unable to connect to the server. Please check your internet connection.');
+      (networkError as any).status = 0;
+      (networkError as any).isNetworkError = true;
+      throw networkError;
+    }
+    // If error is not an Error instance, convert it
+    if (!(error instanceof Error)) {
+      const convertedError = new Error(typeof error === 'string' ? error : 'An unexpected error occurred');
+      (convertedError as any).originalError = error;
+      throw convertedError;
+    }
+    throw error;
+  }
 };
 
 // Auth API
@@ -73,6 +121,8 @@ export const productsAPI = {
     search?: string;
     minPrice?: number;
     maxPrice?: number;
+    seller?: string;
+    isImported?: boolean;
     sortBy?: string;
     order?: string;
     page?: number;
@@ -100,10 +150,36 @@ export const productsAPI = {
       body: formData,
     }).then(async (response) => {
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: 'An error occurred' }));
-        throw new Error(error.message || 'Request failed');
+        let errorMessage = 'An error occurred';
+        let errorData: any = { message: errorMessage };
+        
+        try {
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            errorData = await response.json();
+            errorMessage = errorData.message || errorData.error || `Request failed with status ${response.status}`;
+          } else {
+            const text = await response.text();
+            errorMessage = text || `Request failed with status ${response.status}`;
+            errorData = { message: errorMessage };
+          }
+        } catch (parseError) {
+          errorMessage = `Request failed with status ${response.status}`;
+          errorData = { message: errorMessage };
+        }
+        
+        const error = new Error(errorMessage);
+        (error as any).status = response.status;
+        (error as any).data = errorData;
+        throw error;
       }
       return response.json();
+    }).catch((error) => {
+      // Handle network errors
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Network error: Unable to connect to the server. Please check your internet connection.');
+      }
+      throw error;
     });
   },
   update: (id: string, data: any) =>

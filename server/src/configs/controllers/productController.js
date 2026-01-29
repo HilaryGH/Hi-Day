@@ -9,6 +9,8 @@ export const getProducts = async (req, res) => {
       search,
       minPrice,
       maxPrice,
+      seller,
+      isImported,
       sortBy = 'createdAt',
       order = 'desc',
       page = 1,
@@ -20,6 +22,16 @@ export const getProducts = async (req, res) => {
     // Category filter - exact match
     if (category) {
       query.category = category.trim();
+    }
+
+    // Seller filter
+    if (seller) {
+      query.seller = seller.trim();
+    }
+
+    // Imported products filter
+    if (isImported !== undefined) {
+      query.isImported = isImported === 'true' || isImported === true;
     }
 
     // Price range filter
@@ -58,7 +70,7 @@ export const getProducts = async (req, res) => {
     const skip = (Number(page) - 1) * Number(limit);
 
     const products = await Product.find(query)
-      .populate('seller', 'name email')
+      .populate('seller', '_id name email')
       .sort(sortOptions)
       .skip(skip)
       .limit(Number(limit));
@@ -83,7 +95,7 @@ export const getProducts = async (req, res) => {
 export const getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id)
-      .populate('seller', 'name email');
+      .populate('seller', '_id name email');
     // Reviews population can be enabled when Review functionality is implemented
     // .populate({
     //   path: 'reviews',
@@ -172,6 +184,13 @@ export const createProduct = async (req, res) => {
         // If specifications is not JSON, ignore it
       }
     }
+    
+    // Allow admin and super admin to mark products as imported
+    if (req.userRole === 'admin' || req.userRole === 'super admin') {
+      if (req.body.isImported !== undefined) {
+        productData.isImported = req.body.isImported === 'true' || req.body.isImported === true;
+      }
+    }
 
     const product = await Product.create(productData);
 
@@ -198,7 +217,21 @@ export const updateProduct = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
-    Object.assign(product, req.body);
+    // Prepare update data - exclude isImported first
+    const updateData = { ...req.body };
+    
+    // Only admin and super admin can update isImported field
+    if (req.userRole === 'admin' || req.userRole === 'super admin') {
+      if (req.body.isImported !== undefined) {
+        updateData.isImported = req.body.isImported === 'true' || req.body.isImported === true;
+      }
+    } else {
+      // Remove isImported from update if user is not admin/super admin
+      delete updateData.isImported;
+    }
+    
+    // Update product fields
+    Object.assign(product, updateData);
     await product.save();
 
     res.json(product);
@@ -239,7 +272,7 @@ export const getBestSellers = async (req, res) => {
       isActive: true, 
       isBestSeller: true 
     })
-      .populate('seller', 'name email')
+      .populate('seller', '_id name email')
       .sort({ createdAt: -1 })
       .limit(limit);
 

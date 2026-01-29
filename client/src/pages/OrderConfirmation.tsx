@@ -75,7 +75,12 @@ const OrderConfirmation = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-green-900 mb-1">Order Confirmed!</h1>
-              <p className="text-green-700">Your order has been successfully placed. Order ID: {order._id}</p>
+              <p className="text-green-700">
+                Your order has been successfully placed. 
+                {order.orderNumber && (
+                  <span className="font-semibold"> Order Number: {order.orderNumber}</span>
+                )}
+              </p>
             </div>
           </div>
         </div>
@@ -84,7 +89,9 @@ const OrderConfirmation = () => {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
           <div className="bg-[#16A34A] text-white px-6 py-4">
             <h2 className="text-xl font-bold">Order Details</h2>
-            <p className="text-sm text-blue-100 mt-1">Order #{order._id.slice(-8).toUpperCase()}</p>
+            <p className="text-sm text-blue-100 mt-1">
+              {order.orderNumber ? `Order #${order.orderNumber}` : `Order #${order._id.slice(-8).toUpperCase()}`}
+            </p>
           </div>
 
           <div className="p-6 space-y-6">
@@ -132,11 +139,26 @@ const OrderConfirmation = () => {
             <div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Payment Method</h3>
               <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-gray-700 capitalize">
-                  {order.paymentMethod?.replace('_', ' ')}
+                <p className="text-gray-700 capitalize font-semibold mb-2">
+                  {order.paymentMethod?.replace(/_/g, ' ').replace('cbe', 'CBE').replace('telebirr', 'Telebirr')}
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
-                  Status: <span className="capitalize">{order.paymentStatus}</span>
+                {order.paymentMethod === 'cbe_bank_transfer' && (
+                  <div className="mt-3 p-3 bg-white rounded border border-gray-200">
+                    <p className="text-sm font-semibold text-gray-900 mb-2">Payment Details:</p>
+                    <p className="text-sm text-gray-700">Bank: Commercial Bank of Ethiopia (CBE)</p>
+                    <p className="text-sm text-gray-700">Account Number: <span className="font-mono font-semibold">1000140713949</span></p>
+                    <p className="text-sm text-gray-700">Account Name: <span className="font-semibold">Hilary Gebremedhn</span></p>
+                  </div>
+                )}
+                {order.paymentMethod === 'telebirr' && (
+                  <div className="mt-3 p-3 bg-white rounded border border-gray-200">
+                    <p className="text-sm font-semibold text-gray-900 mb-2">Payment Details:</p>
+                    <p className="text-sm text-gray-700">Phone Number: <span className="font-mono font-semibold">0943056001</span></p>
+                    <p className="text-sm text-gray-700">Account Name: <span className="font-semibold">Hilary Gebremedhn</span></p>
+                  </div>
+                )}
+                <p className="text-sm text-gray-500 mt-3">
+                  Status: <span className="capitalize font-semibold">{order.paymentStatus}</span>
                 </p>
               </div>
             </div>

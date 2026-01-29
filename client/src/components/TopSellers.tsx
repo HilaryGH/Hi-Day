@@ -16,8 +16,11 @@ const TopSellers: React.FC = () => {
         console.log('Top sellers response:', response); // Debug log
         setSellers(response.sellers || []);
       } catch (error: any) {
-        console.error('Error fetching top sellers:', error);
-        setError(error.message || 'Failed to load top sellers');
+        // Only show error if it's not a 404 or expected error
+        if (error?.status !== 404) {
+          console.error('Error fetching top sellers:', error);
+          setError(error.message || 'Failed to load top sellers');
+        }
         setSellers([]);
       } finally {
         setLoading(false);
