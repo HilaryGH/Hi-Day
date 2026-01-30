@@ -360,6 +360,139 @@ export const facebookLogin = async (req, res) => {
   }
 };
 
+// Facebook OAuth Callback (for server-side redirect flow - optional)
+export const facebookCallback = async (req, res) => {
+  try {
+    const { code, error, error_reason, error_description } = req.query;
+
+    // Handle errors from Facebook
+    if (error) {
+      console.error('Facebook OAuth error:', error_reason, error_description);
+      // Redirect to login page with error
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      return res.redirect(`${frontendUrl}/login?error=${encodeURIComponent(error_description || 'Facebook authentication failed')}`);
+    }
+
+    if (!code) {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      return res.redirect(`${frontendUrl}/login?error=${encodeURIComponent('No authorization code received')}`);
+    }
+
+    const facebookAppId = process.env.FACEBOOK_APP_ID;
+    const facebookAppSecret = process.env.FACEBOOK_APP_SECRET;
+
+    if (!facebookAppId || !facebookAppSecret) {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      return res.redirect(`${frontendUrl}/login?error=${encodeURIComponent('Facebook credentials not configured')}`);
+    }
+
+    // Exchange code for access token
+    const tokenResponse = await fetch(
+      `https://graph.facebook.com/v18.0/oauth/access_token?client_id=${facebookAppId}&client_secret=${facebookAppSecret}&redirect_uri=${encodeURIComponent(process.env.FACEBOOK_CALLBACK_URL || `${process.env.FRONTEND_URL || 'http://localhost:5173'}/api/auth/facebook/callback`)}&code=${code}`
+    );
+
+    if (!tokenResponse.ok) {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      return res.redirect(`${frontendUrl}/login?error=${encodeURIComponent('Failed to exchange code for access token')}`);
+    }
+
+    const tokenData = await tokenResponse.json();
+    const accessToken = tokenData.access_token;
+
+    if (!accessToken) {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      return res.redirect(`${frontendUrl}/login?error=${encodeURIComponent('No access token received')}`);
+    }
+
+    // Verify the access token and get user info
+    const debugTokenResponse = await fetch(
+      `https://graph.facebook.com/debug_token?input_token=${accessToken}&access_token=${facebookAppId}|${facebookAppSecret}`
+    );
+
+    if (!debugTokenResponse.ok) {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      return res.redirect(`${frontendUrl}/login?error=${encodeURIComponent('Invalid Facebook access token')}`);
+    }
+
+    const debugTokenData = await debugTokenResponse.json();
+    
+    if (!debugTokenData.data || !debugTokenData.data.is_valid) {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      return res.redirect(`${frontendUrl}/login?error=${encodeURIComponent('Invalid Facebook access token')}`);
+    }
+
+    const facebookId = debugTokenData.data.user_id;
+
+    // Get user info from Facebook Graph API
+    const userInfoResponse = await fetch(
+      `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${accessToken}`
+    );
+
+    if (!userInfoResponse.ok) {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      return res.redirect(`${frontendUrl}/login?error=${encodeURIComponent('Failed to fetch user info from Facebook')}`);
+    }
+
+    const userInfo = await userInfoResponse.json();
+    const { email, name, picture } = userInfo;
+    const profilePicture = picture?.data?.url || '';
+
+    // Check if user exists with this Facebook ID
+    let user = await User.findOne({ facebookId });
+
+    if (!user) {
+      // Check if user exists with this email
+      if (email) {
+        user = await User.findOne({ email });
+
+        if (user) {
+          // Link Facebook account to existing user
+          user.facebookId = facebookId;
+          if (profilePicture && !user.avatar) {
+            user.avatar = profilePicture;
+          }
+          await user.save();
+        }
+      }
+
+      if (!user) {
+        // Create new user with Facebook OAuth
+        user = await User.create({
+          facebookId,
+          email: email || `${facebookId}@facebook.com`,
+          name: name || 'Facebook User',
+          avatar: profilePicture || '',
+          role: 'buyer', // Set role to 'buyer' for Facebook OAuth users
+          privacyConsent: true,
+          isVerified: true,
+        });
+      }
+    } else {
+      // Update avatar if not set
+      if (profilePicture && !user.avatar) {
+        user.avatar = profilePicture;
+        await user.save();
+      }
+    }
+
+    const token = generateToken(user._id);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+    // Redirect to frontend with token (you can also use a token in URL or set a cookie)
+    // Option 1: Redirect with token in URL (less secure, but simple)
+    // Option 2: Set HTTP-only cookie (more secure, requires CORS setup)
+    // Option 3: Use a temporary token store and redirect with a session ID
+    
+    // For now, we'll redirect to a success page that will handle the token
+    // You can modify this based on your frontend routing
+    res.redirect(`${frontendUrl}/auth/facebook/success?token=${token}`);
+  } catch (error) {
+    console.error('Facebook callback error:', error);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.redirect(`${frontendUrl}/login?error=${encodeURIComponent('Facebook authentication failed')}`);
+  }
+};
+
 // Get current user
 export const getMe = async (req, res) => {
   try {

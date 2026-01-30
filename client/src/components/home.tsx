@@ -357,7 +357,7 @@ const Home: React.FC = () => {
             {/* Right Side - Two Cards Side by Side on Mobile, Stacked on Desktop */}
             <div className="md:col-span-2 flex flex-row md:flex-col gap-3 md:gap-2.5 md:h-full">
               {/* Imported Products Card */}
-              <div className="flex-1 rounded-lg p-4 md:p-3 text-white relative overflow-hidden min-h-[120px] md:flex-1 flex shadow-lg hover:shadow-xl transition-shadow">
+              <div className="flex-1 rounded-lg p-2 md:p-3 text-white relative overflow-hidden min-h-[60px] md:min-h-[120px] md:flex-1 flex shadow-lg hover:shadow-xl transition-shadow">
                 {/* Background Gradient for Content Section - Left */}
                 <div className="absolute left-0 top-0 bottom-0 w-1/2 bg-gradient-to-br from-[#16A34A] via-[#15803D] to-[#16A34A] z-0"></div>
                 
@@ -393,27 +393,27 @@ const Home: React.FC = () => {
                 </div>
 
                 {/* Content Section - Left Side - Imported Products */}
-                <div className="relative z-10 w-1/2 flex flex-col justify-between pr-3 md:pr-2">
+                <div className="relative z-10 w-1/2 flex flex-col justify-between pr-1.5 md:pr-2">
                   <div>
-                    <h3 className="text-lg md:text-base font-bold mb-2 md:mb-1.5 text-white drop-shadow-md">Imported Products</h3>
-                    <p className="text-white/95 mb-2 md:mb-1.5 text-sm md:text-xs font-medium leading-tight drop-shadow-sm">are here</p>
-                    <p className="text-white/90 mb-4 md:mb-3 text-xs md:text-[11px] font-medium drop-shadow-sm">browse to see</p>
+                    <h3 className="text-xs md:text-base font-bold mb-0.5 md:mb-1.5 text-white drop-shadow-md">Imported Products</h3>
+                    <p className="text-white/95 mb-0.5 md:mb-1.5 text-[10px] md:text-xs font-medium leading-tight drop-shadow-sm">are here</p>
+                    <p className="text-white/90 mb-1 md:mb-3 text-[9px] md:text-[11px] font-medium drop-shadow-sm">browse to see</p>
                   </div>
                   <Link
                     to="/products"
-                    className="inline-block bg-white text-[#16A34A] font-bold py-2.5 px-5 md:py-2 md:px-4 rounded-lg hover:bg-[#F9FAFB] hover:scale-105 transition-all text-sm md:text-xs w-fit shadow-lg"
+                    className="inline-block bg-white text-[#16A34A] font-bold py-1 px-2 md:py-2 md:px-4 rounded-lg hover:bg-[#F9FAFB] hover:scale-105 transition-all text-[10px] md:text-xs w-fit shadow-lg"
                   >
                     Browse Now
                   </Link>
                 </div>
                 
                 {/* Decorative Elements */}
-                <div className="absolute top-0 right-0 w-12 h-12 md:w-8 md:h-8 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-xl" style={{ zIndex: 5 }}></div>
-                <div className="absolute bottom-0 left-0 w-12 h-12 md:w-8 md:h-8 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-lg" style={{ zIndex: 5 }}></div>
+                <div className="absolute top-0 right-0 w-6 h-6 md:w-8 md:h-8 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-xl" style={{ zIndex: 5 }}></div>
+                <div className="absolute bottom-0 left-0 w-6 h-6 md:w-8 md:h-8 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-lg" style={{ zIndex: 5 }}></div>
               </div>
 
               {/* New Arrivals - Sliding Carousel */}
-              <div className="flex-1 bg-white rounded-lg border border-[#E5E7EB] relative overflow-hidden min-h-[100px] md:flex-1 hover:border-[#16A34A] transition-all md:flex">
+              <div className="flex-1 bg-white rounded-lg border border-[#E5E7EB] relative overflow-hidden min-h-[60px] md:min-h-[100px] md:flex-1 hover:border-[#16A34A] transition-all md:flex">
                 {newArrivals.length > 0 ? (
                   <>
                     {/* Image Carousel Container - Full width on mobile, half on desktop */}
@@ -425,7 +425,7 @@ const Home: React.FC = () => {
                         {newArrivals.slice(0, 3).map((product, index) => (
                           <div 
                             key={index}
-                            className="min-w-full h-full flex items-center justify-center p-2"
+                            className="min-w-full h-full flex items-center justify-center p-1 md:p-2"
                           >
                             {product?.images && product.images.length > 0 ? (
                               <img 
@@ -435,7 +435,7 @@ const Home: React.FC = () => {
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <svg className="w-10 h-10 md:w-8 md:h-8 text-[#16A34A]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-6 h-6 md:w-8 md:h-8 text-[#16A34A]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                 </svg>
                               </div>
@@ -447,15 +447,15 @@ const Home: React.FC = () => {
 
                     {/* Mobile View - Overlaid Content */}
                     <div className="absolute inset-0 md:hidden flex flex-col justify-between z-10 pointer-events-none">
-                      <div className="flex justify-end pt-0 pr-3">
-                        <div className="bg-[#16A34A]/90 backdrop-blur-md px-3 py-1.5 rounded-lg pointer-events-auto">
-                          <h3 className="text-xs font-bold text-white">New Arrivals</h3>
+                      <div className="flex justify-end pt-0.5 pr-1.5">
+                        <div className="bg-[#16A34A]/90 backdrop-blur-md px-1.5 py-0.5 rounded-lg pointer-events-auto">
+                          <h3 className="text-[9px] font-bold text-white">New Arrivals</h3>
                         </div>
                       </div>
-                      <div className="flex justify-start pl-3 pb-1">
+                      <div className="flex justify-start pl-1.5 pb-0.5">
                         <Link
                           to="/products?sortBy=createdAt&order=desc"
-                          className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-4 rounded-md transition-colors text-[10px] pointer-events-auto"
+                          className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-0.5 px-2 rounded-md transition-colors text-[8px] pointer-events-auto"
                         >
                           Shop Now
                         </Link>
@@ -587,9 +587,9 @@ const Home: React.FC = () => {
 
       {/* Enhanced Categories Section */}
       <div className="max-w-7xl mx-auto py-20 px-4 bg-[#F9FAFB]">
-        <div className="mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-[#111827] mb-4">Shop by Category</h2>
-          <p className="text-xl text-[#6B7280] max-w-2xl">
+        <div className="mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#111827] mb-2">Shop by Category</h2>
+          <p className="text-sm md:text-base text-[#6B7280] max-w-2xl">
             Browse thousands of products across multiple categories
           </p>
         </div>
@@ -597,11 +597,17 @@ const Home: React.FC = () => {
           {loading ? (
             // Loading skeleton
             Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-lg p-6 animate-pulse">
-                <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div key={i} className="bg-white rounded-2xl shadow-lg p-4 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-1/4 mb-3"></div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {Array.from({ length: 4 }).map((_, j) => (
-                    <div key={j} className="h-32 md:h-36 bg-gray-200 rounded-lg"></div>
+                    <div key={j} className="flex flex-row bg-gray-50 rounded-lg p-1.5">
+                      <div className="w-16 h-16 bg-gray-200 rounded flex-shrink-0"></div>
+                      <div className="flex-1 space-y-1.5 ml-1.5">
+                        <div className="h-2.5 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-2.5 bg-gray-200 rounded w-1/2"></div>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -609,30 +615,31 @@ const Home: React.FC = () => {
           ) : (
             categoryProducts.map((categoryData, i) => (
               <div key={i} className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden">
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-3">
                     <div>
-                      <h3 className="font-bold text-2xl md:text-3xl text-[#111827] mb-2">{categoryData.category}</h3>
-                      <p className="text-[#6B7280] text-sm md:text-base">
+                      <h3 className="font-bold text-lg md:text-xl text-[#111827] mb-1">{categoryData.category}</h3>
+                      <p className="text-[#6B7280] text-xs md:text-sm">
                         {categoryData.total > 0 ? `${categoryData.total}+ Items Available` : 'No items available'}
                       </p>
                     </div>
                     <Link
                       to={`/products?category=${encodeURIComponent(categoryData.categoryName)}`}
-                      className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-6 rounded-lg transition-colors whitespace-nowrap"
+                      className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-1.5 px-4 rounded-lg transition-colors whitespace-nowrap text-xs md:text-sm"
                     >
                       View All
                     </Link>
                   </div>
                   {categoryData.products.length > 0 ? (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       {categoryData.products.map((product, j) => (
                         <Link
                           key={j}
                           to={`/products/${product._id}`}
-                          className="group bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition-all"
+                          className="group bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition-all flex flex-row"
                         >
-                          <div className="relative h-32 md:h-36 bg-gray-100 overflow-hidden">
+                          {/* Image on the left */}
+                          <div className="relative w-16 h-16 md:w-20 md:h-20 bg-gray-100 overflow-hidden flex-shrink-0">
                             {product.images && product.images.length > 0 ? (
                               <img
                                 src={product.images[0]}
@@ -641,27 +648,28 @@ const Home: React.FC = () => {
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                <svg className="w-12 h-12 md:w-16 md:h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                               </div>
                             )}
                             {product.onSale && (
-                              <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
+                              <div className="absolute top-0.5 right-0.5 bg-red-500 text-white px-1 py-0.5 rounded text-[8px] font-bold">
                                 SALE
                               </div>
                             )}
                           </div>
-                          <div className="p-3">
-                            <h4 className="font-semibold text-sm text-[#111827] mb-1 line-clamp-2 group-hover:text-[#16A34A] transition-colors">
+                          {/* Content on the right */}
+                          <div className="flex-1 p-1.5 flex flex-col justify-between min-w-0">
+                            <h4 className="font-semibold text-[10px] md:text-xs text-[#111827] mb-0.5 line-clamp-2 group-hover:text-[#16A34A] transition-colors">
                               {product.name}
                             </h4>
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg font-bold text-[#16A34A]">
+                            <div className="flex flex-col gap-0.5">
+                              <span className="text-xs md:text-sm font-bold text-[#16A34A]">
                                 ETB {product.price?.toLocaleString() || '0'}
                               </span>
                               {product.originalPrice && product.originalPrice > product.price && (
-                                <span className="text-sm text-gray-500 line-through">
+                                <span className="text-[9px] text-gray-500 line-through">
                                   ETB {product.originalPrice.toLocaleString()}
                                 </span>
                               )}

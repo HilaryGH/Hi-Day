@@ -76,13 +76,13 @@ const RecentProducts: React.FC = () => {
             {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
               <div
                 key={item}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse"
+                className="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse flex flex-row md:flex-col"
               >
-                <div className="aspect-square bg-gray-200"></div>
-                <div className="p-4 space-y-3">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                  <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+                <div className="w-2/5 md:w-full h-32 md:h-64 bg-gray-200"></div>
+                <div className="w-3/5 md:w-full relative md:-mt-12 p-2 md:p-3 md:pt-14 space-y-2">
+                  <div className="h-2.5 md:h-3 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-2 md:h-2.5 bg-gray-200 rounded w-1/2"></div>
+                  <div className="h-3 md:h-4 bg-gray-200 rounded w-1/3"></div>
                 </div>
               </div>
             ))}
@@ -95,10 +95,10 @@ const RecentProducts: React.FC = () => {
                 <Link
                   key={product._id}
                   to={`/products/${product._id}`}
-                  className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-visible"
+                  className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden md:overflow-visible flex flex-row md:flex-col"
                 >
-                  {/* Image Container - Reduced height */}
-                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 rounded-t-2xl">
+                  {/* Image Container - Left side on mobile, full width on desktop */}
+                  <div className="relative w-2/5 md:w-full h-32 md:h-64 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 rounded-l-2xl md:rounded-t-2xl md:rounded-l-none flex-shrink-0">
                     {product.images && product.images.length > 0 ? (
                       <img
                         src={product.images[0]}
@@ -108,7 +108,7 @@ const RecentProducts: React.FC = () => {
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <svg 
-                          className="w-16 h-16 text-gray-300" 
+                          className="w-12 h-12 md:w-16 md:h-16 text-gray-300" 
                           fill="none" 
                           stroke="currentColor" 
                           viewBox="0 0 24 24"
@@ -124,100 +124,104 @@ const RecentProducts: React.FC = () => {
                     )}
                     
                     {/* New Badge */}
-                    <div className="absolute top-3 left-3">
-                      <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="absolute top-1.5 left-1.5 md:top-2 md:left-2">
+                      <span className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-full text-[9px] md:text-[10px] font-bold shadow-lg flex items-center gap-0.5 md:gap-1">
+                        <svg className="w-2 h-2 md:w-2.5 md:h-2.5" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                         </svg>
-                        New
+                        <span className="hidden md:inline">New</span>
                       </span>
                     </div>
 
                     {/* Discount Badge */}
                     {discount && (
-                      <div className="absolute top-3 right-3">
-                        <span className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                      <div className="absolute top-1.5 right-1.5 md:top-2 md:right-2">
+                        <span className="bg-red-500 text-white px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-full text-[9px] md:text-[10px] font-bold shadow-lg">
                           -{discount}%
                         </span>
                       </div>
                     )}
 
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="absolute bottom-4 left-4 right-4">
-                        <button className="w-full bg-white text-[#16A34A] font-semibold py-2 px-4 rounded-lg hover:bg-[#16A34A] hover:text-white transition-colors transform translate-y-2 group-hover:translate-y-0 duration-300">
+                    {/* Hover Overlay - Desktop only */}
+                    <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <button className="w-full bg-white text-[#16A34A] font-semibold py-1.5 px-3 rounded-lg hover:bg-[#16A34A] hover:text-white transition-colors transform translate-y-2 group-hover:translate-y-0 duration-300 text-xs">
                           View Details
                         </button>
                       </div>
                     </div>
                   </div>
 
-                  {/* Product Info - Overlapping the image (half height) */}
-                  <div className="relative -mt-24 bg-white rounded-2xl rounded-t-none p-3 md:p-4 pt-20 shadow-lg border-t border-gray-100 z-10">
-                    <h3 className="font-semibold text-sm md:text-base mb-1.5 text-gray-900 line-clamp-2 group-hover:text-[#16A34A] transition-colors">
-                      {product.name}
-                    </h3>
-                    
-                    {/* Category */}
-                    {product.category && (
-                      <p className="text-[10px] text-gray-500 mb-2 uppercase tracking-wide">
-                        {product.category}
-                      </p>
-                    )}
+                  {/* Product Info - Right side on mobile, overlaying on desktop */}
+                  <div className="relative w-3/5 md:w-full md:-mt-12 bg-white rounded-r-2xl md:rounded-2xl md:rounded-t-none p-2 md:p-3 md:pt-14 shadow-lg md:border-t border-gray-100 z-10 flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-semibold text-[10px] md:text-xs lg:text-sm mb-0.5 md:mb-1 text-gray-900 line-clamp-2 group-hover:text-[#16A34A] transition-colors">
+                        {product.name}
+                      </h3>
+                      
+                      {/* Category */}
+                      {product.category && (
+                        <p className="text-[8px] md:text-[9px] text-gray-500 mb-1 md:mb-1.5 uppercase tracking-wide">
+                          {product.category}
+                        </p>
+                      )}
 
-                    {/* Rating */}
-                    {product.rating && product.rating.average > 0 && (
-                      <div className="flex items-center gap-1.5 mb-2">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <svg
-                              key={i}
-                              className={`w-3 h-3 ${
-                                i < Math.round(product.rating.average)
-                                  ? 'text-yellow-400'
-                                  : 'text-gray-300'
-                              }`}
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                          ))}
+                      {/* Rating */}
+                      {product.rating && product.rating.average > 0 && (
+                        <div className="flex items-center gap-0.5 md:gap-1 mb-1 md:mb-1.5">
+                          <div className="flex items-center">
+                            {[...Array(5)].map((_, i) => (
+                              <svg
+                                key={i}
+                                className={`w-2 h-2 md:w-2.5 md:h-2.5 ${
+                                  i < Math.round(product.rating.average)
+                                    ? 'text-yellow-400'
+                                    : 'text-gray-300'
+                                }`}
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+                          <span className="text-[9px] md:text-[10px] text-gray-600">
+                            ({product.rating.count || 0})
+                          </span>
                         </div>
-                        <span className="text-xs text-gray-600">
-                          ({product.rating.count || 0})
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Price */}
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-[#16A34A]">
-                        {formatPrice(product.price)}
-                      </span>
-                      {product.onSale && product.originalPrice && product.price < product.originalPrice && (
-                        <span className="text-xs text-gray-500 line-through">
-                          {formatPrice(product.originalPrice)}
-                        </span>
                       )}
                     </div>
 
-                    {/* Stock Status */}
-                    {product.stock > 0 ? (
-                      <div className="mt-2 flex items-center gap-1.5 text-xs text-green-600">
-                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                        <span>In Stock</span>
+                    <div>
+                      {/* Price */}
+                      <div className="flex items-center gap-1 md:gap-1.5 mb-1 md:mb-0">
+                        <span className="text-xs md:text-sm lg:text-base font-bold text-[#16A34A]">
+                          {formatPrice(product.price)}
+                        </span>
+                        {product.onSale && product.originalPrice && product.price < product.originalPrice && (
+                          <span className="text-[9px] md:text-[10px] text-gray-500 line-through">
+                            {formatPrice(product.originalPrice)}
+                          </span>
+                        )}
                       </div>
-                    ) : (
-                      <div className="mt-2 flex items-center gap-1.5 text-xs text-red-600">
-                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                        </svg>
-                        <span>Out of Stock</span>
-                      </div>
-                    )}
+
+                      {/* Stock Status */}
+                      {product.stock > 0 ? (
+                        <div className="flex items-center gap-0.5 md:gap-1 text-[9px] md:text-[10px] text-green-600">
+                          <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          <span>In Stock</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-0.5 md:gap-1 text-[9px] md:text-[10px] text-red-600">
+                          <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                          </svg>
+                          <span>Out of Stock</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </Link>
               );
