@@ -19,6 +19,7 @@ const AdminDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>('');
   const [paymentStatusFilter, setPaymentStatusFilter] = useState<string>('');
+  const [editingProduct, setEditingProduct] = useState<any | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -235,7 +236,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'rgba(249, 250, 251, 0.7)' }}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -354,7 +355,7 @@ const AdminDashboard = () => {
                       }
                     }
                   }}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md bg-[#D1D5DB] text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                 />
                 <button
                   onClick={() => {
@@ -547,34 +548,75 @@ const AdminDashboard = () => {
                           </div>
                         )}
                         <div className="flex flex-col gap-2">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleToggleProductStatus(product._id)}
-                              className={`flex-1 px-3 py-2 rounded text-sm ${
-                                product.isActive
-                                  ? 'bg-orange-100 text-orange-800 hover:bg-orange-200'
-                                  : 'bg-green-100 text-green-800 hover:bg-green-200'
-                              }`}
-                            >
-                              {product.isActive ? 'Deactivate' : 'Activate'}
-                            </button>
-                            <button
-                              onClick={() => handleDeleteProduct(product._id)}
-                              className="flex-1 px-3 py-2 bg-red-100 text-red-800 rounded hover:bg-red-200 text-sm"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                          <button
-                            onClick={() => handleToggleBestSeller(product._id)}
-                            className={`w-full px-3 py-2 rounded text-sm ${
-                              product.isBestSeller
-                                ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
-                                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                            }`}
-                          >
-                            {product.isBestSeller ? 'Remove from Best Sellers' : 'Mark as Best Seller'}
-                          </button>
+                          {/* Check if current user is the seller of this product */}
+                          {(() => {
+                            const userId = (user as any)?._id || user?.id;
+                            const sellerId = product.seller?._id || product.seller?.id || product.seller;
+                            const isOwner = sellerId && userId && sellerId.toString() === userId.toString();
+                            
+                            return isOwner ? (
+                              <>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => {
+                                      setEditingProduct(product);
+                                      setActiveTab('create-product');
+                                    }}
+                                    className="flex-1 px-3 py-2 bg-[#16A34A] text-white rounded hover:bg-[#15803D] text-sm font-semibold"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteProduct(product._id)}
+                                    className="flex-1 px-3 py-2 bg-red-100 text-red-800 rounded hover:bg-red-200 text-sm"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                                <button
+                                  onClick={() => handleToggleBestSeller(product._id)}
+                                  className={`w-full px-3 py-2 rounded text-sm ${
+                                    product.isBestSeller
+                                      ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
+                                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                  }`}
+                                >
+                                  {product.isBestSeller ? 'Remove from Best Sellers' : 'Mark as Best Seller'}
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleToggleProductStatus(product._id)}
+                                    className={`flex-1 px-3 py-2 rounded text-sm ${
+                                      product.isActive
+                                        ? 'bg-orange-100 text-orange-800 hover:bg-orange-200'
+                                        : 'bg-green-100 text-green-800 hover:bg-green-200'
+                                    }`}
+                                  >
+                                    {product.isActive ? 'Deactivate' : 'Activate'}
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteProduct(product._id)}
+                                    className="flex-1 px-3 py-2 bg-red-100 text-red-800 rounded hover:bg-red-200 text-sm"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                                <button
+                                  onClick={() => handleToggleBestSeller(product._id)}
+                                  className={`w-full px-3 py-2 rounded text-sm ${
+                                    product.isBestSeller
+                                      ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
+                                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                  }`}
+                                >
+                                  {product.isBestSeller ? 'Remove from Best Sellers' : 'Mark as Best Seller'}
+                                </button>
+                              </>
+                            );
+                          })()}
                         </div>
                       </div>
                     </div>
@@ -587,15 +629,23 @@ const AdminDashboard = () => {
           {activeTab === 'create-product' && (
             <div>
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Imported Product</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  {editingProduct ? 'Edit Product' : 'Create Imported Product'}
+                </h2>
                 <p className="text-gray-600">
-                  As an admin, you can list imported products. Check the "Mark as Imported Product" checkbox when creating the product.
+                  {editingProduct 
+                    ? 'Edit your product details below.'
+                    : 'As an admin, you can list imported products. Check the "Mark as Imported Product" checkbox when creating the product.'}
                 </p>
               </div>
-              <ProductListingForm onSuccess={() => {
-                setActiveTab('products');
-                loadProducts();
-              }} />
+              <ProductListingForm 
+                onSuccess={() => {
+                  setActiveTab('products');
+                  loadProducts();
+                  setEditingProduct(null);
+                }} 
+                product={editingProduct}
+              />
             </div>
           )}
 

@@ -131,6 +131,10 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: ''
+  },
+  logo: {
+    type: String,
+    default: '' // Logo for product providers/sellers
   }
 }, {
   timestamps: true

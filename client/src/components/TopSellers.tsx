@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { sellersAPI } from '../utils/api';
+import SectionBackground from './SectionBackground';
 
 const TopSellers: React.FC = () => {
   const [sellers, setSellers] = useState<any[]>([]);
@@ -49,8 +50,10 @@ const TopSellers: React.FC = () => {
   };
 
   return (
-    <section className="w-full bg-white py-8 md:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative w-full py-8 md:py-20" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
+      {/* Background Images */}
+      <SectionBackground opacity={0.15} imagesPerRow={3} />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Logo Display Above Section */}
         {!loading && sellers.length > 0 && sellers[0]?.avatar && (
           <div className="flex justify-center mb-4 md:mb-8">

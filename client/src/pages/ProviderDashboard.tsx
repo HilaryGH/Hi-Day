@@ -14,6 +14,7 @@ const ProviderDashboard = () => {
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>('');
   const [paymentStatusFilter, setPaymentStatusFilter] = useState<string>('');
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  const [editingProduct, setEditingProduct] = useState<any | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -105,7 +106,7 @@ const ProviderDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'rgba(249, 250, 251, 0.7)' }}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -158,7 +159,16 @@ const ProviderDashboard = () => {
 
         {/* Tab Content */}
         <div>
-          {activeTab === 'list' && <ProductListingForm onSuccess={loadMyProducts} />}
+          {activeTab === 'list' && (
+            <ProductListingForm 
+              onSuccess={() => {
+                loadMyProducts();
+                setEditingProduct(null);
+                setActiveTab('products');
+              }} 
+              product={editingProduct}
+            />
+          )}
           
           {activeTab === 'products' && (
             <div>
@@ -198,11 +208,37 @@ const ProviderDashboard = () => {
                         <p className="text-[#16A34A] font-bold text-xl mb-2">
                           ETB {product.price?.toLocaleString()}
                         </p>
-                        <div className="flex items-center justify-between text-sm text-gray-500">
+                        <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
                           <span>Stock: {product.stock || 0}</span>
                           <span className={`px-2 py-1 rounded ${product.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                             {product.isActive ? 'Active' : 'Inactive'}
                           </span>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setEditingProduct(product);
+                              setActiveTab('list');
+                            }}
+                            className="flex-1 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (window.confirm('Are you sure you want to delete this product?')) {
+                                try {
+                                  await productsAPI.delete(product._id);
+                                  await loadMyProducts();
+                                } catch (error: any) {
+                                  alert(error.message || 'Failed to delete product');
+                                }
+                              }
+                            }}
+                            className="px-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg transition-colors"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </div>
                     </div>

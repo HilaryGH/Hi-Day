@@ -7,9 +7,9 @@ interface CommunicationWidgetProps {
 }
 
 const CommunicationWidget: React.FC<CommunicationWidgetProps> = ({
-  phone = '+251989834889',
-  whatsapp = '+251989834889',
-  email = 'hilarygebremedhn28@gmail.com'
+  phone = '+251977684476',
+  whatsapp = '+251977684476',
+  email = 'support@dahimart.com'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 

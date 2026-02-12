@@ -36,3 +36,11 @@ export const uploadSingleImage = multer({
   fileFilter: fileFilter
 }).single('image');
 
+// Configure multer for logo upload
+export const uploadLogo = multer({
+  storage: memoryStorage,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  },
+  fileFilter: fileFilter
+}).single('logo');

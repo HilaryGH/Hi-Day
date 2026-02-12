@@ -50,7 +50,7 @@ const Navbar = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search for products..."
-                  className="w-full px-4 py-2.5 pl-10 pr-12 border border-[#E5E7EB] rounded-full focus:ring-2 focus:ring-[#16A34A] focus:border-[#16A34A] outline-none"
+                  className="w-full px-4 py-2.5 pl-10 pr-12 border border-[#E5E7EB] rounded-full bg-gray-50 text-gray-800 placeholder:text-gray-500 focus:ring-2 focus:ring-[#16A34A] focus:border-[#16A34A] outline-none"
                 />
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
                   <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +186,7 @@ const Navbar = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for products..."
-              className="w-full px-4 py-3 pl-12 pr-16 border border-[#E5E7EB] rounded-full focus:ring-2 focus:ring-[#16A34A] focus:border-[#16A34A] outline-none text-sm"
+              className="w-full px-4 py-3 pl-12 pr-16 border border-[#E5E7EB] rounded-full bg-gray-50 text-gray-800 placeholder:text-gray-500 focus:ring-2 focus:ring-[#16A34A] focus:border-[#16A34A] outline-none text-sm"
             />
             <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
               <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -30,26 +30,31 @@ interface ProductFormData {
 
 interface ProductListingFormProps {
   onSuccess?: () => void;
+  product?: any; // Product to edit (if provided, form will be in edit mode)
 }
 
-const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
+const ProductListingForm = ({ onSuccess, product }: ProductListingFormProps) => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin' || user?.role === 'super admin';
+  const isEditMode = !!product;
   
   const [formData, setFormData] = useState<ProductFormData>({
-    name: '',
-    description: '',
-    price: '',
-    originalPrice: '',
-    images: [null],
-    category: '',
-    subcategory: '',
-    brand: '',
-    stock: '',
-    specifications: {},
-    tags: [],
-    isImported: false,
+    name: product?.name || '',
+    description: product?.description || '',
+    price: product?.price?.toString() || '',
+    originalPrice: product?.originalPrice?.toString() || '',
+    images: product?.images?.map(() => null) || [null], // Placeholders for existing images
+    category: product?.category || '',
+    subcategory: product?.subcategory || '',
+    brand: product?.brand || '',
+    stock: product?.stock?.toString() || '',
+    specifications: product?.specifications ? Object.fromEntries(product.specifications) : {},
+    tags: product?.tags || [],
+    isImported: product?.isImported || false,
   });
+
+  // Store existing image URLs for display
+  const [existingImages, setExistingImages] = useState<string[]>(product?.images || []);
 
   const [specKey, setSpecKey] = useState('');
   const [specValue, setSpecValue] = useState('');
@@ -58,6 +63,19 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [imagePreviews, setImagePreviews] = useState<{ [key: number]: string }>({});
+  const [imagesToKeep, setImagesToKeep] = useState<boolean[]>([]); // Track which existing images to keep
+
+  // Initialize imagesToKeep when product is loaded
+  useEffect(() => {
+    if (product?.images) {
+      setImagesToKeep(new Array(product.images.length).fill(true));
+      // Initialize formData.images with placeholders for existing images
+      setFormData(prev => ({
+        ...prev,
+        images: new Array(product.images.length).fill(null)
+      }));
+    }
+  }, [product]);
 
   // Update preview URLs when images change
   useEffect(() => {
@@ -65,20 +83,31 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
     formData.images.forEach((image, index) => {
       if (image) {
         previews[index] = URL.createObjectURL(image);
+      } else if (existingImages[index] && imagesToKeep[index]) {
+        // Show existing image if no new file is selected
+        previews[index] = existingImages[index];
       }
     });
     
     setImagePreviews(prevPreviews => {
-      // Clean up old previews
-      Object.values(prevPreviews).forEach(url => URL.revokeObjectURL(url));
+      // Clean up old previews (only object URLs, not existing image URLs)
+      Object.values(prevPreviews).forEach((url) => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
+      });
       return previews;
     });
     
-    // Cleanup on unmount or when images change
+    // Cleanup on unmount
     return () => {
-      Object.values(previews).forEach(url => URL.revokeObjectURL(url));
+      Object.values(previews).forEach(url => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
+      });
     };
-  }, [formData.images.map(img => img ? `${img.name}-${img.size || 0}` : '').join(',')]);
+  }, [formData.images.map(img => img ? `${img.name}-${img.size || 0}` : '').join(','), existingImages, imagesToKeep]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -158,9 +187,17 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
       setError('Valid stock quantity is required');
       return;
     }
+    // In edit mode, allow keeping existing images even if no new images are uploaded
     const validImages = formData.images.filter((img) => img !== null);
-    if (validImages.length === 0) {
+    const keptExistingImages = existingImages.filter((_, index) => imagesToKeep[index]);
+    
+    if (!isEditMode && validImages.length === 0) {
       setError('At least one product image is required');
+      return;
+    }
+    
+    if (isEditMode && validImages.length === 0 && keptExistingImages.length === 0) {
+      setError('At least one product image is required. Keep existing images or upload new ones.');
       return;
     }
 
@@ -198,31 +235,55 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
         formDataToSend.append('isImported', 'true');
       }
       
-      // Add image files
+      // In edit mode, handle image keeping
+      if (isEditMode) {
+        // If we have existing images to keep AND new images, merge them
+        if (keptExistingImages.length > 0 && validImages.length > 0) {
+          formDataToSend.append('keepExistingImages', 'true');
+        }
+        // If only keeping existing images (no new uploads), we need to send a flag
+        // The backend will handle this by checking if files are present
+        if (keptExistingImages.length > 0 && validImages.length === 0) {
+          // No new images, but keeping existing ones - backend should preserve them
+          // We'll send the existing image URLs as a special field
+          formDataToSend.append('existingImages', JSON.stringify(keptExistingImages));
+        }
+      }
+      
+      // Add image files (only new ones)
       validImages.forEach((image) => {
         if (image) {
           formDataToSend.append('images', image);
         }
       });
 
-      await productsAPI.create(formDataToSend);
+      if (isEditMode && product?._id) {
+        await productsAPI.update(product._id, formDataToSend);
+      } else {
+        await productsAPI.create(formDataToSend);
+      }
+      
       setSuccess(true);
       
-      // Reset form
-      setFormData({
-        name: '',
-        description: '',
-        price: '',
-        originalPrice: '',
-        images: [null],
-        category: '',
-        subcategory: '',
-        brand: '',
-        stock: '',
-        specifications: {},
-        tags: [],
-        isImported: false,
-      });
+      // Reset form only if not in edit mode
+      if (!isEditMode) {
+        setFormData({
+          name: '',
+          description: '',
+          price: '',
+          originalPrice: '',
+          images: [null],
+          category: '',
+          subcategory: '',
+          brand: '',
+          stock: '',
+          specifications: {},
+          tags: [],
+          isImported: false,
+        });
+        setExistingImages([]);
+        setImagesToKeep([]);
+      }
 
       if (onSuccess) {
         setTimeout(() => {
@@ -236,9 +297,17 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
     }
   };
 
+  const removeExistingImage = (index: number) => {
+    const newKeep = [...imagesToKeep];
+    newKeep[index] = false;
+    setImagesToKeep(newKeep);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">List a New Product</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        {isEditMode ? 'Edit Product' : 'List a New Product'}
+      </h2>
 
       {error && (
         <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
@@ -248,7 +317,7 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
 
       {success && (
         <div className="mb-6 bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded">
-          Product listed successfully! Redirecting...
+          {isEditMode ? 'Product updated successfully!' : 'Product listed successfully! Redirecting...'}
         </div>
       )}
 
@@ -402,7 +471,41 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Product Images <span className="text-red-500">*</span>
           </label>
-          <p className="text-xs text-gray-500 mb-2">At least one image is required (up to 5 images, max 5MB each)</p>
+          <p className="text-xs text-gray-500 mb-2">
+            {isEditMode 
+              ? 'Upload new images to replace existing ones, or keep current images. At least one image is required (up to 5 images, max 5MB each).'
+              : 'At least one image is required (up to 5 images, max 5MB each)'}
+          </p>
+          
+          {/* Show existing images in edit mode */}
+          {isEditMode && existingImages.length > 0 && (
+            <div className="mb-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">Current Images:</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                {existingImages.map((imgUrl, index) => (
+                  imagesToKeep[index] && (
+                    <div key={index} className="relative">
+                      <img
+                        src={imgUrl}
+                        alt={`Current ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-lg border border-gray-300"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeExistingImage(index)}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                      >
+                        ×
+                      </button>
+                      <p className="text-xs text-gray-500 mt-1 text-center">Current Image</p>
+                    </div>
+                  )
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Image upload fields */}
           {formData.images.map((image, index) => (
             <div key={index} className="mb-4">
               <div className="flex gap-2 mb-2">
@@ -432,14 +535,16 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
                   </button>
                 )}
               </div>
-              {image && imagePreviews[index] && (
+              {imagePreviews[index] && (
                 <div className="mt-2">
                   <img
                     src={imagePreviews[index]}
                     alt={`Preview ${index + 1}`}
                     className="w-32 h-32 object-cover rounded-lg border border-gray-300"
                   />
-                  <p className="text-xs text-gray-500 mt-1">{image.name} ({(image.size / 1024 / 1024).toFixed(2)} MB)</p>
+                  {image && (
+                    <p className="text-xs text-gray-500 mt-1">{image.name} ({(image.size / 1024 / 1024).toFixed(2)} MB)</p>
+                  )}
                 </div>
               )}
             </div>
@@ -616,7 +721,9 @@ const ProductListingForm = ({ onSuccess }: ProductListingFormProps) => {
             disabled={loading}
             className="px-6 py-2 bg-[#16A34A] text-white rounded-md hover:bg-[#15803D] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Listing Product...' : 'List Product'}
+            {loading 
+              ? (isEditMode ? 'Updating Product...' : 'Listing Product...') 
+              : (isEditMode ? 'Update Product' : 'List Product')}
           </button>
         </div>
       </form>

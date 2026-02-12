@@ -45,7 +45,30 @@ router.post('/',
   },
   createProduct
 );
-router.put('/:id', protect, updateProduct);
+// Update product with file upload support
+router.put('/:id', 
+  protect, 
+  (req, res, next) => {
+    // Handle multer middleware with error handling (optional - images may or may not be included)
+    uploadProductImages(req, res, (err) => {
+      if (err) {
+        if (err instanceof multer.MulterError) {
+          if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({ message: 'File size too large. Maximum size is 10MB per image.' });
+          }
+          if (err.code === 'LIMIT_FILE_COUNT') {
+            return res.status(400).json({ message: 'Too many files. Maximum 5 images allowed.' });
+          }
+          return res.status(400).json({ message: err.message || 'File upload error' });
+        }
+        return res.status(400).json({ message: err.message || 'File upload error' });
+      }
+      // No error, continue to next middleware
+      next();
+    });
+  },
+  updateProduct
+);
 router.put('/:id/bestseller', protect, authorize('admin', 'super admin'), toggleBestSeller);
 router.delete('/:id', protect, deleteProduct);
 

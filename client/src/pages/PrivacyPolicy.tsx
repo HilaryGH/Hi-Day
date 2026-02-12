@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 const PrivacyPolicy = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8" style={{ background: 'linear-gradient(to bottom right, rgba(239, 246, 255, 0.6), rgba(255, 255, 255, 0.7), rgba(250, 245, 255, 0.6))' }}>
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12">
         {/* Header */}
         <div className="mb-8">
@@ -119,7 +119,7 @@ const PrivacyPolicy = () => {
               <li><strong>Account Closure:</strong> Close your account at any time</li>
             </ul>
             <p className="mt-4">
-              To exercise these rights, please contact us at <a href="mailto:hilarygebremedhn28@gmail.com" className="text-[#16A34A] hover:underline">hilarygebremedhn28@gmail.com</a>.
+              To exercise these rights, please contact us at <a href="mailto:support@dahimart.com" className="text-[#16A34A] hover:underline">support@dahimart.com</a>.
             </p>
           </section>
 
@@ -164,8 +164,8 @@ const PrivacyPolicy = () => {
               If you have any questions about this Privacy Policy, please contact us:
             </p>
             <div className="bg-gray-50 p-4 rounded-lg mt-4">
-              <p className="mb-2"><strong>Email:</strong> <a href="mailto:hilarygebremedhn28@gmail.com" className="text-[#16A34A] hover:underline">hilarygebremedhn28@gmail.com</a></p>
-              <p className="mb-2"><strong>Phone:</strong> <a href="tel:+251989834889" className="text-[#16A34A] hover:underline">+251 989 834 889</a></p>
+              <p className="mb-2"><strong>Email:</strong> <a href="mailto:support@dahimart.com" className="text-[#16A34A] hover:underline">support@dahimart.com</a></p>
+              <p className="mb-2"><strong>Phone:</strong> <a href="tel:+251977684476" className="text-[#16A34A] hover:underline">+251 977 684 476</a></p>
               <p><strong>Address:</strong> Ethiopia</p>
             </div>
           </section>

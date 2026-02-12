@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
+import { uploadToCloudinary } from '../cloudinary.js';
 
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET || 'your-secret-key', {
@@ -11,6 +12,11 @@ const generateToken = (userId) => {
 // Register
 export const register = async (req, res) => {
   try {
+    // Safety check: ensure req.body exists
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ message: 'Request body is missing or invalid' });
+    }
+
     const {
       name,
       email,
@@ -89,6 +95,19 @@ export const register = async (req, res) => {
       privacyConsent: true
     };
 
+    // Handle logo upload for product providers (optional)
+    if (req.file && (role === 'product provider' || role === 'seller')) {
+      try {
+        const uploadResult = await uploadToCloudinary(req.file.buffer, 'users/logos');
+        userData.logo = uploadResult.secure_url;
+      } catch (uploadError) {
+        console.error('Logo upload error:', uploadError);
+        return res.status(500).json({ 
+          message: uploadError.message || 'Failed to upload logo. Please try again.' 
+        });
+      }
+    }
+
     // Remove undefined fields
     Object.keys(userData).forEach(key => {
       if (userData[key] === undefined || userData[key] === '') {
@@ -107,7 +126,9 @@ export const register = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        logo: user.logo || '',
+        avatar: user.avatar || ''
       }
     });
   } catch (error) {

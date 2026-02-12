@@ -63,7 +63,7 @@ const OrderConfirmation = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'rgba(249, 250, 251, 0.7)' }}>
       <div className="max-w-4xl mx-auto">
         {/* Success Message */}
         <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">

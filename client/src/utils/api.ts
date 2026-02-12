@@ -96,11 +96,58 @@ const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
 
 // Auth API
 export const authAPI = {
-  register: (data: any) =>
-    fetchAPI('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+  register: async (data: any) => {
+    // Check if data is FormData (for file uploads) or regular object
+    if (data instanceof FormData) {
+      const token = getToken();
+      return fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+          // Don't set Content-Type, let browser set it with boundary for FormData
+        },
+        body: data,
+      }).then(async (response) => {
+        if (!response.ok) {
+          let errorMessage = 'An error occurred';
+          let errorData: any = { message: errorMessage };
+          
+          try {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              errorData = await response.json();
+              errorMessage = errorData.message || errorData.error || `Request failed with status ${response.status}`;
+            } else {
+              const text = await response.text();
+              errorMessage = text || `Request failed with status ${response.status}`;
+              errorData = { message: errorMessage };
+            }
+          } catch (parseError) {
+            errorMessage = `Request failed with status ${response.status}`;
+            errorData = { message: errorMessage };
+          }
+          
+          const error = new Error(errorMessage);
+          (error as any).status = response.status;
+          (error as any).data = errorData;
+          throw error;
+        }
+        return response.json();
+      }).catch((error) => {
+        // Handle network errors
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          throw new Error('Network error: Unable to connect to the server. Please check your internet connection.');
+        }
+        throw error;
+      });
+    } else {
+      // Regular JSON registration
+      return fetchAPI('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+    }
+  },
   login: (data: { email: string; password: string }) =>
     fetchAPI('/auth/login', {
       method: 'POST',
@@ -187,11 +234,58 @@ export const productsAPI = {
       throw error;
     });
   },
-  update: (id: string, data: any) =>
-    fetchAPI(`/products/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }),
+  update: (id: string, data: any) => {
+    // Check if data is FormData (for file uploads) or regular object
+    if (data instanceof FormData) {
+      const token = getToken();
+      return fetch(`${API_URL}/products/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          // Don't set Content-Type, let browser set it with boundary for FormData
+        },
+        body: data,
+      }).then(async (response) => {
+        if (!response.ok) {
+          let errorMessage = 'An error occurred';
+          let errorData: any = { message: errorMessage };
+          
+          try {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              errorData = await response.json();
+              errorMessage = errorData.message || errorData.error || `Request failed with status ${response.status}`;
+            } else {
+              const text = await response.text();
+              errorMessage = text || `Request failed with status ${response.status}`;
+              errorData = { message: errorMessage };
+            }
+          } catch (parseError) {
+            errorMessage = `Request failed with status ${response.status}`;
+            errorData = { message: errorMessage };
+          }
+          
+          const error = new Error(errorMessage);
+          (error as any).status = response.status;
+          (error as any).data = errorData;
+          throw error;
+        }
+        return response.json();
+      }).catch((error) => {
+        // Handle network errors
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          throw new Error('Network error: Unable to connect to the server. Please check your internet connection.');
+        }
+        throw error;
+      });
+    } else {
+      // Regular JSON update
+      return fetchAPI(`/products/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
+    }
+  },
   delete: (id: string) =>
     fetchAPI(`/products/${id}`, {
       method: 'DELETE',

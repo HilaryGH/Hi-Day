@@ -5,6 +5,7 @@ import BestSellers from "./BestSellers";
 import TopSellers from "./TopSellers";
 import RecentProducts from "./RecentProducts";
 import CommunicationWidget from "./CommunicationWidget";
+import SectionBackground from "./SectionBackground";
 
 const categories = [
   { name: "Fashion & Apparel", categoryName: "Fashion & Apparel" },
@@ -220,9 +221,11 @@ const Home: React.FC = () => {
   return (
     <section className="w-full">
       {/* Enhanced Hero Section */}
-      <div className="relative w-full min-h-[45vh] md:min-h-[50vh] lg:min-h-[55vh] flex flex-col lg:flex-row overflow-hidden bg-[#F9FAFB]">
+      <div className="relative w-full min-h-[45vh] md:min-h-[50vh] lg:min-h-[55vh] flex flex-col lg:flex-row overflow-hidden" style={{ backgroundColor: 'rgba(249, 250, 251, 0.8)' }}>
+        {/* Background Images */}
+        <SectionBackground opacity={0.15} imagesPerRow={3} />
         {/* Left Side - Categories (Hidden on mobile, shown on desktop) */}
-        <div className="hidden lg:block lg:w-64 xl:w-72 bg-white border-r border-[#E5E7EB] p-4 lg:min-h-[50vh] xl:min-h-[55vh]">
+        <div className="relative z-10 hidden lg:block lg:w-64 xl:w-72 bg-white/90 border-r border-[#E5E7EB] p-4 lg:min-h-[50vh] xl:min-h-[55vh]">
           <h2 className="text-xl font-bold text-[#111827] mb-4 flex items-center gap-2">
           
             Categories
@@ -252,11 +255,11 @@ const Home: React.FC = () => {
         </div>
 
         {/* Right Side - Hero Content */}
-        <div className="flex-1 px-4 md:px-8 lg:px-12 py-4 md:py-8 lg:py-6">
+        <div className="relative z-10 flex-1 px-4 md:px-8 lg:px-12 py-4 md:py-8 lg:py-6">
           {/* Top Section - Mega Sale Event on Left, Two Cards Stacked on Right */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-8 lg:gap-12 min-h-[140px] md:h-[7vh] w-full">
             {/* Promotional Section - Creative Banner with Wave Overlay */}
-            <div className="md:col-span-3 rounded-lg relative overflow-hidden min-h-[140px] md:h-full group">
+            <div className="md:col-span-3 rounded-lg relative overflow-hidden min-h-[220px] md:h-full group">
               {/* Background Image or Gradient Fallback */}
               {(discountedProduct?.images?.[0] || promotion?.image) ? (
                 <div className="absolute inset-0">
@@ -276,22 +279,22 @@ const Home: React.FC = () => {
               {/* Wave SVG Overlay - Brand Colors with Creative Design */}
               <div className="absolute inset-0 z-0 overflow-hidden">
                 <svg 
-                  className="absolute bottom-0 left-0 w-full" 
+                  className="absolute bottom-0 left-0 w-full h-[30%] md:h-[50%] lg:h-[70%]" 
                   viewBox="0 0 1440 320" 
                   preserveAspectRatio="none"
-                  style={{ height: '70%', minHeight: '200px' }}
+                  style={{ minHeight: '80px' }}
                 >
                   {/* Main Wave */}
                   <path 
                     d="M0,192L48,197.3C96,203,192,213,288,213.3C384,213,480,203,576,186.7C672,171,768,149,864,154.7C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" 
                     fill="url(#waveGradient1)"
-                    className="opacity-95"
+                    className="opacity-60 md:opacity-80 lg:opacity-95"
                   />
                   {/* Secondary Wave for Depth */}
                   <path 
                     d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,208C672,213,768,203,864,197.3C960,192,1056,192,1152,186.7C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" 
                     fill="url(#waveGradient2)"
-                    className="opacity-80"
+                    className="opacity-50 md:opacity-65 lg:opacity-80"
                   />
                   <defs>
                     <linearGradient id="waveGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -357,7 +360,7 @@ const Home: React.FC = () => {
             {/* Right Side - Two Cards Side by Side on Mobile, Stacked on Desktop */}
             <div className="md:col-span-2 flex flex-row md:flex-col gap-3 md:gap-2.5 md:h-full">
               {/* Imported Products Card */}
-              <div className="flex-1 rounded-lg p-2 md:p-3 text-white relative overflow-hidden min-h-[60px] md:min-h-[120px] md:flex-1 flex shadow-lg hover:shadow-xl transition-shadow">
+              <div className="flex-1 rounded-lg p-1.5 md:p-3 text-white relative overflow-hidden min-h-[120px] md:min-h-[120px] md:flex-1 flex shadow-lg hover:shadow-xl transition-shadow">
                 {/* Background Gradient for Content Section - Left */}
                 <div className="absolute left-0 top-0 bottom-0 w-1/2 bg-gradient-to-br from-[#16A34A] via-[#15803D] to-[#16A34A] z-0"></div>
                 
@@ -376,34 +379,40 @@ const Home: React.FC = () => {
                  
                 </div>
 
-                {/* Simple Wave Separator - Single Curve */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-16 md:w-20 transform -translate-x-1/2 z-10">
+                {/* Simple Wave Separator - Single Curve (removed overlay) */}
+                <div className="absolute left-1/2 top-0 bottom-0 w-16 md:w-20 transform -translate-x-1/2 z-10 pointer-events-none">
                   <svg 
                     className="absolute inset-0 w-full h-full" 
                     viewBox="0 0 100 200" 
                     preserveAspectRatio="none"
                   >
-                    {/* Single smooth curve from bottom to bottom */}
+                    {/* Single smooth curve separator - no fill, just border */}
                     <path 
-                      d="M0,200 Q50,100 0,0 L0,200 L100,200 L100,0 Q50,100 100,200 Z" 
-                      fill="rgba(255, 255, 255, 0.3)"
-                      className="drop-shadow-lg"
+                      d="M0,200 Q50,100 0,0" 
+                      stroke="rgba(255, 255, 255, 0.2)"
+                      strokeWidth="1"
+                      fill="none"
                     />
                   </svg>
                 </div>
 
                 {/* Content Section - Left Side - Imported Products */}
-                <div className="relative z-10 w-1/2 flex flex-col justify-between pr-1.5 md:pr-2">
-                  <div>
-                    <h3 className="text-xs md:text-base font-bold mb-0.5 md:mb-1.5 text-white drop-shadow-md">Imported Products</h3>
-                    <p className="text-white/95 mb-0.5 md:mb-1.5 text-[10px] md:text-xs font-medium leading-tight drop-shadow-sm">are here</p>
-                    <p className="text-white/90 mb-1 md:mb-3 text-[9px] md:text-[11px] font-medium drop-shadow-sm">browse to see</p>
+                <div className="relative z-10 w-1/2 flex flex-col justify-between pr-1 md:pr-2">
+                  <div className="animate-fade-in-up">
+                    <div className="flex items-center gap-0.5 md:gap-1.5 mb-0 md:mb-1">
+                      <svg className="w-2 h-2 md:w-3 md:h-3 text-white animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+                      </svg>
+                      <h3 className="text-[9px] md:text-sm font-bold text-white drop-shadow-md animate-slide-in-left leading-tight">Premium Imports</h3>
+                    </div>
+                    <p className="text-white/95 mb-0 md:mb-1 text-[8px] md:text-[10px] font-semibold leading-tight drop-shadow-sm animate-fade-in-delay">Discover Global Quality</p>
+                    <p className="text-white/90 mb-0 md:mb-1.5 text-[7px] md:text-[10px] font-medium leading-tight drop-shadow-sm animate-fade-in-delay-2">✨ Exclusive international products</p>
                   </div>
                   <Link
                     to="/products"
-                    className="inline-block bg-white text-[#16A34A] font-bold py-1 px-2 md:py-2 md:px-4 rounded-lg hover:bg-[#F9FAFB] hover:scale-105 transition-all text-[10px] md:text-xs w-fit shadow-lg"
+                    className="inline-block bg-white text-[#16A34A] font-bold py-0.5 px-1 md:py-1.5 md:px-3 rounded-lg hover:bg-[#F9FAFB] hover:scale-105 transition-all text-[8px] md:text-[10px] w-fit shadow-lg animate-bounce-subtle"
                   >
-                    Browse Now
+                    Explore Now →
                   </Link>
                 </div>
                 
@@ -413,7 +422,7 @@ const Home: React.FC = () => {
               </div>
 
               {/* New Arrivals - Sliding Carousel */}
-              <div className="flex-1 bg-white rounded-lg border border-[#E5E7EB] relative overflow-hidden min-h-[60px] md:min-h-[100px] md:flex-1 hover:border-[#16A34A] transition-all md:flex">
+              <div className="flex-1 bg-white rounded-lg border border-[#E5E7EB] relative overflow-hidden min-h-[120px] md:min-h-[100px] md:flex-1 hover:border-[#16A34A] transition-all md:flex">
                 {newArrivals.length > 0 ? (
                   <>
                     {/* Image Carousel Container - Full width on mobile, half on desktop */}
@@ -586,18 +595,20 @@ const Home: React.FC = () => {
       <RecentProducts />
 
       {/* Enhanced Categories Section */}
-      <div className="max-w-7xl mx-auto py-20 px-4 bg-[#F9FAFB]">
-        <div className="mb-8">
+      <div className="relative max-w-7xl mx-auto py-20 px-4" style={{ backgroundColor: 'rgba(249, 250, 251, 0.85)' }}>
+        {/* Background Images */}
+        <SectionBackground opacity={0.15} imagesPerRow={3} />
+        <div className="relative z-10 mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-[#111827] mb-2">Shop by Category</h2>
           <p className="text-sm md:text-base text-[#6B7280] max-w-2xl">
             Browse thousands of products across multiple categories
           </p>
         </div>
-        <div className="space-y-6">
+        <div className="relative z-10 space-y-6">
           {loading ? (
             // Loading skeleton
             Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-lg p-4 animate-pulse">
+              <div key={i} className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg p-4 animate-pulse">
                 <div className="h-6 bg-gray-200 rounded w-1/4 mb-3"></div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {Array.from({ length: 4 }).map((_, j) => (
@@ -614,7 +625,7 @@ const Home: React.FC = () => {
             ))
           ) : (
             categoryProducts.map((categoryData, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden">
+              <div key={i} className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden">
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div>
@@ -636,7 +647,7 @@ const Home: React.FC = () => {
                         <Link
                           key={j}
                           to={`/products/${product._id}`}
-                          className="group bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition-all flex flex-row"
+                          className="group bg-gray-50/70 backdrop-blur-sm rounded-lg overflow-hidden hover:shadow-md transition-all flex flex-row"
                         >
                           {/* Image on the left */}
                           <div className="relative w-16 h-16 md:w-20 md:h-20 bg-gray-100 overflow-hidden flex-shrink-0">
@@ -691,16 +702,23 @@ const Home: React.FC = () => {
       </div>
 
       {/* Short About Section */}
-      <div className="max-w-7xl mx-auto py-12 px-4 bg-[#F9FAFB]">
-        <div className="text-center max-w-3xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#111827] mb-4">About da-hi Marketplace</h2>
-          <p className="text-base md:text-lg text-[#6B7280] mb-6 leading-relaxed">
-            Ethiopia's premier online shopping destination, connecting buyers and sellers across the country. 
-            We're building a vibrant community where everyone can buy and sell with confidence.
+      <div className="relative max-w-7xl mx-auto py-12 px-4" style={{ backgroundColor: 'rgba(249, 250, 251, 0.85)' }}>
+        {/* Background Images - Using different shuffle seed for different image arrangement */}
+        <SectionBackground opacity={0.15} imagesPerRow={3} shuffleSeed={42} />
+        <div className="relative z-10 max-w-3xl">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#111827] mb-4 animate-slide-in-left">About</h2>
+          <p className="text-lg md:text-xl text-[#111827] font-semibold mb-4 animate-fade-in-delay">
+            Ethiopia's trusted online shopping destination.
+          </p>
+          <p className="text-base md:text-lg text-[#6B7280] mb-4 leading-relaxed animate-fade-in-delay-2">
+            We connect verified local sellers with buyers across the country through a secure, easy-to-use marketplace. From everyday essentials to pre-order and imported products, da-hi Marketplace makes buying and selling simple, safe, and reliable.
+          </p>
+          <p className="text-base md:text-lg text-[#16A34A] font-semibold mb-6 animate-fade-in-delay-2">
+            Shop with confidence. Sell with ease.
           </p>
           <Link
             to="/about"
-            className="inline-flex items-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg"
+            className="inline-flex items-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg animate-fade-in-delay-2"
           >
             <span>Learn More</span>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

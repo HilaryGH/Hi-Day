@@ -209,25 +209,160 @@ export const updateProduct = async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    // Check if user is seller, admin, super admin, or marketing team
-    if (product.seller.toString() !== req.userId && 
-        req.userRole !== 'admin' && 
-        req.userRole !== 'super admin' && 
-        req.userRole !== 'marketing team') {
+    // Check authorization:
+    // - Sellers can edit their own products
+    // - Admins can only edit products they own (where they are the seller)
+    // - Super admins and marketing team can edit any product
+    // Handle seller ID - could be ObjectId, populated object, or string
+    let sellerId;
+    if (product.seller && typeof product.seller === 'object' && product.seller._id) {
+      sellerId = product.seller._id.toString();
+    } else if (product.seller) {
+      sellerId = product.seller.toString();
+    }
+    
+    // Handle user ID - ensure it's a string for comparison
+    const userId = req.userId ? req.userId.toString() : null;
+    
+    const isOwner = sellerId && userId && sellerId === userId;
+    const isSuperAdmin = req.userRole === 'super admin';
+    const isMarketingTeam = req.userRole === 'marketing team';
+    const isAdmin = req.userRole === 'admin';
+    
+    // Debug logging (can be removed later)
+    console.log('Product update authorization check:', {
+      sellerId,
+      userId,
+      isOwner,
+      userRole: req.userRole,
+      isAdmin,
+      isSuperAdmin,
+      isMarketingTeam
+    });
+    
+    if (!isOwner && !isSuperAdmin && !isMarketingTeam) {
+      // If user is admin but not the owner, deny access
+      if (isAdmin) {
+        return res.status(403).json({ 
+          message: 'Admins can only edit products they own',
+          debug: { sellerId, userId, isOwner }
+        });
+      }
       return res.status(403).json({ message: 'Not authorized' });
     }
 
-    // Prepare update data - exclude isImported first
-    const updateData = { ...req.body };
+    // Prepare update data
+    const updateData = {};
+
+    // Handle text fields from req.body (they come as strings from FormData)
+    if (req.body.name !== undefined) {
+      updateData.name = req.body.name.trim();
+    }
+    if (req.body.description !== undefined) {
+      updateData.description = req.body.description.trim();
+    }
+    if (req.body.price !== undefined) {
+      updateData.price = parseFloat(req.body.price);
+    }
+    if (req.body.category !== undefined) {
+      updateData.category = req.body.category;
+    }
+    if (req.body.stock !== undefined) {
+      updateData.stock = parseInt(req.body.stock);
+    }
+    if (req.body.originalPrice !== undefined) {
+      if (req.body.originalPrice && req.body.originalPrice.trim() !== '') {
+        updateData.originalPrice = parseFloat(req.body.originalPrice);
+      } else {
+        updateData.originalPrice = undefined;
+      }
+    }
+    if (req.body.subcategory !== undefined) {
+      updateData.subcategory = req.body.subcategory.trim() || undefined;
+    }
+    if (req.body.brand !== undefined) {
+      updateData.brand = req.body.brand.trim() || undefined;
+    }
+    if (req.body.tags !== undefined) {
+      try {
+        updateData.tags = JSON.parse(req.body.tags);
+      } catch (e) {
+        // If tags is not JSON, treat it as comma-separated string
+        if (req.body.tags && req.body.tags.trim()) {
+          updateData.tags = req.body.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+        } else {
+          updateData.tags = [];
+        }
+      }
+    }
+    if (req.body.specifications !== undefined) {
+      try {
+        updateData.specifications = JSON.parse(req.body.specifications);
+      } catch (e) {
+        // If specifications is not JSON, ignore it
+      }
+    }
+
+    // Handle image uploads if new images are provided
+    if (req.files && req.files.length > 0) {
+      try {
+        // Extract buffers from multer files
+        const fileBuffers = req.files.map(file => file.buffer);
+        
+        // Upload all images to Cloudinary
+        const uploadResults = await uploadMultipleToCloudinary(fileBuffers, 'products');
+        
+        // Extract secure URLs from Cloudinary response
+        const newImageUrls = uploadResults.map(result => result.secure_url);
+        
+        // If keepExistingImages is true, merge with existing images
+        // Otherwise, replace all images with new ones
+        if (req.body.keepExistingImages === 'true' && product.images && product.images.length > 0) {
+          // Filter existing images to keep only those that should be kept
+          // For now, we'll keep all existing and add new ones
+          // The frontend should handle removing images before submitting
+          const existingToKeep = product.images.filter((img, idx) => {
+            // If existingImages array is provided, only keep those
+            if (req.body.existingImages) {
+              try {
+                const existingImagesList = JSON.parse(req.body.existingImages);
+                return existingImagesList.includes(img);
+              } catch (e) {
+                // If parsing fails, keep all existing
+                return true;
+              }
+            }
+            return true;
+          });
+          updateData.images = [...existingToKeep, ...newImageUrls];
+        } else {
+          updateData.images = newImageUrls;
+        }
+      } catch (uploadError) {
+        console.error('Cloudinary upload error:', uploadError);
+        return res.status(500).json({ 
+          message: uploadError.message || 'Failed to upload images. Please try again.' 
+        });
+      }
+    } else if (req.body.existingImages) {
+      // No new images uploaded, but existing images list provided
+      // This means we're only keeping some existing images
+      try {
+        const existingImagesList = JSON.parse(req.body.existingImages);
+        if (Array.isArray(existingImagesList) && existingImagesList.length > 0) {
+          updateData.images = existingImagesList;
+        }
+      } catch (e) {
+        // If parsing fails, don't update images
+        console.error('Error parsing existingImages:', e);
+      }
+    }
     
     // Only admin and super admin can update isImported field
     if (req.userRole === 'admin' || req.userRole === 'super admin') {
       if (req.body.isImported !== undefined) {
         updateData.isImported = req.body.isImported === 'true' || req.body.isImported === true;
       }
-    } else {
-      // Remove isImported from update if user is not admin/super admin
-      delete updateData.isImported;
     }
     
     // Update product fields
@@ -249,10 +384,31 @@ export const deleteProduct = async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    if (product.seller.toString() !== req.userId && 
-        req.userRole !== 'admin' && 
-        req.userRole !== 'super admin' && 
-        req.userRole !== 'marketing team') {
+    // Check authorization:
+    // - Sellers can delete their own products
+    // - Admins can only delete products they own (where they are the seller)
+    // - Super admins and marketing team can delete any product
+    // Handle seller ID - could be ObjectId, populated object, or string
+    let sellerId;
+    if (product.seller && typeof product.seller === 'object' && product.seller._id) {
+      sellerId = product.seller._id.toString();
+    } else if (product.seller) {
+      sellerId = product.seller.toString();
+    }
+    
+    // Handle user ID - ensure it's a string for comparison
+    const userId = req.userId ? req.userId.toString() : null;
+    
+    const isOwner = sellerId && userId && sellerId === userId;
+    const isSuperAdmin = req.userRole === 'super admin';
+    const isMarketingTeam = req.userRole === 'marketing team';
+    const isAdmin = req.userRole === 'admin';
+    
+    if (!isOwner && !isSuperAdmin && !isMarketingTeam) {
+      // If user is admin but not the owner, deny access
+      if (isAdmin) {
+        return res.status(403).json({ message: 'Admins can only delete products they own' });
+      }
       return res.status(403).json({ message: 'Not authorized' });
     }
 

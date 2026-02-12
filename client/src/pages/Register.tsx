@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -18,6 +18,8 @@ const Register = () => {
   const { register } = useAuth();
   const [userType, setUserType] = useState<'individual' | 'product provider' | null>(null);
   const [providerType, setProviderType] = useState<'freelancer' | 'small business' | 'specialized' | null>(null);
+  const [isProviderTypeOpen, setIsProviderTypeOpen] = useState(false);
+  const providerTypeDropdownRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -42,10 +44,28 @@ const Register = () => {
     crCertificate: null as File | null,
     professionalCertificate: null as File | null,
     portfolioPhotos: [] as File[],
+    logo: null as File | null, // Logo for product providers
     privacyConsent: false,
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (providerTypeDropdownRef.current && !providerTypeDropdownRef.current.contains(event.target as Node)) {
+        setIsProviderTypeOpen(false);
+      }
+    };
+
+    if (isProviderTypeOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isProviderTypeOpen]);
 
   const handleFileChange = (field: string, files: FileList | null) => {
     if (!files) return;
@@ -221,7 +241,24 @@ const Register = () => {
         }
       }
 
-      await register(registrationData);
+      // If logo is provided, use FormData
+      if (formData.logo && userType === 'product provider') {
+        const formDataToSend = new FormData();
+        
+        // Add all text fields
+        Object.keys(registrationData).forEach(key => {
+          if (registrationData[key] !== undefined && registrationData[key] !== null) {
+            formDataToSend.append(key, String(registrationData[key]));
+          }
+        });
+        
+        // Add logo file
+        formDataToSend.append('logo', formData.logo);
+        
+        await register(formDataToSend);
+      } else {
+        await register(registrationData);
+      }
       navigate('/products');
     } catch (err: any) {
       // Handle different error formats
@@ -263,7 +300,7 @@ const Register = () => {
   // Individual Registration Form
   if (userType === 'individual') {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'rgba(249, 250, 251, 0.7)' }}>
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-extrabold text-gray-900">Create Your Account</h2>
@@ -475,7 +512,7 @@ const Register = () => {
   // Product Provider Registration Form
   if (userType === 'product provider') {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'rgba(249, 250, 251, 0.7)' }}>
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-extrabold text-gray-900">Register as Product Provider</h2>
@@ -490,30 +527,87 @@ const Register = () => {
             )}
 
             {/* Provider Type */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">Provider Type</label>
-              <div className="grid grid-cols-3 gap-4">
-                {(['freelancer', 'small business', 'specialized'] as const).map((type) => (
-                  <button
-                    key={type}
-                    type="button"
-                    onClick={() => setProviderType(type)}
-                    className={`p-4 border-2 rounded-lg text-center transition-all ${
-                      providerType === type
-                        ? 'border-[#16A34A] bg-[#16A34A]/5'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
+            <div ref={providerTypeDropdownRef}>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Provider Type <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsProviderTypeOpen(!isProviderTypeOpen)}
+                  className={`mt-1 w-full px-4 py-3 pl-12 pr-10 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:border-[#16A34A] bg-white text-left ${
+                    providerType 
+                      ? 'text-gray-900 font-medium border-[#16A34A]' 
+                      : 'text-gray-500 border-gray-300'
+                  } hover:border-gray-400 transition-colors`}
+                >
+                  {providerType ? (
+                    <span>
+                      {providerType === 'freelancer' ? 'Freelancer' : providerType === 'small business' ? 'Small Business' : 'Specialized'}
+                      <span className="text-gray-500 text-sm font-normal ml-2">
+                        {providerType === 'freelancer' ? '- Individual professional' : providerType === 'small business' ? '- Local business' : ''}
+                      </span>
+                    </span>
+                  ) : (
+                    'Select Provider Type'
+                  )}
+                </button>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg 
+                    className={`w-5 h-5 text-gray-400 transition-transform ${isProviderTypeOpen ? 'transform rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
                   >
-                    <div className="text-2xl mb-2">
-                      {type === 'freelancer' ? '💼' : type === 'small business' ? '🏪' : '🏭'}
-                    </div>
-                    <div className="font-semibold capitalize">{type === 'small business' ? 'Small Business' : type === 'specialized' ? 'Specialized' : 'Freelancer'}</div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      {type === 'freelancer' ? 'Individual professional' : type === 'small business' ? 'Local business' : 'Large enterprise'}
-                    </div>
-                  </button>
-                ))}
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                  {providerType && (
+                    <span className="text-xl">
+                      {providerType === 'freelancer' ? '💼' : providerType === 'small business' ? '🏪' : '🏭'}
+                    </span>
+                  )}
+                </div>
+                {isProviderTypeOpen && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+                    {(['freelancer', 'small business', 'specialized'] as const).map((type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => {
+                          setProviderType(type);
+                          setIsProviderTypeOpen(false);
+                        }}
+                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                          providerType === type ? 'bg-[#16A34A]/5 border-l-4 border-[#16A34A]' : ''
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">
+                            {type === 'freelancer' ? '💼' : type === 'small business' ? '🏪' : '🏭'}
+                          </span>
+                          <div>
+                            <div className="font-semibold text-gray-900">
+                              {type === 'freelancer' ? 'Freelancer' : type === 'small business' ? 'Small Business' : 'Specialized'}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {type === 'freelancer' ? 'Individual professional' : type === 'small business' ? 'Local business' : ''}
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
+              {providerType && (
+                <p className="mt-2 text-sm text-gray-600">
+                  {providerType === 'freelancer' && 'Individual professional offering services'}
+                  {providerType === 'small business' && 'Local business providing products and services'}
+                  {providerType === 'specialized' && 'Specialized enterprise with advanced capabilities'}
+                </p>
+              )}
             </div>
 
             {/* Company Information - Only for Small Business and Specialized */}
@@ -737,7 +831,31 @@ const Register = () => {
 
             {/* Required Documents */}
             <div className="border-t pt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Required Documents</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Logo (Optional)</h3>
+              <div className="mb-4">
+                <label htmlFor="logo" className="block text-sm font-medium text-gray-700 mb-1">
+                  Company/Personal Logo
+                </label>
+                <input
+                  id="logo"
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.gif,.webp"
+                  onChange={(e) => handleFileChange('logo', e.target.files)}
+                  className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#16A34A] file:text-white hover:file:bg-[#15803D]"
+                />
+                <p className="mt-1 text-xs text-gray-500">Upload your company or personal logo (optional)</p>
+                {formData.logo && (
+                  <div className="mt-2">
+                    <img
+                      src={URL.createObjectURL(formData.logo)}
+                      alt="Logo preview"
+                      className="w-32 h-32 object-contain border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-6">Required Documents</h3>
               
               {/* Product Center Photos - Only for Small Business and Specialized */}
               {(providerType === 'small business' || providerType === 'specialized') && (
@@ -917,7 +1035,7 @@ const Register = () => {
 
   // Initial Role Selection Screen
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ background: 'linear-gradient(to bottom right, rgba(239, 246, 255, 0.6), rgba(255, 255, 255, 0.7), rgba(250, 245, 255, 0.6))' }}>
       <div className="max-w-3xl w-full">
         {/* Logo Section */}
         <div className="text-center mb-8">

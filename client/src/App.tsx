@@ -15,6 +15,7 @@ import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import PromotionManagement from './pages/PromotionManagement';
 import Cart from './components/Cart';
+import BackgroundImages from './components/BackgroundImages';
 import './App.css';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
@@ -26,10 +27,14 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-grow">
-            <Routes>
+        <div className="flex flex-col min-h-screen relative" style={{ position: 'relative' }}>
+          {/* Background Images Grid - Shadow/Watermark Effect */}
+          <BackgroundImages opacity={0.15} imagesPerRow={3} />
+          <div className="absolute inset-0 bg-green-50/10 z-0" style={{ position: 'fixed' }} />
+          <div className="relative z-10 flex flex-col min-h-screen" style={{ backgroundColor: 'transparent' }}>
+            <Navbar />
+            <main className="flex-grow">
+              <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<Products />} />
               <Route path="/products/:id" element={<ProductDetail />} />
@@ -47,9 +52,10 @@ function App() {
               <Route path="/user-data-deletion" element={<UserDataDeletion />} />
               <Route path="/about" element={<About />} />
               <Route path="/seller/:sellerId" element={<SellerStore />} /> 
-            </Routes>
-          </main>
-          <Footer />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
         </div>
       </Router>
     </AuthProvider>

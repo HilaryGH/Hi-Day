@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { productsAPI } from '../utils/api';
+import SectionBackground from './SectionBackground';
 
 const RecentProducts: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -40,10 +41,12 @@ const RecentProducts: React.FC = () => {
   };
 
   return (
-    <section className="w-full bg-gradient-to-br from-gray-50 via-white to-gray-50 py-16 md:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative w-full py-8 md:py-12" style={{ background: 'linear-gradient(to bottom right, rgba(249, 250, 251, 0.85), rgba(255, 255, 255, 0.9), rgba(249, 250, 251, 0.85))' }}>
+      {/* Background Images */}
+      <SectionBackground opacity={0.15} imagesPerRow={3} />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-12 flex items-center justify-between">
+        <div className="mb-6 md:mb-8 flex items-center justify-between">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
             Recent Products
           </h2>
@@ -78,8 +81,8 @@ const RecentProducts: React.FC = () => {
                 key={item}
                 className="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse flex flex-row md:flex-col"
               >
-                <div className="w-2/5 md:w-full h-32 md:h-64 bg-gray-200"></div>
-                <div className="w-3/5 md:w-full relative md:-mt-12 p-2 md:p-3 md:pt-14 space-y-2">
+                <div className="w-2/5 md:w-full h-32 md:h-48 bg-gray-200"></div>
+                <div className="w-3/5 md:w-full relative p-2 md:p-3 space-y-2">
                   <div className="h-2.5 md:h-3 bg-gray-200 rounded w-3/4"></div>
                   <div className="h-2 md:h-2.5 bg-gray-200 rounded w-1/2"></div>
                   <div className="h-3 md:h-4 bg-gray-200 rounded w-1/3"></div>
@@ -98,7 +101,7 @@ const RecentProducts: React.FC = () => {
                   className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden md:overflow-visible flex flex-row md:flex-col"
                 >
                   {/* Image Container - Left side on mobile, full width on desktop */}
-                  <div className="relative w-2/5 md:w-full h-32 md:h-64 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 rounded-l-2xl md:rounded-t-2xl md:rounded-l-none flex-shrink-0">
+                  <div className="relative w-2/5 md:w-full h-32 md:h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 rounded-l-2xl md:rounded-t-2xl md:rounded-l-none flex-shrink-0">
                     {product.images && product.images.length > 0 ? (
                       <img
                         src={product.images[0]}
@@ -152,8 +155,8 @@ const RecentProducts: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Product Info - Right side on mobile, overlaying on desktop */}
-                  <div className="relative w-3/5 md:w-full md:-mt-12 bg-white rounded-r-2xl md:rounded-2xl md:rounded-t-none p-2 md:p-3 md:pt-14 shadow-lg md:border-t border-gray-100 z-10 flex flex-col justify-between">
+                  {/* Product Info - Right side on mobile, directly below on desktop */}
+                  <div className="relative w-3/5 md:w-full bg-white rounded-r-2xl md:rounded-2xl md:rounded-t-none p-2 md:p-3 shadow-lg md:border-t border-gray-100 z-10 flex flex-col justify-between">
                     <div>
                       <h3 className="font-semibold text-[10px] md:text-xs lg:text-sm mb-0.5 md:mb-1 text-gray-900 line-clamp-2 group-hover:text-[#16A34A] transition-colors">
                         {product.name}
