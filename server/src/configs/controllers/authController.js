@@ -1,7 +1,7 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
-import { uploadToCloudinary } from '../cloudinary.js';
+import { uploadToCloudinary, uploadMultipleToCloudinary } from '../cloudinary.js';
 
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET || 'your-secret-key', {
@@ -95,27 +95,146 @@ export const register = async (req, res) => {
       privacyConsent: true
     };
 
-    // Handle logo upload for product providers (optional)
-    if (req.file && (role === 'product provider' || role === 'seller')) {
-      try {
-        const uploadResult = await uploadToCloudinary(req.file.buffer, 'users/logos');
-        userData.logo = uploadResult.secure_url;
-      } catch (uploadError) {
-        console.error('Logo upload error:', uploadError);
-        return res.status(500).json({ 
-          message: uploadError.message || 'Failed to upload logo. Please try again.' 
-        });
+    // Handle file uploads to Cloudinary
+    // When using .any(), req.files is an array of all files
+    if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+      // Group files by fieldname
+      const filesByField = {};
+      req.files.forEach(file => {
+        if (!filesByField[file.fieldname]) {
+          filesByField[file.fieldname] = [];
+        }
+        filesByField[file.fieldname].push(file);
+      });
+
+      // Logo upload (optional)
+      if (filesByField.logo && filesByField.logo[0]) {
+        try {
+          const uploadResult = await uploadToCloudinary(filesByField.logo[0].buffer, 'users/logos');
+          userData.logo = uploadResult.secure_url;
+        } catch (uploadError) {
+          console.error('Logo upload error:', uploadError);
+          return res.status(500).json({ 
+            message: uploadError.message || 'Failed to upload logo. Please try again.' 
+          });
+        }
+      }
+
+      // ID Document upload (for freelancers and individuals)
+      if (filesByField.idDocument && filesByField.idDocument[0]) {
+        try {
+          const uploadResult = await uploadToCloudinary(filesByField.idDocument[0].buffer, 'users/documents', { resource_type: 'auto' });
+          userData.idDocument = uploadResult.secure_url;
+        } catch (uploadError) {
+          console.error('ID Document upload error:', uploadError);
+          return res.status(500).json({ 
+            message: uploadError.message || 'Failed to upload ID document. Please try again.' 
+          });
+        }
+      }
+
+      // Service Center Photos (for small business and specialized)
+      if (filesByField.serviceCenterPhotos && filesByField.serviceCenterPhotos.length > 0) {
+        try {
+          const fileBuffers = filesByField.serviceCenterPhotos.map(file => file.buffer);
+          const uploadResults = await uploadMultipleToCloudinary(fileBuffers, 'users/service-centers');
+          userData.serviceCenterPhotos = uploadResults.map(result => result.secure_url);
+        } catch (uploadError) {
+          console.error('Service center photos upload error:', uploadError);
+          return res.status(500).json({ 
+            message: uploadError.message || 'Failed to upload service center photos. Please try again.' 
+          });
+        }
+      }
+
+      // Portfolio Photos (for freelancers)
+      if (filesByField.portfolioPhotos && filesByField.portfolioPhotos.length > 0) {
+        try {
+          const fileBuffers = filesByField.portfolioPhotos.map(file => file.buffer);
+          const uploadResults = await uploadMultipleToCloudinary(fileBuffers, 'users/portfolios');
+          userData.portfolioPhotos = uploadResults.map(result => result.secure_url);
+        } catch (uploadError) {
+          console.error('Portfolio photos upload error:', uploadError);
+          return res.status(500).json({ 
+            message: uploadError.message || 'Failed to upload portfolio photos. Please try again.' 
+          });
+        }
+      }
+
+      // CR Certificate (for small business and specialized)
+      if (filesByField.crCertificate && filesByField.crCertificate[0]) {
+        try {
+          const uploadResult = await uploadToCloudinary(filesByField.crCertificate[0].buffer, 'users/certificates', { resource_type: 'auto' });
+          userData.crCertificate = uploadResult.secure_url;
+        } catch (uploadError) {
+          console.error('CR Certificate upload error:', uploadError);
+          return res.status(500).json({ 
+            message: uploadError.message || 'Failed to upload CR certificate. Please try again.' 
+          });
+        }
+      }
+
+      // Professional Certificate / Business License
+      if (filesByField.professionalCertificate && filesByField.professionalCertificate[0]) {
+        try {
+          const uploadResult = await uploadToCloudinary(filesByField.professionalCertificate[0].buffer, 'users/certificates', { resource_type: 'auto' });
+          userData.professionalCertificate = uploadResult.secure_url;
+        } catch (uploadError) {
+          console.error('Professional certificate upload error:', uploadError);
+          return res.status(500).json({ 
+            message: uploadError.message || 'Failed to upload professional certificate. Please try again.' 
+          });
+        }
+      }
+
+      // Service Price List / Product Price List
+      if (filesByField.servicePriceList && filesByField.servicePriceList[0]) {
+        try {
+          const uploadResult = await uploadToCloudinary(filesByField.servicePriceList[0].buffer, 'users/price-lists', { resource_type: 'auto' });
+          userData.servicePriceList = uploadResult.secure_url;
+        } catch (uploadError) {
+          console.error('Price list upload error:', uploadError);
+          return res.status(500).json({ 
+            message: uploadError.message || 'Failed to upload price list. Please try again.' 
+          });
+        }
+      }
+
+      // Introduction Video
+      if (filesByField.introductionVideo && filesByField.introductionVideo[0]) {
+        try {
+          const uploadResult = await uploadToCloudinary(filesByField.introductionVideo[0].buffer, 'users/videos', { resource_type: 'video' });
+          userData.introductionVideo = uploadResult.secure_url;
+        } catch (uploadError) {
+          console.error('Introduction video upload error:', uploadError);
+          return res.status(500).json({ 
+            message: uploadError.message || 'Failed to upload introduction video. Please try again.' 
+          });
+        }
       }
     }
 
-    // Remove undefined fields
+    // Remove undefined fields and empty strings, but keep empty arrays
     Object.keys(userData).forEach(key => {
-      if (userData[key] === undefined || userData[key] === '') {
+      if (userData[key] === undefined || (userData[key] === '' && !Array.isArray(userData[key]))) {
         delete userData[key];
       }
     });
 
     const user = await User.create(userData);
+
+    // Log saved documents for debugging
+    console.log('User created with documents:', {
+      id: user._id,
+      logo: user.logo,
+      idDocument: user.idDocument,
+      serviceCenterPhotos: user.serviceCenterPhotos?.length || 0,
+      portfolioPhotos: user.portfolioPhotos?.length || 0,
+      crCertificate: user.crCertificate,
+      professionalCertificate: user.professionalCertificate,
+      servicePriceList: user.servicePriceList,
+      introductionVideo: user.introductionVideo
+    });
 
     const token = generateToken(user._id);
 

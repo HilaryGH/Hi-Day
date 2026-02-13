@@ -56,6 +56,64 @@ export const getUser = async (req, res) => {
   }
 };
 
+// Get user documents (for admin/super admin)
+export const getUserDocuments = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Log what we're fetching for debugging
+    console.log('Fetching documents for user:', req.params.id);
+    console.log('User document fields:', {
+      logo: user.logo,
+      idDocument: user.idDocument,
+      serviceCenterPhotos: user.serviceCenterPhotos,
+      portfolioPhotos: user.portfolioPhotos,
+      crCertificate: user.crCertificate,
+      professionalCertificate: user.professionalCertificate,
+      servicePriceList: user.servicePriceList,
+      introductionVideo: user.introductionVideo
+    });
+
+    // Extract all document fields - ensure arrays are properly handled
+    const documents = {
+      logo: user.logo && user.logo.trim() !== '' ? user.logo : null,
+      idDocument: user.idDocument && user.idDocument.trim() !== '' ? user.idDocument : null,
+      serviceCenterPhotos: Array.isArray(user.serviceCenterPhotos) && user.serviceCenterPhotos.length > 0 
+        ? user.serviceCenterPhotos.filter(url => url && url.trim() !== '')
+        : [],
+      portfolioPhotos: Array.isArray(user.portfolioPhotos) && user.portfolioPhotos.length > 0
+        ? user.portfolioPhotos.filter(url => url && url.trim() !== '')
+        : [],
+      crCertificate: user.crCertificate && user.crCertificate.trim() !== '' ? user.crCertificate : null,
+      professionalCertificate: user.professionalCertificate && user.professionalCertificate.trim() !== '' 
+        ? user.professionalCertificate 
+        : null,
+      servicePriceList: user.servicePriceList && user.servicePriceList.trim() !== '' ? user.servicePriceList : null,
+      introductionVideo: user.introductionVideo && user.introductionVideo.trim() !== '' ? user.introductionVideo : null,
+      // Additional user info for context
+      userInfo: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        providerType: user.providerType,
+        companyName: user.companyName,
+        isVerified: user.isVerified,
+        isActive: user.isActive
+      }
+    };
+
+    console.log('Returning documents:', documents);
+    res.json(documents);
+  } catch (error) {
+    console.error('Error fetching user documents:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Update user (verify, change role, etc.)
 export const updateUser = async (req, res) => {
   try {

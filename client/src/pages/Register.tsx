@@ -241,8 +241,17 @@ const Register = () => {
         }
       }
 
-      // If logo is provided, use FormData
-      if (formData.logo && userType === 'product provider') {
+      // Check if any files need to be uploaded - if so, use FormData
+      const hasFiles = formData.logo || 
+        formData.idDocument || 
+        formData.serviceCenterPhotos.length > 0 || 
+        formData.portfolioPhotos.length > 0 || 
+        formData.crCertificate || 
+        formData.professionalCertificate || 
+        formData.servicePriceList || 
+        formData.introductionVideo;
+
+      if (hasFiles) {
         const formDataToSend = new FormData();
         
         // Add all text fields
@@ -252,8 +261,35 @@ const Register = () => {
           }
         });
         
-        // Add logo file
-        formDataToSend.append('logo', formData.logo);
+        // Add files if they exist
+        if (formData.logo) {
+          formDataToSend.append('logo', formData.logo);
+        }
+        if (formData.idDocument) {
+          formDataToSend.append('idDocument', formData.idDocument);
+        }
+        if (formData.serviceCenterPhotos.length > 0) {
+          formData.serviceCenterPhotos.forEach((file) => {
+            formDataToSend.append('serviceCenterPhotos', file);
+          });
+        }
+        if (formData.portfolioPhotos.length > 0) {
+          formData.portfolioPhotos.forEach((file) => {
+            formDataToSend.append('portfolioPhotos', file);
+          });
+        }
+        if (formData.crCertificate) {
+          formDataToSend.append('crCertificate', formData.crCertificate);
+        }
+        if (formData.professionalCertificate) {
+          formDataToSend.append('professionalCertificate', formData.professionalCertificate);
+        }
+        if (formData.servicePriceList) {
+          formDataToSend.append('servicePriceList', formData.servicePriceList);
+        }
+        if (formData.introductionVideo) {
+          formDataToSend.append('introductionVideo', formData.introductionVideo);
+        }
         
         await register(formDataToSend);
       } else {

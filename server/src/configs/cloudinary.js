@@ -11,22 +11,17 @@ cloudinary.config({
 });
 
 /**
- * Upload image to Cloudinary
+ * Upload file to Cloudinary (supports images, PDFs, videos)
  * @param {Buffer} fileBuffer - File buffer
  * @param {string} folder - Folder name in Cloudinary (e.g., 'products', 'users')
- * @param {Object} options - Additional options (e.g., width, height, crop)
+ * @param {Object} options - Additional options (e.g., width, height, crop, resource_type)
  * @returns {Promise<Object>} - Cloudinary upload result
  */
 export const uploadToCloudinary = async (fileBuffer, folder = 'products', options = {}) => {
   return new Promise((resolve, reject) => {
-    // Convert buffer to base64 string
-    const base64String = fileBuffer.toString('base64');
-    // Create data URI for Cloudinary
-    const dataUri = `data:image/jpeg;base64,${base64String}`;
-
     const uploadOptions = {
       folder: folder,
-      resource_type: 'auto',
+      resource_type: 'auto', // Auto-detect: image, video, raw (PDF, etc.)
       ...options
     };
 

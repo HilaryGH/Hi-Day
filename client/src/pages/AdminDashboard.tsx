@@ -20,6 +20,9 @@ const AdminDashboard = () => {
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>('');
   const [paymentStatusFilter, setPaymentStatusFilter] = useState<string>('');
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [userDocuments, setUserDocuments] = useState<any | null>(null);
+  const [showDocumentsModal, setShowDocumentsModal] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -164,6 +167,25 @@ const AdminDashboard = () => {
       loadStats();
     } catch (err: any) {
       setError(err.message || 'Failed to verify provider');
+    }
+  };
+
+  const handleViewDocuments = async (userItem: any) => {
+    setSelectedUser(userItem);
+    setLoading(true);
+    setError('');
+    try {
+      console.log('Fetching documents for user:', userItem._id);
+      const documents = await adminAPI.getUserDocuments(userItem._id);
+      console.log('Received documents:', documents);
+      setUserDocuments(documents);
+      setShowDocumentsModal(true);
+    } catch (err: any) {
+      console.error('Error loading documents:', err);
+      setError(err.message || 'Failed to load user documents');
+      alert(`Error loading documents: ${err.message || 'Failed to load user documents'}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -432,10 +454,17 @@ const AdminDashboard = () => {
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <button
+                              onClick={() => handleViewDocuments(userItem)}
+                              className="text-blue-600 hover:text-blue-900 mr-2"
+                              title="View Documents"
+                            >
+                              Documents
+                            </button>
                             {activeTab === 'providers' && !userItem.isVerified && (
                               <button
                                 onClick={() => handleVerifyProvider(userItem._id)}
-                                className="text-green-600 hover:text-green-900"
+                                className="text-green-600 hover:text-green-900 mr-2"
                               >
                                 Verify
                               </button>
@@ -846,6 +875,333 @@ const AdminDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* User Documents Modal */}
+      {showDocumentsModal && userDocuments && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">
+                User Documents - {selectedUser?.name || 'Unknown'}
+              </h2>
+              <button
+                onClick={() => {
+                  setShowDocumentsModal(false);
+                  setUserDocuments(null);
+                  setSelectedUser(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              {/* User Info */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <h3 className="font-semibold text-gray-900 mb-2">User Information</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div><span className="font-medium">Name:</span> {userDocuments.userInfo?.name}</div>
+                  <div><span className="font-medium">Email:</span> {userDocuments.userInfo?.email}</div>
+                  <div><span className="font-medium">Role:</span> {userDocuments.userInfo?.role}</div>
+                  <div><span className="font-medium">Provider Type:</span> {userDocuments.userInfo?.providerType || 'N/A'}</div>
+                  <div><span className="font-medium">Company:</span> {userDocuments.userInfo?.companyName || 'N/A'}</div>
+                  <div><span className="font-medium">Status:</span> 
+                    <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                      userDocuments.userInfo?.isVerified 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-orange-100 text-orange-800'
+                    }`}>
+                      {userDocuments.userInfo?.isVerified ? 'Verified' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Documents Grid */}
+              <div className="space-y-6">
+                {/* Logo */}
+                {userDocuments.logo && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Logo</h3>
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <img 
+                        src={userDocuments.logo} 
+                        alt="Logo" 
+                        className="max-w-xs max-h-32 object-contain"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/placeholder-image.png';
+                        }}
+                      />
+                      <a 
+                        href={userDocuments.logo} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-block text-blue-600 hover:text-blue-800 text-sm"
+                      >
+                        Open in new tab
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {/* ID Document */}
+                {userDocuments.idDocument && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">ID Document</h3>
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      {userDocuments.idDocument.match(/\.(pdf)$/i) ? (
+                        <a 
+                          href={userDocuments.idDocument} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          📄 View PDF Document
+                        </a>
+                      ) : (
+                        <>
+                          <img 
+                            src={userDocuments.idDocument} 
+                            alt="ID Document" 
+                            className="max-w-full max-h-96 object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/placeholder-image.png';
+                            }}
+                          />
+                          <a 
+                            href={userDocuments.idDocument} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="mt-2 inline-block text-blue-600 hover:text-blue-800 text-sm"
+                          >
+                            Open in new tab
+                          </a>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Service Center Photos */}
+                {userDocuments.serviceCenterPhotos && userDocuments.serviceCenterPhotos.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">
+                      Service Center Photos ({userDocuments.serviceCenterPhotos.length})
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {userDocuments.serviceCenterPhotos.map((photo: string, index: number) => (
+                        <div key={index} className="border border-gray-200 rounded-lg p-2">
+                          <img 
+                            src={photo} 
+                            alt={`Service Center Photo ${index + 1}`}
+                            className="w-full h-48 object-cover rounded"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/placeholder-image.png';
+                            }}
+                          />
+                          <a 
+                            href={photo} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="mt-2 block text-blue-600 hover:text-blue-800 text-xs text-center"
+                          >
+                            View Full Size
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Portfolio Photos */}
+                {userDocuments.portfolioPhotos && userDocuments.portfolioPhotos.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">
+                      Portfolio Photos ({userDocuments.portfolioPhotos.length})
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {userDocuments.portfolioPhotos.map((photo: string, index: number) => (
+                        <div key={index} className="border border-gray-200 rounded-lg p-2">
+                          <img 
+                            src={photo} 
+                            alt={`Portfolio Photo ${index + 1}`}
+                            className="w-full h-48 object-cover rounded"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/placeholder-image.png';
+                            }}
+                          />
+                          <a 
+                            href={photo} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="mt-2 block text-blue-600 hover:text-blue-800 text-xs text-center"
+                          >
+                            View Full Size
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* CR Certificate */}
+                {userDocuments.crCertificate && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">CR Certificate</h3>
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      {userDocuments.crCertificate.match(/\.(pdf)$/i) ? (
+                        <a 
+                          href={userDocuments.crCertificate} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          📄 View PDF Certificate
+                        </a>
+                      ) : (
+                        <>
+                          <img 
+                            src={userDocuments.crCertificate} 
+                            alt="CR Certificate" 
+                            className="max-w-full max-h-96 object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/placeholder-image.png';
+                            }}
+                          />
+                          <a 
+                            href={userDocuments.crCertificate} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="mt-2 inline-block text-blue-600 hover:text-blue-800 text-sm"
+                          >
+                            Open in new tab
+                          </a>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Professional Certificate */}
+                {userDocuments.professionalCertificate && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Professional Certificate / Business License</h3>
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      {userDocuments.professionalCertificate.match(/\.(pdf)$/i) ? (
+                        <a 
+                          href={userDocuments.professionalCertificate} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          📄 View PDF Certificate
+                        </a>
+                      ) : (
+                        <>
+                          <img 
+                            src={userDocuments.professionalCertificate} 
+                            alt="Professional Certificate" 
+                            className="max-w-full max-h-96 object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/placeholder-image.png';
+                            }}
+                          />
+                          <a 
+                            href={userDocuments.professionalCertificate} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="mt-2 inline-block text-blue-600 hover:text-blue-800 text-sm"
+                          >
+                            Open in new tab
+                          </a>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Service Price List */}
+                {userDocuments.servicePriceList && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Service Price List</h3>
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      {userDocuments.servicePriceList.match(/\.(pdf)$/i) ? (
+                        <a 
+                          href={userDocuments.servicePriceList} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          📄 View PDF Price List
+                        </a>
+                      ) : (
+                        <a 
+                          href={userDocuments.servicePriceList} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          View Price List
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Introduction Video */}
+                {userDocuments.introductionVideo && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Introduction Video</h3>
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <video 
+                        src={userDocuments.introductionVideo} 
+                        controls 
+                        className="max-w-full max-h-96"
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                      <a 
+                        href={userDocuments.introductionVideo} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-block text-blue-600 hover:text-blue-800 text-sm"
+                      >
+                        Open in new tab
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {/* No Documents Message */}
+                {!userDocuments.logo && 
+                 !userDocuments.idDocument && 
+                 userDocuments.serviceCenterPhotos?.length === 0 && 
+                 userDocuments.portfolioPhotos?.length === 0 && 
+                 !userDocuments.crCertificate && 
+                 !userDocuments.professionalCertificate && 
+                 !userDocuments.servicePriceList && 
+                 !userDocuments.introductionVideo && (
+                  <div className="text-center py-8 text-gray-500">
+                    No documents uploaded by this user.
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end">
+              <button
+                onClick={() => {
+                  setShowDocumentsModal(false);
+                  setUserDocuments(null);
+                  setSelectedUser(null);
+                }}
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

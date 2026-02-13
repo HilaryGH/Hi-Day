@@ -378,6 +378,7 @@ export const adminAPI = {
     return fetchAPI(`/admin/users?${queryString}`);
   },
   getUser: (id: string) => fetchAPI(`/admin/users/${id}`),
+  getUserDocuments: (id: string) => fetchAPI(`/admin/users/${id}/documents`),
   updateUser: (id: string, data: any) =>
     fetchAPI(`/admin/users/${id}`, {
       method: 'PUT',

@@ -2,6 +2,7 @@ import express from 'express';
 import {
   getAllUsers,
   getUser,
+  getUserDocuments,
   updateUser,
   deleteUser,
   verifyProvider,
@@ -26,6 +27,7 @@ router.get('/stats', protect, authorize('admin', 'super admin'), getDashboardSta
 // User management - requires authentication and admin role
 router.get('/users', protect, authorize('admin', 'super admin'), getAllUsers);
 router.get('/users/:id', protect, authorize('admin', 'super admin'), getUser);
+router.get('/users/:id/documents', protect, authorize('admin', 'super admin'), getUserDocuments);
 router.put('/users/:id', protect, authorize('admin', 'super admin'), updateUser);
 router.delete('/users/:id', protect, authorize('admin', 'super admin'), deleteUser);
 
