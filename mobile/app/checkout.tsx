@@ -48,6 +48,8 @@ const Checkout = () => {
     phone: '',
     paymentMethod: 'cash_on_delivery',
     shippingCost: 200,
+    latitude: null as number | null,
+    longitude: null as number | null,
   });
 
   useEffect(() => {
@@ -97,11 +99,89 @@ const Checkout = () => {
     }
   };
 
+  const getCurrentLocation = async () => {
+    try {
+      const { Location } = await import('expo-location');
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is required to use this feature.');
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      const lat = location.coords.latitude;
+      const lng = location.coords.longitude;
+      
+      setFormData(prev => ({
+        ...prev,
+        latitude: lat,
+        longitude: lng
+      }));
+
+      // Reverse geocode to get address
+      const addresses = await Location.reverseGeocodeAsync({ latitude: lat, longitude: lng });
+      if (addresses && addresses.length > 0) {
+        const address = addresses[0];
+        setFormData(prev => ({
+          ...prev,
+          street: address.street || prev.street,
+          city: address.city || address.district || prev.city,
+          state: address.region || prev.state,
+          zipCode: address.postalCode || prev.zipCode
+        }));
+      }
+
+      // Recalculate delivery fee
+      setTimeout(() => {
+        calculateDeliveryFee();
+      }, 500);
+    } catch (error) {
+      console.error('Error getting location:', error);
+      Alert.alert('Error', 'Unable to get your location. Please enter address manually.');
+    }
+  };
+
+  const calculateDeliveryFee = async () => {
+    if (!formData.city.trim() || !formData.street.trim() || items.length === 0) {
+      return;
+    }
+
+    try {
+      const productIds = items.map(item => item.productId);
+      const deliveryFeeResponse = await orderAPI.calculateDeliveryFee({
+        shippingAddress: {
+          city: formData.city,
+          street: formData.street,
+          state: formData.state,
+          zipCode: formData.zipCode,
+          latitude: formData.latitude,
+          longitude: formData.longitude
+        },
+        productIds
+      });
+      
+      if (deliveryFeeResponse.deliveryFee) {
+        setFormData(prev => ({ ...prev, shippingCost: deliveryFeeResponse.deliveryFee }));
+      }
+    } catch (error) {
+      console.error('Error calculating delivery fee:', error);
+      // Keep default fee on error
+    }
+  };
+
   const handleInputChange = (name: string, value: string) => {
     if (name === 'shippingCost') {
       setFormData({ ...formData, [name]: parseFloat(value) || 0 });
     } else {
       setFormData({ ...formData, [name]: value });
+      
+      // Recalculate delivery fee when city or street changes
+      if (name === 'city' || name === 'street') {
+        setTimeout(() => {
+          calculateDeliveryFee();
+        }, 500);
+      }
     }
   };
 
@@ -146,7 +226,9 @@ const Checkout = () => {
           state: formData.state.trim(),
           zipCode: formData.zipCode.trim(),
           country: formData.country,
-          phone: formData.phone.trim()
+          phone: formData.phone.trim(),
+          latitude: formData.latitude,
+          longitude: formData.longitude
         },
         paymentMethod: formData.paymentMethod,
         shippingCost: formData.shippingCost,
@@ -213,7 +295,7 @@ const Checkout = () => {
       desc: 'Mobile money transfer',
       available: true,
       details: {
-        phoneNumber: '0943056001',
+        phoneNumber: '+251989834889',
         accountName: 'Hilary Gebremedhn'
       }
     },
@@ -248,13 +330,26 @@ const Checkout = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Shipping Address</Text>
           
-          <TextInput
-            style={styles.input}
-            placeholder="Street Address *"
-            value={formData.street}
-            onChangeText={(value) => handleInputChange('street', value)}
-            placeholderTextColor="#9CA3AF"
-          />
+          <View>
+            <View style={styles.locationHeader}>
+              <Text style={styles.inputLabel}>Street Address *</Text>
+              <TouchableOpacity onPress={getCurrentLocation} style={styles.locationButton}>
+                <Text style={styles.locationButtonText}>📍 Use Location</Text>
+              </TouchableOpacity>
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Start typing your address (e.g., Bole, Addis Ababa)"
+              value={formData.street}
+              onChangeText={(value) => handleInputChange('street', value)}
+              placeholderTextColor="#9CA3AF"
+            />
+            {formData.latitude && formData.longitude && (
+              <Text style={styles.locationHint}>
+                📍 Location set: {formData.latitude.toFixed(6)}, {formData.longitude.toFixed(6)}
+              </Text>
+            )}
+          </View>
 
           <View style={styles.row}>
             <TextInput
@@ -420,7 +515,7 @@ const Checkout = () => {
               keyboardType="numeric"
               placeholderTextColor="#9CA3AF"
             />
-            <Text style={styles.inputHint}>Standard delivery fee: 200 ETB</Text>
+            <Text style={styles.inputHint}>Delivery fee based on distance: 0-5 km (200 ETB), 5-10 km (300 ETB), 10+ km (400 ETB)</Text>
           </View>
         </View>
 
@@ -685,6 +780,29 @@ const styles = StyleSheet.create({
   },
   shippingCostInput: {
     marginTop: 16,
+  },
+  locationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  locationButton: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    backgroundColor: '#D1FAE5',
+  },
+  locationButtonText: {
+    fontSize: 12,
+    color: '#16A34A',
+    fontWeight: '600',
+  },
+  locationHint: {
+    fontSize: 11,
+    color: '#6B7280',
+    marginTop: 4,
+    fontStyle: 'italic',
   },
   inputLabel: {
     fontSize: 14,

@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   createOrder,
+  calculateDeliveryFee,
   getUserOrders,
   getSellerOrders,
   getOrder,
@@ -12,6 +13,9 @@ const router = express.Router();
 
 // All order routes require authentication
 router.use(protect);
+
+// Calculate delivery fee (before creating order)
+router.post('/calculate-delivery-fee', calculateDeliveryFee);
 
 // Create order (for both cart checkout and direct purchase)
 router.post('/', createOrder);

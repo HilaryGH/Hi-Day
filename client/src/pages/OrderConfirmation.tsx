@@ -153,7 +153,7 @@ const OrderConfirmation = () => {
                 {order.paymentMethod === 'telebirr' && (
                   <div className="mt-3 p-3 bg-white rounded border border-gray-200">
                     <p className="text-sm font-semibold text-gray-900 mb-2">Payment Details:</p>
-                    <p className="text-sm text-gray-700">Phone Number: <span className="font-mono font-semibold">0943056001</span></p>
+                    <p className="text-sm text-gray-700">Phone Number: <span className="font-mono font-semibold">+251989834889</span></p>
                     <p className="text-sm text-gray-700">Account Name: <span className="font-semibold">Hilary Gebremedhn</span></p>
                   </div>
                 )}

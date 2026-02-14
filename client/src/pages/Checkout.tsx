@@ -1,7 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { orderAPI, cartAPI } from '../utils/api';
+
+// Declare Google Maps types
+declare global {
+  interface Window {
+    google?: any;
+    initMap?: () => void;
+  }
+}
 
 interface CheckoutItem {
   productId: string;
@@ -33,7 +41,9 @@ const Checkout = () => {
     country: 'Ethiopia',
     phone: '',
     paymentMethod: 'cash_on_delivery',
-    shippingCost: 200,
+    shippingCost: 200, // Default, will be calculated
+    latitude: null as number | null,
+    longitude: null as number | null,
   });
 
   useEffect(() => {
@@ -83,9 +93,285 @@ const Checkout = () => {
     }
   };
 
+  const autocompleteRef = useRef<HTMLInputElement>(null);
+  const autocompleteInstanceRef = useRef<any>(null);
+  const [mapsLoaded, setMapsLoaded] = useState(false);
+
+  // Load Google Maps script and initialize autocomplete
+  useEffect(() => {
+    let checkInterval: ReturnType<typeof setInterval> | null = null;
+
+    const initializeAutocomplete = () => {
+      if (!autocompleteRef.current) {
+        // Retry if input is not ready yet
+        setTimeout(() => {
+          if (window.google && window.google.maps && window.google.maps.places) {
+            initializeAutocomplete();
+          }
+        }, 200);
+        return;
+      }
+      
+      if (window.google && window.google.maps && window.google.maps.places) {
+        // Clean up existing autocomplete if any
+        if (autocompleteInstanceRef.current) {
+          try {
+            window.google.maps.event.clearInstanceListeners(autocompleteInstanceRef.current);
+          } catch (e) {
+            // Ignore cleanup errors
+          }
+        }
+
+        try {
+          const autocompleteInstance = new window.google.maps.places.Autocomplete(
+            autocompleteRef.current,
+            {
+              componentRestrictions: { country: 'et' }, // Restrict to Ethiopia
+              fields: ['formatted_address', 'geometry', 'address_components', 'name'],
+              types: ['geocode', 'establishment'] // Allow both addresses and places
+            }
+          );
+
+          autocompleteInstance.addListener('place_changed', () => {
+            const place = autocompleteInstance.getPlace();
+            if (place.geometry) {
+              const lat = place.geometry.location.lat();
+              const lng = place.geometry.location.lng();
+              
+              // Extract address components
+              let street = '';
+              let city = '';
+              let state = '';
+              let zipCode = '';
+
+              if (place.address_components) {
+                place.address_components.forEach((component: any) => {
+                  const types = component.types;
+                  if (types.includes('street_number') || types.includes('route')) {
+                    street += (street ? ' ' : '') + component.long_name;
+                  }
+                  if (types.includes('locality') || types.includes('administrative_area_level_2')) {
+                    city = component.long_name;
+                  }
+                  if (types.includes('administrative_area_level_1')) {
+                    state = component.long_name;
+                  }
+                  if (types.includes('postal_code')) {
+                    zipCode = component.long_name;
+                  }
+                });
+              }
+
+              setFormData(prev => ({
+                ...prev,
+                street: street || place.name || place.formatted_address || prev.street,
+                city: city || prev.city,
+                state: state || prev.state,
+                zipCode: zipCode || prev.zipCode,
+                latitude: lat,
+                longitude: lng
+              }));
+
+              // Recalculate delivery fee after location is set
+              setTimeout(() => {
+                calculateDeliveryFee();
+              }, 500);
+            }
+          });
+
+          autocompleteInstanceRef.current = autocompleteInstance;
+          setMapsLoaded(true);
+          console.log('✅ Google Maps Autocomplete initialized successfully');
+        } catch (error) {
+          console.error('❌ Error initializing autocomplete:', error);
+          setMapsLoaded(false);
+        }
+      } else {
+        setMapsLoaded(false);
+      }
+    };
+
+    // Check if Google Maps is already loaded
+    if (window.google && window.google.maps && window.google.maps.places) {
+      // Small delay to ensure input is rendered
+      setTimeout(() => {
+        initializeAutocomplete();
+      }, 100);
+      return;
+    }
+
+    // Check if script is already being loaded
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    if (existingScript) {
+      // Wait for script to load
+      checkInterval = setInterval(() => {
+        if (window.google && window.google.maps && window.google.maps.places) {
+          if (checkInterval) clearInterval(checkInterval);
+          setTimeout(() => {
+            initializeAutocomplete();
+          }, 100);
+        }
+      }, 100);
+      
+      // Timeout after 10 seconds
+      setTimeout(() => {
+        if (checkInterval) clearInterval(checkInterval);
+        if (!window.google || !window.google.maps) {
+          console.warn('⚠️ Google Maps API failed to load. Autocomplete will not work. Make sure VITE_GOOGLE_MAPS_API_KEY is set in your .env file.');
+        }
+      }, 10000);
+      
+      return;
+    }
+
+    // Load Google Maps script
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    if (!apiKey) {
+      console.warn('⚠️ Google Maps API key not found. Autocomplete will not work. Add VITE_GOOGLE_MAPS_API_KEY to your .env file.');
+      return;
+    }
+
+    console.log('🔄 Loading Google Maps API...');
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+    script.async = true;
+    script.defer = true;
+    
+    script.onload = () => {
+      console.log('✅ Google Maps API loaded');
+      // Wait a bit for Google Maps to fully initialize
+      setTimeout(() => {
+        initializeAutocomplete();
+      }, 200);
+    };
+    
+    script.onerror = () => {
+      console.error('❌ Failed to load Google Maps API. Check your API key and network connection.');
+      setMapsLoaded(false);
+    };
+    
+    document.head.appendChild(script);
+
+    // Cleanup
+    return () => {
+      if (checkInterval) {
+        clearInterval(checkInterval);
+      }
+      if (autocompleteInstanceRef.current) {
+        try {
+          window.google?.maps?.event?.clearInstanceListeners(autocompleteInstanceRef.current);
+        } catch (e) {
+          // Ignore cleanup errors
+        }
+      }
+    };
+  }, []);
+
+  // Get current location
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          
+          setFormData(prev => ({
+            ...prev,
+            latitude: lat,
+            longitude: lng
+          }));
+
+          // Reverse geocode to get address
+          if (window.google && window.google.maps) {
+            const geocoder = new window.google.maps.Geocoder();
+            geocoder.geocode({ location: { lat, lng } }, (results: any[], status: string) => {
+              if (status === 'OK' && results[0]) {
+                const place = results[0];
+                let street = '';
+                let city = '';
+                let state = '';
+                let zipCode = '';
+
+                place.address_components.forEach((component: any) => {
+                  const types = component.types;
+                  if (types.includes('street_number') || types.includes('route')) {
+                    street += (street ? ' ' : '') + component.long_name;
+                  }
+                  if (types.includes('locality') || types.includes('administrative_area_level_2')) {
+                    city = component.long_name;
+                  }
+                  if (types.includes('administrative_area_level_1')) {
+                    state = component.long_name;
+                  }
+                  if (types.includes('postal_code')) {
+                    zipCode = component.long_name;
+                  }
+                });
+
+                setFormData(prev => ({
+                  ...prev,
+                  street: street || place.formatted_address,
+                  city: city || prev.city,
+                  state: state || prev.state,
+                  zipCode: zipCode || prev.zipCode
+                }));
+
+                setTimeout(() => {
+                  calculateDeliveryFee();
+                }, 500);
+              }
+            });
+          }
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          alert('Unable to get your location. Please enter address manually.');
+        }
+      );
+    } else {
+      alert('Geolocation is not supported by your browser.');
+    }
+  };
+
+  const calculateDeliveryFee = async () => {
+    if (!formData.city.trim() || !formData.street.trim() || items.length === 0) {
+      return;
+    }
+
+    try {
+      const productIds = items.map(item => item.productId);
+      const deliveryFeeResponse = await orderAPI.calculateDeliveryFee({
+        shippingAddress: {
+          city: formData.city,
+          street: formData.street,
+          state: formData.state,
+          zipCode: formData.zipCode,
+          latitude: formData.latitude,
+          longitude: formData.longitude
+        },
+        productIds
+      });
+      
+      if (deliveryFeeResponse.deliveryFee) {
+        setFormData(prev => ({ ...prev, shippingCost: deliveryFeeResponse.deliveryFee }));
+      }
+    } catch (error) {
+      console.error('Error calculating delivery fee:', error);
+      // Keep default fee on error
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
+    // Recalculate delivery fee when city or street changes
+    if (name === 'city' || name === 'street') {
+      // Debounce the calculation
+      setTimeout(() => {
+        calculateDeliveryFee();
+      }, 500);
+    }
   };
 
   const calculateSubtotal = () => {
@@ -130,7 +416,9 @@ const Checkout = () => {
           state: formData.state.trim(),
           zipCode: formData.zipCode.trim(),
           country: formData.country,
-          phone: formData.phone.trim()
+          phone: formData.phone.trim(),
+          latitude: formData.latitude,
+          longitude: formData.longitude
         },
         paymentMethod: formData.paymentMethod,
         shippingCost: formData.shippingCost,
@@ -195,19 +483,50 @@ const Checkout = () => {
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Shipping Address</h2>
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="street" className="block text-sm font-medium text-gray-700 mb-1">
-                      Street Address <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="street"
-                      name="street"
-                      type="text"
-                      required
-                      value={formData.street}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
-                      placeholder="Street name and house number"
-                    />
+                    <div className="flex items-center justify-between mb-1">
+                      <label htmlFor="street" className="block text-sm font-medium text-gray-700">
+                        Street Address <span className="text-red-500">*</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={getCurrentLocation}
+                        className="text-xs text-[#16A34A] hover:text-[#15803D] font-medium flex items-center gap-1"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Use Current Location
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <input
+                        ref={autocompleteRef}
+                        id="street"
+                        name="street"
+                        type="text"
+                        required
+                        value={formData.street}
+                        onChange={handleInputChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
+                        placeholder="Start typing your address (e.g., Bole, Addis Ababa)"
+                        autoComplete="off"
+                      />
+                      {mapsLoaded && (
+                        <div className="absolute right-3 top-3 text-green-500">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                    <p className="mt-1 text-xs text-gray-500">
+                      {formData.latitude && formData.longitude 
+                        ? `📍 Location set: ${formData.latitude.toFixed(6)}, ${formData.longitude.toFixed(6)}`
+                        : mapsLoaded 
+                          ? '💡 Start typing to see address suggestions (e.g., Bole, Addis Ababa)'
+                          : '💡 Tip: Use "Use Current Location" or enter your address manually'}
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -317,7 +636,7 @@ const Checkout = () => {
                       desc: 'Mobile money transfer',
                       available: true,
                       details: {
-                        phoneNumber: '0943056001',
+                        phoneNumber: '+251989834889',
                         accountName: 'Hilary Gebremedhn'
                       }
                     },
@@ -468,7 +787,9 @@ const Checkout = () => {
                     onChange={handleInputChange}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#16A34A] focus:border-[#16A34A]"
                   />
-                  <p className="mt-1 text-xs text-gray-500">Standard delivery fee: 200 ETB</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Delivery fee based on distance: 0-5 km (200 ETB), 5-10 km (300 ETB), 10+ km (400 ETB)
+                  </p>
                 </div>
 
                 {/* Submit Button */}

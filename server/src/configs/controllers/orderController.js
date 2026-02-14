@@ -2,6 +2,7 @@ import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
 import User from '../models/User.js';
+import { getDeliveryFeeFromAddresses } from '../utils/deliveryFee.js';
 import { sendOrderConfirmationToCustomer, sendOrderNotificationToSeller } from '../utils/emailService.js';
 
 // Create order from cart or direct purchase
@@ -90,8 +91,39 @@ export const createOrder = async (req, res) => {
       }
     }
 
+    // Calculate delivery fee if not provided or if shipping address is available
+    let finalShippingCost = shippingCost;
+    if (!shippingCost || shippingCost === 0) {
+      // Get seller's address from first product
+      const firstProductId = orderItems[0].product;
+      const firstProduct = await Product.findById(firstProductId).populate('seller', 'city location address latitude longitude');
+      
+      if (firstProduct && firstProduct.seller) {
+        const seller = firstProduct.seller;
+        const origin = {
+          lat: seller.latitude,
+          lng: seller.longitude,
+          city: seller.city || '',
+          location: seller.location || seller.address || '',
+          address: seller.address || ''
+        };
+        const destination = {
+          lat: shippingAddress.latitude,
+          lng: shippingAddress.longitude,
+          city: shippingAddress.city || '',
+          location: shippingAddress.street || shippingAddress.location || '',
+          address: shippingAddress.street || ''
+        };
+        
+        finalShippingCost = await getDeliveryFeeFromAddresses(origin, destination);
+      } else {
+        // Default to middle tier if seller info not available
+        finalShippingCost = 300;
+      }
+    }
+
     // Calculate total amount
-    const totalAmount = orderItems.reduce((total, item) => total + (item.price * item.quantity), 0) + shippingCost;
+    const totalAmount = orderItems.reduce((total, item) => total + (item.price * item.quantity), 0) + finalShippingCost;
 
     // Generate order number based on category
     // Get category from first product
@@ -141,13 +173,15 @@ export const createOrder = async (req, res) => {
         state: shippingAddress.state || shippingAddress.region || '',
         zipCode: shippingAddress.zipCode || shippingAddress.postalCode || '',
         country: shippingAddress.country || 'Ethiopia',
-        phone: shippingAddress.phone
+        phone: shippingAddress.phone,
+        latitude: shippingAddress.latitude || null,
+        longitude: shippingAddress.longitude || null
       },
       paymentMethod,
       paymentStatus: paymentMethod === 'cash_on_delivery' ? 'pending' : 'pending',
       orderStatus: 'pending',
       totalAmount,
-      shippingCost,
+      shippingCost: finalShippingCost,
       orderNumber: finalOrderNumber
     });
 
@@ -199,6 +233,47 @@ export const createOrder = async (req, res) => {
       order
     });
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Calculate delivery fee endpoint
+export const calculateDeliveryFee = async (req, res) => {
+  try {
+    const { shippingAddress, productIds } = req.body;
+
+    if (!shippingAddress || !productIds || productIds.length === 0) {
+      return res.status(400).json({ message: 'Shipping address and product IDs are required' });
+    }
+
+    // Get seller's address from first product
+    const firstProduct = await Product.findById(productIds[0]).populate('seller', 'city location address latitude longitude');
+    
+    if (!firstProduct || !firstProduct.seller) {
+      return res.status(400).json({ message: 'Product or seller not found' });
+    }
+
+    const seller = firstProduct.seller;
+    const origin = {
+      lat: seller.latitude,
+      lng: seller.longitude,
+      city: seller.city || '',
+      location: seller.location || seller.address || '',
+      address: seller.address || ''
+    };
+    const destination = {
+      lat: shippingAddress.latitude,
+      lng: shippingAddress.longitude,
+      city: shippingAddress.city || '',
+      location: shippingAddress.street || shippingAddress.location || '',
+      address: shippingAddress.street || ''
+    };
+
+    const deliveryFee = await getDeliveryFeeFromAddresses(origin, destination);
+
+    res.json({ deliveryFee });
+  } catch (error) {
+    console.error('Error calculating delivery fee:', error);
     res.status(500).json({ message: error.message });
   }
 };

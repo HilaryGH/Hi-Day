@@ -69,6 +69,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  latitude: {
+    type: Number,
+    default: null
+  },
+  longitude: {
+    type: Number,
+    default: null
+  },
   referralCode: {
     type: String,
     trim: true

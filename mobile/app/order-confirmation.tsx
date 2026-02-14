@@ -165,7 +165,7 @@ const OrderConfirmation = () => {
                 <View style={styles.paymentDetails}>
                   <Text style={styles.paymentDetailsTitle}>Payment Details:</Text>
                   <Text style={styles.paymentDetailsText}>
-                    Phone Number: <Text style={styles.paymentDetailsBold}>0943056001</Text>
+                    Phone Number: <Text style={styles.paymentDetailsBold}>+251989834889</Text>
                   </Text>
                   <Text style={styles.paymentDetailsText}>
                     Account Name: <Text style={styles.paymentDetailsBold}>Hilary Gebremedhn</Text>

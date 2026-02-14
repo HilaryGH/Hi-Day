@@ -30,7 +30,9 @@ const orderSchema = new mongoose.Schema({
     state: { type: String, required: true },
     zipCode: { type: String, required: true },
     country: { type: String, default: 'Ethiopia' },
-    phone: { type: String, required: true }
+    phone: { type: String, required: true },
+    latitude: { type: Number, default: null },
+    longitude: { type: Number, default: null }
   },
   paymentMethod: {
     type: String,

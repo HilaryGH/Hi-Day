@@ -325,6 +325,11 @@ export const cartAPI = {
 
 // Order API
 export const orderAPI = {
+  calculateDeliveryFee: (data: { shippingAddress: any; productIds: string[] }) =>
+    fetchAPI('/orders/calculate-delivery-fee', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
   create: (data: any) =>
     fetchAPI('/orders', {
       method: 'POST',
